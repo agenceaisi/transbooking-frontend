@@ -1,0 +1,49 @@
+name: transbooking_bf
+description: "TransBooking BF — plateforme de réservation de transport et d'envoi de colis au Burkina Faso."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  # Aligné sur le SDK du projet (Flutter 3.44.6 / Dart 3.12.2).
+  sdk: ^3.12.0
+
+dependencies:
+  connectivity_plus: ^7.3.0
+  cupertino_icons: ^1.0.9
+  dio: ^5.10.0
+  drift: ^2.34.2
+  drift_flutter: ^0.3.1
+  fl_chart: ^1.2.0
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^3.3.2
+  flutter_secure_storage: ^10.3.1
+  freezed_annotation: ^3.1.0
+  go_router: ^17.3.0
+  google_fonts: ^8.2.0
+  intl: ^0.20.2
+  json_annotation: ^4.12.0
+  logger: ^2.7.0
+  riverpod_annotation: ^4.0.3
+
+dev_dependencies:
+  build_runner: ^2.15.1
+  drift_dev: ^2.34.0
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  # Pre-release assumée : la dernière stable (3.2.5) plafonne à analyzer <11,
+  # alors que la chaîne de génération (Dart 3.12 + riverpod_generator 4) impose
+  # analyzer ^12. Repasser sur une stable dès la sortie de freezed 3.2.6.
+  freezed: ^3.2.6-dev.1
+  json_serializable: ^6.14.0
+  mocktail: ^1.0.5
+  riverpod_generator: ^4.0.4
+  yaml: ^3.1.3
+
+flutter:
+  uses-material-design: true
+  # Génère les classes de localisation depuis l10n.yaml + lib/l10n/*.arb
+  generate: true

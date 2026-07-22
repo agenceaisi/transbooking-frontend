@@ -1,0 +1,29 @@
+# Fichiers et dossiers générés par Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# Dossiers de plateforme générés par `flutter create .`
+# (régénérés localement ; décommenter pour les versionner)
+
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Aide au developpement
+
+CLAUDE.md
+PROMPTS.md
+aide_test.md
+design_handoff_transbooking/
+api/

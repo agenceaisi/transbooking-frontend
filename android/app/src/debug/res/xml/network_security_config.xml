@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Développement uniquement : le serveur Django local est servi en HTTP en clair
+  (http://<IP_LAN>:8000). Ce fichier vit dans src/debug/ — il n'est jamais
+  fusionné dans un build release, qui reste donc en HTTPS strict.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

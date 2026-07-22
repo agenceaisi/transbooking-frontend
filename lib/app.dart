@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'core/localization/app_locales.dart';
+import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
+
+/// Racine de l'application.
+class TransBookingApp extends ConsumerWidget {
+  const TransBookingApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
+      routerConfig: ref.watch(appRouterProvider),
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+      theme: AppTheme.light,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocales.supported,
+      locale: AppLocales.fallback,
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}

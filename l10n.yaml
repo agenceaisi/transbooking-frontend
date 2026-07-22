@@ -1,0 +1,8 @@
+arb-dir: lib/l10n
+template-arb-file: app_fr.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+# Le français est la langue de repli : le getter n'est jamais nul.
+nullable-getter: false
+# Ajouter un `app_<code>.arb` suffit pour une nouvelle langue — aucun refactor.
+untranslated-messages-file: l10n_untranslated.json

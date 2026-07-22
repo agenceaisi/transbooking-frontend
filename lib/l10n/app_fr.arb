@@ -1,0 +1,426 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "TransBooking BF",
+  "@appTitle": {
+    "description": "Nom de l'application, affiché dans le gestionnaire de tâches et l'onglet navigateur"
+  },
+
+  "currencySuffix": "FCFA",
+  "@currencySuffix": {
+    "description": "Devise affichée après un montant"
+  },
+
+  "actionRetry": "Réessayer",
+  "@actionRetry": {
+    "description": "Bouton de relance après une erreur"
+  },
+
+  "actionCancel": "Annuler",
+  "actionClose": "Fermer",
+  "actionContinue": "Continuer",
+  "actionSignIn": "Se connecter",
+  "actionSignOut": "Se déconnecter",
+  "actionBack": "Retour",
+
+  "brandTagline": "Voyages & colis · Burkina Faso",
+  "@brandTagline": {
+    "description": "Signature affichée sous le logo sur les écrans d'accueil et d'authentification"
+  },
+
+  "featureComingSoon": "Bientôt disponible",
+  "@featureComingSoon": {
+    "description": "Mention portée par une commande visible mais sans service côté API (CLAUDE.md §7)"
+  },
+
+  "fieldOptional": "(optionnel)",
+  "fieldRequired": "Ce champ est obligatoire.",
+  "fieldEmailInvalid": "Adresse e-mail invalide.",
+  "fieldPhoneIncomplete": "Le numéro compte 8 chiffres.",
+
+  "passwordShow": "Afficher le mot de passe",
+  "passwordHide": "Masquer le mot de passe",
+  "passwordTooShort": "Choisissez un mot de passe d'au moins 8 caractères.",
+
+  "loginTitle": "Content de vous revoir",
+  "@loginTitle": {
+    "description": "Titre de l'écran de connexion, conforme à la maquette « Écrans publics »"
+  },
+
+  "loginSubtitle": "Connectez-vous pour gérer vos réservations et colis.",
+  "loginPasswordLabel": "Mot de passe",
+  "loginForgotPassword": "Mot de passe oublié ?",
+  "loginForgotPasswordUnavailable": "La réinitialisation n'est pas encore ouverte. Contactez votre compagnie ou la plateforme.",
+  "@loginForgotPasswordUnavailable": {
+    "description": "Aucun endpoint public de réinitialisation n'existe : le lien reste inactif"
+  },
+
+  "loginInvalidCredentials": "Numéro ou mot de passe incorrect. Vérifiez et réessayez.",
+  "@loginInvalidCredentials": {
+    "description": "Réponse 401 de POST /auth/login/ — sur cet écran, ce n'est pas une session expirée"
+  },
+
+  "loginRetryIn": "Réessayez dans {seconds} s",
+  "@loginRetryIn": {
+    "description": "Back-off après un 429 (10 requêtes/min/IP sur les routes d'authentification)",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+
+  "loginNoAccount": "Pas encore de compte ?",
+  "loginCreateAccount": "Créer un compte",
+
+  "registerTitle": "Créer un compte",
+  "registerSubtitle": "Rejoignez la plateforme de transport du Burkina Faso.",
+  "registerTabTraveler": "Voyageur",
+  "registerTabTravelerHint": "Réserver & suivre",
+  "registerTabCompany": "Compagnie",
+  "registerTabCompanyHint": "Demande à valider",
+  "registerHasAccount": "Vous avez déjà un compte ?",
+
+  "fieldFirstName": "Prénom",
+  "fieldFirstNameHint": "Awa",
+  "fieldLastName": "Nom",
+  "fieldLastNameHint": "Ouédraogo",
+  "fieldEmail": "E-mail",
+  "fieldEmailHint": "awa@exemple.com",
+  "fieldPasswordHint": "8 caractères minimum",
+
+  "registerTerms": "J'accepte les conditions d'utilisation et la politique de confidentialité.",
+  "registerTermsRequired": "Acceptez les conditions pour continuer.",
+  "registerSubmitTraveler": "Créer mon compte voyageur",
+  "registerSuccess": "Votre compte est créé. Connectez-vous pour commencer.",
+
+  "companyRequestNotice": "Votre demande sera examinée par l'équipe TransBooking BF sous 48 h. Vous recevrez un e-mail dès la validation de votre compte compagnie.",
+  "companyRequestNoticeTitle": "Demande soumise à validation",
+  "fieldCompanyName": "Nom de la compagnie",
+  "fieldCompanyNameHint": "Ex. Faso Express",
+  "fieldManagerName": "Responsable",
+  "fieldManagerNameHint": "Nom & prénom",
+  "fieldProEmail": "E-mail professionnel",
+  "fieldProEmailHint": "contact@compagnie.bf",
+  "fieldCompanyCity": "Ville / Adresse du siège",
+  "fieldCompanyCityHint": "Ex. Gare routière, Ouagadougou",
+  "companyDocumentsLabel": "Documents administratifs",
+  "companyDocumentsHint": "RCCM, IFU, agrément",
+  "companyRequestSubmit": "Envoyer la demande",
+  "companyRequestFootnote": "Compte soumis à validation de la plateforme.",
+  "companyRequestSuccess": "Demande envoyée. Nous revenons vers vous sous 48 h.",
+
+  "passwordChangeTitle": "Changer votre mot de passe",
+  "passwordChangeSubtitle": "Votre session reste ouverte après le changement.",
+  "fieldCurrentPassword": "Mot de passe actuel",
+  "fieldNewPassword": "Nouveau mot de passe",
+  "fieldConfirmPassword": "Confirmer le nouveau mot de passe",
+  "passwordMismatch": "Les deux saisies ne correspondent pas.",
+  "passwordChangeSubmit": "Enregistrer le nouveau mot de passe",
+  "passwordChangeSuccess": "Mot de passe modifié.",
+
+  "accountSuspendedTitle": "Compte suspendu",
+  "accountSuspendedMessage": "L'accès de votre compagnie est suspendu, ou son abonnement a expiré. Contactez l'administrateur de la plateforme pour le rétablir.",
+
+  "shellTraveler": "Espace voyageur",
+  "shellAgent": "Module agent",
+  "shellCompanyAdmin": "Back-office compagnie",
+  "shellSuperAdmin": "Administration plateforme",
+
+  "shellPlaceholderMessage": "Cet espace accueillera bientôt ses écrans.",
+  "@shellPlaceholderMessage": {
+    "description": "Message des coquilles de routes tant que les écrans du rôle ne sont pas construits"
+  },
+
+  "connectionSynced": "Connecté — données à jour",
+  "@connectionSynced": {
+    "description": "Bandeau de connexion, état vert : en ligne et rien en attente"
+  },
+
+  "connectionSyncing": "Synchronisation en cours…",
+  "@connectionSyncing": {
+    "description": "Bandeau de connexion, état bleu clignotant"
+  },
+
+  "connectionOfflinePending": "{count, plural, =1{Hors ligne — 1 élément à envoyer} other{Hors ligne — {count} éléments à envoyer}}",
+  "@connectionOfflinePending": {
+    "description": "Bandeau de connexion, état orange : hors-ligne avec des écritures en attente dans l'outbox",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+
+  "connectionOffline": "Hors ligne — rien en attente",
+  "@connectionOffline": {
+    "description": "Bandeau de connexion, état gris : hors-ligne, outbox vide"
+  },
+
+  "connectionSyncError": "Synchronisation impossible. Touchez pour relancer.",
+  "@connectionSyncError": {
+    "description": "Bandeau de connexion, état rouge : la dernière synchronisation a échoué"
+  },
+
+  "connectionBannerTooltip": "Voir les données en attente",
+  "@connectionBannerTooltip": {
+    "description": "Infobulle du bandeau de connexion, qui ouvre le détail de l'outbox"
+  },
+
+  "lastUpdatedAt": "Dernière mise à jour à {time}",
+  "@lastUpdatedAt": {
+    "description": "Fraîcheur d'une donnée issue du cache local",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14h05"
+      }
+    }
+  },
+
+  "otpTitle": "Saisissez le code reçu par SMS",
+  "@otpTitle": {
+    "description": "Titre de l'écran de confirmation du paiement Mobile Money"
+  },
+
+  "otpFieldLabel": "Code de confirmation",
+  "otpDigitLabel": "Chiffre {position} sur {total}",
+  "@otpDigitLabel": {
+    "description": "Étiquette d'accessibilité d'une case du code de confirmation",
+    "placeholders": {
+      "position": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+
+  "otpExpiresIn": "Code valable encore {duration}",
+  "@otpExpiresIn": {
+    "description": "Compte à rebours avant expiration du code",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "2:45"
+      }
+    }
+  },
+
+  "otpExpired": "Le code a expiré. Demandez-en un nouveau.",
+  "otpAttemptsRemaining": "{count, plural, =1{Il vous reste 1 tentative} other{Il vous reste {count} tentatives}}",
+  "@otpAttemptsRemaining": {
+    "description": "Nombre d'essais restants renvoyé par l'API",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+
+  "otpResend": "Renvoyer le code",
+  "otpResendIn": "Renvoyer le code dans {seconds} s",
+  "@otpResendIn": {
+    "description": "Le renvoi est limité à une fois toutes les 30 secondes",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "18"
+      }
+    }
+  },
+
+  "phoneFieldLabel": "Numéro de téléphone",
+  "phoneFieldHint": "70 00 00 00",
+  "phoneCountryPrefix": "+226",
+  "@phoneCountryPrefix": {
+    "description": "Indicatif du Burkina Faso, préfixe fixe du champ téléphone"
+  },
+
+  "emptyStateTitle": "Rien à afficher pour l'instant",
+  "@emptyStateTitle": {
+    "description": "Titre par défaut d'un état vide — les écrans fournissent un texte plus engageant"
+  },
+
+  "errorStateTitle": "L'affichage a échoué",
+  "@errorStateTitle": {
+    "description": "Titre par défaut d'un état d'erreur"
+  },
+
+  "failureNoConnection": "Pas de connexion. Vos données seront envoyées au retour du réseau.",
+  "@failureNoConnection": {
+    "description": "Échec réseau : aucune connectivité"
+  },
+
+  "failureTimeout": "Le serveur met trop de temps à répondre. Réessayez.",
+  "failureServer": "Le service est momentanément indisponible. Réessayez dans un instant.",
+  "failureUnauthorized": "Votre session a expiré. Reconnectez-vous.",
+  "failureForbidden": "Vous n'avez pas accès à cette information.",
+  "failureAccountSuspended": "Ce compte est suspendu. Contactez l'administrateur de la plateforme.",
+  "failureNotFound": "Cette information est introuvable.",
+  "failureConflict": "Cette place vient d'être prise. Choisissez-en une autre.",
+  "@failureConflict": {
+    "description": "Code 409 — conflit de siège, cf. CLAUDE.md §5"
+  },
+
+  "failureRateLimited": "Trop de tentatives. Patientez un instant avant de réessayer.",
+  "failureUnexpected": "Une erreur est survenue. Réessayez.",
+
+  "connectionSyncedTitle": "Connecté",
+  "@connectionSyncedTitle": {
+    "description": "Bandeau de connexion, variante carte — titre de l'état vert"
+  },
+
+  "connectionSyncedBody": "Toutes les données sont à jour et synchronisées.",
+  "connectionSyncingTitle": "Synchronisation en cours…",
+  "connectionSyncingBody": "Envoi des enregistrements locaux vers le serveur.",
+  "connectionOfflinePendingTitle": "Hors ligne — données en attente",
+  "connectionOfflinePendingBody": "Synchronisation automatique au retour du réseau.",
+  "connectionOfflineTitle": "Hors ligne",
+  "connectionOfflineBody": "Aucune donnée en attente. Vous pouvez continuer.",
+  "connectionSyncErrorTitle": "Échec de synchronisation",
+  "connectionSyncErrorBody": "Vos données locales sont conservées. Touchez pour voir le détail.",
+
+  "timeAgoJustNow": "à l'instant",
+  "@timeAgoJustNow": {
+    "description": "Horodatage relatif d'une alerte ou d'une saisie de moins d'une minute"
+  },
+
+  "timeAgoMinutes": "il y a {count} min",
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "timeAgoHours": "il y a {count} h",
+  "@timeAgoHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "timeAgoDays": "{count, plural, =1{hier} other{il y a {count} jours}}",
+  "@timeAgoDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "agentRoleGuichet": "Agent guichet",
+  "@agentRoleGuichet": {
+    "description": "Libellé affiché du rôle agent_guichet"
+  },
+
+  "agentRoleControleur": "Contrôleur",
+  "agentGreetingFallback": "Votre poste",
+  "@agentGreetingFallback": {
+    "description": "Remplace le nom de l'agent tant que le profil complet n'est pas chargé"
+  },
+
+  "agentQuickActionsTitle": "Actions rapides",
+  "agentActionRegisterPassenger": "Enregistrer un passager",
+  "agentActionRegisterParcel": "Enregistrer un colis",
+  "agentActionDaySchedule": "Programme du jour",
+  "agentActionScanQr": "Scanner un QR code",
+  "agentActionPassengerList": "Liste des passagers · embarquement",
+
+  "agentNextDeparturesTitle": "Prochains départs",
+  "agentFullSchedule": "Programme complet",
+  "agentSeatsAvailable": "{count, plural, =1{1 place} other{{count} places}}",
+  "@agentSeatsAvailable": {
+    "description": "Pastille de places restantes sur un départ",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "agentSeatsFull": "Complet",
+  "agentDepartureDelayed": "Retardé",
+  "@agentDepartureDelayed": {
+    "description": "L'API signale le retard sans donner la nouvelle heure : on annonce le fait, pas un horaire inventé"
+  },
+
+  "agentDepartureCancelled": "Annulé",
+  "agentPassengersRegistered": "{count, plural, =0{aucun passager} =1{1 passager} other{{count} passagers}}",
+  "@agentPassengersRegistered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "agentViewPassengerList": "Voir la liste des passagers",
+  "agentViewPassengerListShort": "Liste passagers",
+  "agentAddPassenger": "Ajouter",
+  "agentNoDeparturesTitle": "Plus aucun départ aujourd'hui",
+  "agentNoDeparturesMessage": "Ouvrez le programme complet pour préparer les départs de demain.",
+
+  "agentAlertsTitle": "Alertes récentes",
+  "agentAlertsEmptyTitle": "Rien à signaler",
+  "agentAlertsEmptyMessage": "Les colis arrivés et les départs imminents apparaîtront ici.",
+
+  "agentNextBoardingTitle": "Prochain embarquement",
+  "agentDepartureAt": "départ {time}",
+  "@agentDepartureAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+
+  "agentScanNextTicket": "Scanner le prochain billet",
+  "agentBoardingProgressNotice": "L'avancement de l'embarquement s'affiche dans la liste des passagers.",
+  "@agentBoardingProgressNotice": {
+    "description": "Aucun endpoint de lecture ne donne le compte d'embarqués : on renvoie vers l'écran qui l'aura"
+  },
+
+  "agentNoBoardingTitle": "Aucun embarquement en attente",
+  "agentNoBoardingMessage": "Le prochain départ de votre véhicule s'affichera ici.",
+
+  "agentConnectionSectionTitle": "État de connexion",
+  "agentPendingSheetTitle": "Données en attente",
+  "agentPendingCount": "{count, plural, =1{1 enregistrement en attente d'envoi} other{{count} enregistrements en attente d'envoi}}",
+  "@agentPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "agentPendingEmptyTitle": "Tout est synchronisé",
+  "agentPendingEmptyMessage": "Aucune donnée en attente d'envoi. Vous pouvez continuer à travailler.",
+  "agentPendingBooking": "Passager",
+  "agentPendingParcel": "Colis",
+  "agentPendingValidation": "Embarquement",
+  "agentPendingStatusPending": "En attente",
+  "agentPendingStatusSyncing": "Envoi…",
+  "agentPendingStatusFailed": "Échec",
+  "agentSyncEngineNotice": "L'envoi automatique arrive avec le module hors-ligne. Vos saisies restent conservées sur l'appareil.",
+  "@agentSyncEngineNotice": {
+    "description": "Le moteur de synchronisation est construit en phase 5A — le bandeau ne doit pas laisser croire qu'il tourne déjà"
+  },
+
+  "agentNavHome": "Accueil",
+  "agentNavPassengers": "Passagers",
+  "agentNavParcels": "Colis",
+  "agentNavScan": "Scanner",
+  "agentNavProfile": "Profil"
+}
