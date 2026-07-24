@@ -23,9 +23,83 @@ abstract final class AppRoutes {
   static const String passwordChange = '/mot-de-passe';
   static const String passwordChangeName = 'mot-de-passe';
 
+  // ── Espace public (non authentifié) ──────────────────────────────────────
+  /// Page d'accueil marketing — porte d'entrée d'un visiteur non connecté.
+  static const String home = '/accueil';
+  static const String homeName = 'accueil';
+
+  /// Résultats de recherche de trajets.
+  static const String searchResults = '/resultats';
+  static const String searchResultsName = 'resultats';
+
+  /// Fiche publique d'une compagnie. Base `/partenaires` — volontairement
+  /// distincte de `/compagnie` (back-office admin) pour éviter que le préfixe
+  /// de garde ne confonde les deux espaces.
+  static const String company = '/partenaires';
+  static const String companyName = 'partenaire';
+
+  /// Suivi public d'un colis.
+  static const String parcelTracking = '/suivi-colis';
+  static const String parcelTrackingName = 'suivi-colis';
+
+  /// Chemin de la fiche d'une compagnie donnée.
+  static String companyPath(int id) => '$company/$id';
+
   // ── Espaces par rôle ─────────────────────────────────────────────────────
   static const String traveler = '/voyageur';
   static const String travelerName = 'voyageur';
+
+  /// Parcours d'achat voyageur (protégé). Réservation d'un voyage donné.
+  static const String travelerBooking = '/voyageur/reservation';
+  static const String travelerBookingName = 'reservation';
+  static String travelerBookingPath(int tripId) => '$travelerBooking/$tripId';
+
+  /// Saisie du code de confirmation Mobile Money d'un paiement.
+  static const String travelerPayment = '/voyageur/paiement';
+  static const String travelerPaymentName = 'paiement';
+  static String travelerPaymentPath(int paymentId) =>
+      '$travelerPayment/$paymentId';
+
+  /// Résultat d'un paiement (payé / en attente / échoué).
+  static const String travelerReceipt = '/voyageur/recu';
+  static const String travelerReceiptName = 'recu-paiement';
+  static String travelerReceiptPath(int paymentId) =>
+      '$travelerReceipt/$paymentId';
+
+  /// Mes réservations (liste des billets du voyageur).
+  static const String travelerBookings = '/voyageur/reservations';
+  static const String travelerBookingsName = 'mes-reservations';
+
+  /// Détail d'un billet électronique (QR plein écran).
+  static const String travelerTicket = '/voyageur/reservations';
+  static const String travelerTicketName = 'billet';
+  static String travelerTicketPath(int bookingId) =>
+      '$travelerTicket/$bookingId';
+
+  /// Bagages : règles de transport et bagages enregistrés.
+  static const String travelerBaggage = '/voyageur/bagages';
+  static const String travelerBaggageName = 'bagages';
+
+  /// Mes réclamations (liste + suivi d'état).
+  static const String travelerClaims = '/voyageur/reclamations';
+  static const String travelerClaimsName = 'reclamations';
+
+  /// Nouvelle réclamation (formulaire).
+  static const String travelerNewClaim = '/voyageur/reclamations/nouvelle';
+  static const String travelerNewClaimName = 'nouvelle-reclamation';
+
+  /// Déposer un avis sur un voyage terminé.
+  static const String travelerReview = '/voyageur/avis';
+  static const String travelerReviewName = 'avis';
+  static String travelerReviewPath(int tripId) => '$travelerReview/$tripId';
+
+  /// Signalement d'excès de vitesse.
+  static const String travelerSpeedReport = '/voyageur/signalement';
+  static const String travelerSpeedReportName = 'signalement';
+
+  /// Mon profil (infos, mot de passe, historique).
+  static const String travelerProfile = '/voyageur/profil';
+  static const String travelerProfileName = 'profil';
 
   /// Module agent : guichet **et** contrôle partagent le même shell, car ils
   /// partagent le fonctionnement hors ligne et le bandeau de connexion.
@@ -61,12 +135,24 @@ abstract final class AppRoutes {
   static bool isProtected(String location) =>
       rolesAllowedIn(location).isNotEmpty;
 
-  /// Écrans accessibles hors session.
+  /// Écrans à chemin fixe accessibles hors session.
   static const Set<String> publicLocations = {
     login,
     register,
     accountSuspended,
+    home,
+    searchResults,
+    parcelTracking,
   };
+
+  /// Préfixes des espaces publics à chemin variable (fiche compagnie).
+  static const Set<String> _publicPrefixes = {company};
+
+  /// Vrai si [location] est ouverte sans session (chemins fixes **ou**
+  /// paramétrés comme la fiche d'une compagnie).
+  static bool isPublicLocation(String location) =>
+      publicLocations.contains(location) ||
+      _publicPrefixes.any(location.startsWith);
 
   /// Écrans ouverts à tous les rôles, en dehors des espaces par rôle.
   static const Set<String> sharedAuthenticatedLocations = {passwordChange};

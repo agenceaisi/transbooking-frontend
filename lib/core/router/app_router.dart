@@ -9,6 +9,23 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/password_change_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/presentation/session_controller.dart';
+import '../../features/public/presentation/screens/company_public_screen.dart';
+import '../../features/public/presentation/screens/home_screen.dart';
+import '../../features/public/presentation/screens/parcel_tracking_screen.dart';
+import '../../features/public/presentation/screens/search_results_screen.dart';
+import '../../features/traveler/domain/payment_snapshot.dart';
+import '../../features/traveler/presentation/screens/baggage_screen.dart';
+import '../../features/traveler/presentation/screens/booking_screen.dart';
+import '../../features/traveler/presentation/screens/claims_screen.dart';
+import '../../features/traveler/presentation/screens/my_bookings_screen.dart';
+import '../../features/traveler/presentation/screens/new_claim_screen.dart';
+import '../../features/traveler/presentation/screens/payment_otp_screen.dart';
+import '../../features/traveler/presentation/screens/payment_result_screen.dart';
+import '../../features/traveler/presentation/screens/profile_screen.dart';
+import '../../features/traveler/presentation/screens/review_screen.dart';
+import '../../features/traveler/presentation/screens/speed_report_screen.dart';
+import '../../features/traveler/presentation/screens/ticket_screen.dart';
+import '../../features/traveler/presentation/screens/traveler_dashboard_screen.dart';
 import '../localization/l10n_extension.dart';
 import 'app_routes.dart';
 import 'role_shell_placeholder.dart';
@@ -54,11 +71,123 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.passwordChangeName,
         builder: (context, state) => const PasswordChangeScreen(),
       ),
+      // ── Espace public ──────────────────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.home,
+        name: AppRoutes.homeName,
+        builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.searchResults,
+        name: AppRoutes.searchResultsName,
+        builder: (context, state) => const SearchResultsScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.company}/:id',
+        name: AppRoutes.companyName,
+        builder: (context, state) {
+          final id = int.tryParse(state.pathParameters['id'] ?? '');
+          return CompanyPublicScreen(companyId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.parcelTracking,
+        name: AppRoutes.parcelTrackingName,
+        builder: (context, state) => const ParcelTrackingScreen(),
+      ),
       GoRoute(
         path: AppRoutes.traveler,
         name: AppRoutes.travelerName,
-        builder: (context, state) =>
-            RoleShellPlaceholder(title: context.l10n.shellTraveler),
+        builder: (context, state) => const TravelerDashboardScreen(),
+      ),
+      // ── Espace voyageur (protégé) ──────────────────────────────────────
+      GoRoute(
+        path: AppRoutes.travelerBookings,
+        name: AppRoutes.travelerBookingsName,
+        builder: (context, state) => const MyBookingsScreen(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            name: AppRoutes.travelerTicketName,
+            builder: (context, state) {
+              final id = int.tryParse(state.pathParameters['id'] ?? '');
+              return TicketScreen(bookingId: id);
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.travelerBaggage,
+        name: AppRoutes.travelerBaggageName,
+        builder: (context, state) => const BaggageScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.travelerClaims,
+        name: AppRoutes.travelerClaimsName,
+        builder: (context, state) => const ClaimsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.travelerNewClaim,
+        name: AppRoutes.travelerNewClaimName,
+        builder: (context, state) => const NewClaimScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.travelerReview}/:tripId',
+        name: AppRoutes.travelerReviewName,
+        builder: (context, state) {
+          final tripId = int.tryParse(state.pathParameters['tripId'] ?? '');
+          final label = state.extra is String ? state.extra as String : null;
+          return ReviewScreen(tripId: tripId, routeLabel: label);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.travelerSpeedReport,
+        name: AppRoutes.travelerSpeedReportName,
+        builder: (context, state) => const SpeedReportScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.travelerProfile,
+        name: AppRoutes.travelerProfileName,
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      // ── Parcours d'achat voyageur (protégé) ────────────────────────────
+      GoRoute(
+        path: '${AppRoutes.travelerBooking}/:tripId',
+        name: AppRoutes.travelerBookingName,
+        builder: (context, state) {
+          final tripId = int.tryParse(state.pathParameters['tripId'] ?? '');
+          return BookingScreen(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: '${AppRoutes.travelerPayment}/:paymentId',
+        name: AppRoutes.travelerPaymentName,
+        builder: (context, state) {
+          final paymentId = int.tryParse(
+            state.pathParameters['paymentId'] ?? '',
+          );
+          return PaymentOtpScreen(
+            paymentId: paymentId,
+            initialSnapshot: state.extra is PaymentSnapshot
+                ? state.extra as PaymentSnapshot
+                : null,
+          );
+        },
+      ),
+      GoRoute(
+        path: '${AppRoutes.travelerReceipt}/:paymentId',
+        name: AppRoutes.travelerReceiptName,
+        builder: (context, state) {
+          final paymentId = int.tryParse(
+            state.pathParameters['paymentId'] ?? '',
+          );
+          return PaymentResultScreen(
+            paymentId: paymentId,
+            initialSnapshot: state.extra is PaymentSnapshot
+                ? state.extra as PaymentSnapshot
+                : null,
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.agent,
@@ -95,11 +224,13 @@ String? _guard(AuthState auth, String location) {
   final role = auth.role;
 
   if (role == null) {
-    // Session close : connexion, inscription et compte suspendu restent seuls
-    // accessibles.
-    return AppRoutes.publicLocations.contains(location)
-        ? null
-        : AppRoutes.login;
+    // Session close : l'espace public reste ouvert. La porte d'entrée d'un
+    // visiteur non connecté est l'accueil (depuis l'amorçage), pas la
+    // connexion. Les espaces protégés, eux, renvoient toujours vers la
+    // connexion.
+    if (AppRoutes.isPublicLocation(location)) return null;
+    if (location == AppRoutes.splash) return AppRoutes.home;
+    return AppRoutes.login;
   }
 
   // Accès bloqué par la plateforme : rien d'autre que l'écran dédié, d'où

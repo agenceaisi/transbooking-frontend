@@ -112,6 +112,11 @@ void main(List<String> args) {
 
   for (final entry in schemas.entries) {
     final name = entry.key as String;
+    // drf-spectacular émet `NullEnum` (`enum: [null]`) et `BlankEnum`
+    // (`enum: ['']`) pour décrire un enum nullable/blank via `oneOf`. Ce sont
+    // des artefacts sans type propre : ils sont résolus directement au niveau
+    // du champ (cf. `_dartType`), on ne génère donc rien pour eux.
+    if (name == 'NullEnum' || name == 'BlankEnum') continue;
     final schema = entry.value as YamlMap;
     final fileName = '${_snakeCase(name)}.dart';
 
@@ -296,6 +301,21 @@ String _dartType(YamlMap schema, Set<String> referenced) {
   final allOf = schema['allOf'] as YamlList?;
   if (allOf != null && allOf.isNotEmpty) {
     return _dartType(allOf.first as YamlMap, referenced);
+  }
+
+  // `oneOf` : motif drf-spectacular d'un enum nullable/blank
+  // (`[XEnum, BlankEnum, NullEnum]`). On retient le vrai enum ; la nullabilité
+  // est portée par le `nullable: true` du champ.
+  final oneOf = schema['oneOf'] as YamlList?;
+  if (oneOf != null && oneOf.isNotEmpty) {
+    for (final option in oneOf) {
+      final optionRef = (option as YamlMap)[r'$ref'] as String?;
+      if (optionRef == null) continue;
+      final refName = _refName(optionRef);
+      if (refName == 'BlankEnum' || refName == 'NullEnum') continue;
+      referenced.add(refName);
+      return refName;
+    }
   }
 
   final type = schema['type'] as String?;
