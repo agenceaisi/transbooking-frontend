@@ -53,6 +53,13 @@ void main() {
       price: '5000.00',
       status: status,
       statusDisplay: 'Programme',
+      company: 1,
+      companyName: 'Faso Express',
+      companySigle: 'FE',
+      companyRating: 4.5,
+      isDirect: true,
+      stopsCount: 0,
+      durationMinutes: 300,
       createdAt: departureAt,
       updatedAt: departureAt,
     );

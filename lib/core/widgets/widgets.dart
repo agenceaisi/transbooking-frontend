@@ -10,6 +10,7 @@ export 'brand_mark.dart';
 export 'connection_banner.dart';
 export 'empty_state.dart';
 export 'error_state.dart';
+export 'image_placeholder.dart';
 export 'inline_alert.dart';
 export 'loading_skeleton.dart';
 export 'otp_input.dart';

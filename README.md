@@ -24,6 +24,10 @@ dart run tool/generate_dto.dart          # DTO depuis api/schema.yml
 dart run build_runner build              # freezed, json_serializable, riverpod, drift
 flutter run --dart-define=ENV=dev        # mobile / émulateur
 flutter run -d chrome --dart-define=ENV=dev
+
+# Sur téléphone physique
+flutter run --dart-define=ENV=dev --dart-define=API_BASE_URL=http://192.168.1.75:8000
+
 ```
 
 L'URL du serveur est résolue par `AppConfig` :

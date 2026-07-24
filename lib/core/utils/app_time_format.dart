@@ -36,6 +36,18 @@ abstract final class AppTimeFormat {
     return _capitalize(formatted);
   }
 
+  /// Date moyenne — « 22 juil. 2026 ».
+  static String mediumDate(BuildContext context, DateTime dateTime) {
+    return MaterialLocalizations.of(
+      context,
+    ).formatMediumDate(dateTime.toLocal());
+  }
+
+  /// Date moyenne + heure — « 22 juil. 2026 · 07:40 » (horodatage de suivi).
+  static String mediumDateTime(BuildContext context, DateTime dateTime) {
+    return '${mediumDate(context, dateTime)} · ${hourMinute(context, dateTime)}';
+  }
+
   /// Ancienneté d'un événement — « il y a 3 min ».
   ///
   /// [now] est injectable pour rendre les tests déterministes.
