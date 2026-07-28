@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/localization/l10n_extension.dart';
 import '../../../../core/storage/tables/outbox_tables.dart';
@@ -8,13 +9,15 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_time_format.dart';
 import '../../../../core/widgets/blinking_dot.dart';
 import '../../../../core/widgets/inline_alert.dart';
+import '../../../../core/widgets/primary_button.dart';
+import '../agent_providers.dart';
 
 /// Feuille « données en attente », ouverte en touchant le bandeau de connexion.
 ///
-/// Lecture seule à ce stade : le moteur qui envoie l'outbox est construit en
-/// phase 5A. La feuille le dit explicitement plutôt que d'afficher un bouton
-/// « Tout synchroniser » qui ne ferait rien.
-class PendingSyncSheet extends StatelessWidget {
+/// L'envoi automatique se déclenche seul au retour du réseau (moteur de
+/// synchronisation, phase 5A) : la feuille n'expose qu'un bouton « Réessayer »,
+/// réservé au cas où un envoi précédent a échoué.
+class PendingSyncSheet extends ConsumerStatefulWidget {
   const PendingSyncSheet({
     required this.snapshot,
     required this.operations,
@@ -41,8 +44,26 @@ class PendingSyncSheet extends StatelessWidget {
   }
 
   @override
+  ConsumerState<PendingSyncSheet> createState() => _PendingSyncSheetState();
+}
+
+class _PendingSyncSheetState extends ConsumerState<PendingSyncSheet> {
+  bool _isRetrying = false;
+
+  Future<void> _retry() async {
+    setState(() => _isRetrying = true);
+    try {
+      await ref.read(agentSyncRepositoryProvider).retryFailed();
+    } finally {
+      if (mounted) setState(() => _isRetrying = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final snapshot = widget.snapshot;
+    final operations = widget.operations;
     final palette = AppStatusColors.of(snapshot.status.statusType);
 
     return SafeArea(
@@ -89,7 +110,17 @@ class PendingSyncSheet extends StatelessWidget {
                   message: snapshot.lastSyncError!,
                 ),
               ],
-              if (operations.isNotEmpty) ...[
+              if (snapshot.status.canRetry) ...[
+                const SizedBox(height: AppSpacing.md),
+                PrimaryButton(
+                  label: _isRetrying
+                      ? l10n.agentSyncRetrying
+                      : l10n.agentSyncRetryButton,
+                  icon: Icons.refresh,
+                  isLoading: _isRetrying,
+                  onPressed: _isRetrying ? null : _retry,
+                ),
+              ] else if (operations.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.md),
                 InlineAlert(
                   type: StatusType.info,
@@ -194,6 +225,7 @@ class _PendingTile extends StatelessWidget {
     OutboxEntity.booking => Icons.person_add_alt_outlined,
     OutboxEntity.parcel => Icons.inventory_2_outlined,
     OutboxEntity.validation => Icons.how_to_reg_outlined,
+    OutboxEntity.parcelNotification => Icons.notifications_active_outlined,
   };
 
   @override
@@ -204,6 +236,7 @@ class _PendingTile extends StatelessWidget {
       OutboxEntity.booking => l10n.agentPendingBooking,
       OutboxEntity.parcel => l10n.agentPendingParcel,
       OutboxEntity.validation => l10n.agentPendingValidation,
+      OutboxEntity.parcelNotification => l10n.agentPendingParcelNotification,
     };
 
     final (statusLabel, statusType) = switch (operation.status) {

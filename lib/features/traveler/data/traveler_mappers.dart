@@ -64,6 +64,7 @@ extension BookingReadTravelerMapper on dto.BookingRead {
   TravelerBooking toTravelerBooking() => TravelerBooking(
     id: id,
     ticketNumber: ticketNumber,
+    tripId: trip.id,
     originCity: trip.originCity,
     destinationCity: trip.destinationCity,
     companyName: trip.companyName,
@@ -82,6 +83,7 @@ extension BookingReadTravelerMapper on dto.BookingRead {
     statusDisplay: statusDisplay,
     isBoarded: isBoarded,
     createdAt: createdAt,
+    tripStatus: TripStatusKind.fromWire(trip.status?.wireValue),
   );
 }
 
@@ -101,6 +103,7 @@ extension PaymentReadHistoryMapper on dto.PaymentRead {
     id: id,
     ticketNumber: ticketNumber,
     amount: amount,
+    methodWire: method.wireValue,
     methodDisplay: methodDisplay,
     status: PaymentStatus.fromWire(status?.wireValue),
     statusDisplay: statusDisplay,
@@ -119,18 +122,24 @@ extension TravelerDashboardMapper on dto.TravelerDashboard {
             destination: trip.destination,
             departureTime: trip.departureTime,
             seatNumber: trip.seatNumber,
+            companyName: trip.companyName,
+            companySigle: trip.companySigle,
             status: trip.status,
           ),
         )
         .toList(growable: false),
     activeBookingsCount: activeBookingsCount,
     pendingCount: pendingCount,
+    paidCount: paidCount,
+    cancelledCount: cancelledCount,
     recentNotifications: recentNotifications
         .map(
           (notif) => TravelerNotificationPreview(
             id: notif.id,
             title: notif.title,
             body: notif.body,
+            kind: NotificationKind.fromWire(notif.type.wireValue),
+            typeDisplay: notif.typeDisplay,
             isRead: notif.isRead,
             createdAt: notif.createdAt,
           ),

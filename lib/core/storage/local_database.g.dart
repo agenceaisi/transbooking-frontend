@@ -2634,6 +2634,18 @@ class $OfflineBookingsTable extends OfflineBookings
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _transactionRefMeta = const VerificationMeta(
+    'transactionRef',
+  );
+  @override
+  late final GeneratedColumn<String> transactionRef = GeneratedColumn<String>(
+    'transaction_ref',
+    aliasedName,
+    true,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 100),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _offlineCreatedAtMeta = const VerificationMeta(
     'offlineCreatedAt',
   );
@@ -2656,6 +2668,7 @@ class $OfflineBookingsTable extends OfflineBookings
     seatNumber,
     amount,
     paymentMethod,
+    transactionRef,
     offlineCreatedAt,
   ];
   @override
@@ -2734,6 +2747,15 @@ class $OfflineBookingsTable extends OfflineBookings
         ),
       );
     }
+    if (data.containsKey('transaction_ref')) {
+      context.handle(
+        _transactionRefMeta,
+        transactionRef.isAcceptableOrUnknown(
+          data['transaction_ref']!,
+          _transactionRefMeta,
+        ),
+      );
+    }
     if (data.containsKey('offline_created_at')) {
       context.handle(
         _offlineCreatedAtMeta,
@@ -2786,6 +2808,10 @@ class $OfflineBookingsTable extends OfflineBookings
         DriftSqlType.string,
         data['${effectivePrefix}payment_method'],
       ),
+      transactionRef: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}transaction_ref'],
+      ),
       offlineCreatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}offline_created_at'],
@@ -2815,6 +2841,11 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
   /// Valeur technique de `Method80cEnum` (cash, orange_money, …).
   final String? paymentMethod;
 
+  /// Référence de transaction Mobile Money, saisie par l'agent (donnée par le
+  /// client après un paiement fait hors app — pas un flux OTP à cet écran).
+  /// Requis côté serveur pour tout moyen ≠ `cash` (guide §6.7).
+  final String? transactionRef;
+
   /// Instant de la saisie sur le terrain, transmis tel quel au serveur.
   final DateTime offlineCreatedAt;
   const OfflineBooking({
@@ -2826,6 +2857,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
     this.seatNumber,
     this.amount,
     this.paymentMethod,
+    this.transactionRef,
     required this.offlineCreatedAt,
   });
   @override
@@ -2844,6 +2876,9 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
     }
     if (!nullToAbsent || paymentMethod != null) {
       map['payment_method'] = Variable<String>(paymentMethod);
+    }
+    if (!nullToAbsent || transactionRef != null) {
+      map['transaction_ref'] = Variable<String>(transactionRef);
     }
     map['offline_created_at'] = Variable<DateTime>(offlineCreatedAt);
     return map;
@@ -2865,6 +2900,9 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
       paymentMethod: paymentMethod == null && nullToAbsent
           ? const Value.absent()
           : Value(paymentMethod),
+      transactionRef: transactionRef == null && nullToAbsent
+          ? const Value.absent()
+          : Value(transactionRef),
       offlineCreatedAt: Value(offlineCreatedAt),
     );
   }
@@ -2883,6 +2921,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
       seatNumber: serializer.fromJson<String?>(json['seatNumber']),
       amount: serializer.fromJson<String?>(json['amount']),
       paymentMethod: serializer.fromJson<String?>(json['paymentMethod']),
+      transactionRef: serializer.fromJson<String?>(json['transactionRef']),
       offlineCreatedAt: serializer.fromJson<DateTime>(json['offlineCreatedAt']),
     );
   }
@@ -2898,6 +2937,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
       'seatNumber': serializer.toJson<String?>(seatNumber),
       'amount': serializer.toJson<String?>(amount),
       'paymentMethod': serializer.toJson<String?>(paymentMethod),
+      'transactionRef': serializer.toJson<String?>(transactionRef),
       'offlineCreatedAt': serializer.toJson<DateTime>(offlineCreatedAt),
     };
   }
@@ -2911,6 +2951,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
     Value<String?> seatNumber = const Value.absent(),
     Value<String?> amount = const Value.absent(),
     Value<String?> paymentMethod = const Value.absent(),
+    Value<String?> transactionRef = const Value.absent(),
     DateTime? offlineCreatedAt,
   }) => OfflineBooking(
     ticketNumber: ticketNumber ?? this.ticketNumber,
@@ -2923,6 +2964,9 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
     paymentMethod: paymentMethod.present
         ? paymentMethod.value
         : this.paymentMethod,
+    transactionRef: transactionRef.present
+        ? transactionRef.value
+        : this.transactionRef,
     offlineCreatedAt: offlineCreatedAt ?? this.offlineCreatedAt,
   );
   OfflineBooking copyWithCompanion(OfflineBookingsCompanion data) {
@@ -2941,6 +2985,9 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
       paymentMethod: data.paymentMethod.present
           ? data.paymentMethod.value
           : this.paymentMethod,
+      transactionRef: data.transactionRef.present
+          ? data.transactionRef.value
+          : this.transactionRef,
       offlineCreatedAt: data.offlineCreatedAt.present
           ? data.offlineCreatedAt.value
           : this.offlineCreatedAt,
@@ -2958,6 +3005,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
           ..write('seatNumber: $seatNumber, ')
           ..write('amount: $amount, ')
           ..write('paymentMethod: $paymentMethod, ')
+          ..write('transactionRef: $transactionRef, ')
           ..write('offlineCreatedAt: $offlineCreatedAt')
           ..write(')'))
         .toString();
@@ -2973,6 +3021,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
     seatNumber,
     amount,
     paymentMethod,
+    transactionRef,
     offlineCreatedAt,
   );
   @override
@@ -2987,6 +3036,7 @@ class OfflineBooking extends DataClass implements Insertable<OfflineBooking> {
           other.seatNumber == this.seatNumber &&
           other.amount == this.amount &&
           other.paymentMethod == this.paymentMethod &&
+          other.transactionRef == this.transactionRef &&
           other.offlineCreatedAt == this.offlineCreatedAt);
 }
 
@@ -2999,6 +3049,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
   final Value<String?> seatNumber;
   final Value<String?> amount;
   final Value<String?> paymentMethod;
+  final Value<String?> transactionRef;
   final Value<DateTime> offlineCreatedAt;
   final Value<int> rowid;
   const OfflineBookingsCompanion({
@@ -3010,6 +3061,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
     this.seatNumber = const Value.absent(),
     this.amount = const Value.absent(),
     this.paymentMethod = const Value.absent(),
+    this.transactionRef = const Value.absent(),
     this.offlineCreatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -3022,6 +3074,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
     this.seatNumber = const Value.absent(),
     this.amount = const Value.absent(),
     this.paymentMethod = const Value.absent(),
+    this.transactionRef = const Value.absent(),
     required DateTime offlineCreatedAt,
     this.rowid = const Value.absent(),
   }) : ticketNumber = Value(ticketNumber),
@@ -3039,6 +3092,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
     Expression<String>? seatNumber,
     Expression<String>? amount,
     Expression<String>? paymentMethod,
+    Expression<String>? transactionRef,
     Expression<DateTime>? offlineCreatedAt,
     Expression<int>? rowid,
   }) {
@@ -3051,6 +3105,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
       if (seatNumber != null) 'seat_number': seatNumber,
       if (amount != null) 'amount': amount,
       if (paymentMethod != null) 'payment_method': paymentMethod,
+      if (transactionRef != null) 'transaction_ref': transactionRef,
       if (offlineCreatedAt != null) 'offline_created_at': offlineCreatedAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -3065,6 +3120,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
     Value<String?>? seatNumber,
     Value<String?>? amount,
     Value<String?>? paymentMethod,
+    Value<String?>? transactionRef,
     Value<DateTime>? offlineCreatedAt,
     Value<int>? rowid,
   }) {
@@ -3077,6 +3133,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
       seatNumber: seatNumber ?? this.seatNumber,
       amount: amount ?? this.amount,
       paymentMethod: paymentMethod ?? this.paymentMethod,
+      transactionRef: transactionRef ?? this.transactionRef,
       offlineCreatedAt: offlineCreatedAt ?? this.offlineCreatedAt,
       rowid: rowid ?? this.rowid,
     );
@@ -3109,6 +3166,9 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
     if (paymentMethod.present) {
       map['payment_method'] = Variable<String>(paymentMethod.value);
     }
+    if (transactionRef.present) {
+      map['transaction_ref'] = Variable<String>(transactionRef.value);
+    }
     if (offlineCreatedAt.present) {
       map['offline_created_at'] = Variable<DateTime>(offlineCreatedAt.value);
     }
@@ -3129,6 +3189,7 @@ class OfflineBookingsCompanion extends UpdateCompanion<OfflineBooking> {
           ..write('seatNumber: $seatNumber, ')
           ..write('amount: $amount, ')
           ..write('paymentMethod: $paymentMethod, ')
+          ..write('transactionRef: $transactionRef, ')
           ..write('offlineCreatedAt: $offlineCreatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -4130,6 +4191,251 @@ class OfflineValidationsCompanion extends UpdateCompanion<OfflineValidation> {
   String toString() {
     return (StringBuffer('OfflineValidationsCompanion(')
           ..write('ticketNumber: $ticketNumber, ')
+          ..write('offlineCreatedAt: $offlineCreatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OfflineParcelNotificationsTable extends OfflineParcelNotifications
+    with
+        TableInfo<$OfflineParcelNotificationsTable, OfflineParcelNotification> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OfflineParcelNotificationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _trackingNumberMeta = const VerificationMeta(
+    'trackingNumber',
+  );
+  @override
+  late final GeneratedColumn<String> trackingNumber = GeneratedColumn<String>(
+    'tracking_number',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 20),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _offlineCreatedAtMeta = const VerificationMeta(
+    'offlineCreatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> offlineCreatedAt =
+      GeneratedColumn<DateTime>(
+        'offline_created_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: true,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [trackingNumber, offlineCreatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'offline_parcel_notifications';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OfflineParcelNotification> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tracking_number')) {
+      context.handle(
+        _trackingNumberMeta,
+        trackingNumber.isAcceptableOrUnknown(
+          data['tracking_number']!,
+          _trackingNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_trackingNumberMeta);
+    }
+    if (data.containsKey('offline_created_at')) {
+      context.handle(
+        _offlineCreatedAtMeta,
+        offlineCreatedAt.isAcceptableOrUnknown(
+          data['offline_created_at']!,
+          _offlineCreatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_offlineCreatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {trackingNumber};
+  @override
+  OfflineParcelNotification map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OfflineParcelNotification(
+      trackingNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tracking_number'],
+      )!,
+      offlineCreatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}offline_created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $OfflineParcelNotificationsTable createAlias(String alias) {
+    return $OfflineParcelNotificationsTable(attachedDatabase, alias);
+  }
+}
+
+class OfflineParcelNotification extends DataClass
+    implements Insertable<OfflineParcelNotification> {
+  /// Code de suivi du colis concerné — clé d'idempotence avec
+  /// [offlineCreatedAt].
+  final String trackingNumber;
+  final DateTime offlineCreatedAt;
+  const OfflineParcelNotification({
+    required this.trackingNumber,
+    required this.offlineCreatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['tracking_number'] = Variable<String>(trackingNumber);
+    map['offline_created_at'] = Variable<DateTime>(offlineCreatedAt);
+    return map;
+  }
+
+  OfflineParcelNotificationsCompanion toCompanion(bool nullToAbsent) {
+    return OfflineParcelNotificationsCompanion(
+      trackingNumber: Value(trackingNumber),
+      offlineCreatedAt: Value(offlineCreatedAt),
+    );
+  }
+
+  factory OfflineParcelNotification.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OfflineParcelNotification(
+      trackingNumber: serializer.fromJson<String>(json['trackingNumber']),
+      offlineCreatedAt: serializer.fromJson<DateTime>(json['offlineCreatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'trackingNumber': serializer.toJson<String>(trackingNumber),
+      'offlineCreatedAt': serializer.toJson<DateTime>(offlineCreatedAt),
+    };
+  }
+
+  OfflineParcelNotification copyWith({
+    String? trackingNumber,
+    DateTime? offlineCreatedAt,
+  }) => OfflineParcelNotification(
+    trackingNumber: trackingNumber ?? this.trackingNumber,
+    offlineCreatedAt: offlineCreatedAt ?? this.offlineCreatedAt,
+  );
+  OfflineParcelNotification copyWithCompanion(
+    OfflineParcelNotificationsCompanion data,
+  ) {
+    return OfflineParcelNotification(
+      trackingNumber: data.trackingNumber.present
+          ? data.trackingNumber.value
+          : this.trackingNumber,
+      offlineCreatedAt: data.offlineCreatedAt.present
+          ? data.offlineCreatedAt.value
+          : this.offlineCreatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OfflineParcelNotification(')
+          ..write('trackingNumber: $trackingNumber, ')
+          ..write('offlineCreatedAt: $offlineCreatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(trackingNumber, offlineCreatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OfflineParcelNotification &&
+          other.trackingNumber == this.trackingNumber &&
+          other.offlineCreatedAt == this.offlineCreatedAt);
+}
+
+class OfflineParcelNotificationsCompanion
+    extends UpdateCompanion<OfflineParcelNotification> {
+  final Value<String> trackingNumber;
+  final Value<DateTime> offlineCreatedAt;
+  final Value<int> rowid;
+  const OfflineParcelNotificationsCompanion({
+    this.trackingNumber = const Value.absent(),
+    this.offlineCreatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OfflineParcelNotificationsCompanion.insert({
+    required String trackingNumber,
+    required DateTime offlineCreatedAt,
+    this.rowid = const Value.absent(),
+  }) : trackingNumber = Value(trackingNumber),
+       offlineCreatedAt = Value(offlineCreatedAt);
+  static Insertable<OfflineParcelNotification> custom({
+    Expression<String>? trackingNumber,
+    Expression<DateTime>? offlineCreatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (trackingNumber != null) 'tracking_number': trackingNumber,
+      if (offlineCreatedAt != null) 'offline_created_at': offlineCreatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OfflineParcelNotificationsCompanion copyWith({
+    Value<String>? trackingNumber,
+    Value<DateTime>? offlineCreatedAt,
+    Value<int>? rowid,
+  }) {
+    return OfflineParcelNotificationsCompanion(
+      trackingNumber: trackingNumber ?? this.trackingNumber,
+      offlineCreatedAt: offlineCreatedAt ?? this.offlineCreatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (trackingNumber.present) {
+      map['tracking_number'] = Variable<String>(trackingNumber.value);
+    }
+    if (offlineCreatedAt.present) {
+      map['offline_created_at'] = Variable<DateTime>(offlineCreatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OfflineParcelNotificationsCompanion(')
+          ..write('trackingNumber: $trackingNumber, ')
           ..write('offlineCreatedAt: $offlineCreatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -5434,6 +5740,549 @@ class SessionProfilesCompanion extends UpdateCompanion<SessionProfile> {
   }
 }
 
+class $BoardedTicketsTable extends BoardedTickets
+    with TableInfo<$BoardedTicketsTable, BoardedTicket> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BoardedTicketsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _ticketNumberMeta = const VerificationMeta(
+    'ticketNumber',
+  );
+  @override
+  late final GeneratedColumn<String> ticketNumber = GeneratedColumn<String>(
+    'ticket_number',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 20),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<LocalBoardingMethod, String>
+  method = GeneratedColumn<String>(
+    'method',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  ).withConverter<LocalBoardingMethod>($BoardedTicketsTable.$convertermethod);
+  static const VerificationMeta _boardedAtMeta = const VerificationMeta(
+    'boardedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> boardedAt = GeneratedColumn<DateTime>(
+    'boarded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isOfflineMeta = const VerificationMeta(
+    'isOffline',
+  );
+  @override
+  late final GeneratedColumn<bool> isOffline = GeneratedColumn<bool>(
+    'is_offline',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_offline" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    ticketNumber,
+    method,
+    boardedAt,
+    isOffline,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'boarded_tickets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BoardedTicket> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('ticket_number')) {
+      context.handle(
+        _ticketNumberMeta,
+        ticketNumber.isAcceptableOrUnknown(
+          data['ticket_number']!,
+          _ticketNumberMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_ticketNumberMeta);
+    }
+    if (data.containsKey('boarded_at')) {
+      context.handle(
+        _boardedAtMeta,
+        boardedAt.isAcceptableOrUnknown(data['boarded_at']!, _boardedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_boardedAtMeta);
+    }
+    if (data.containsKey('is_offline')) {
+      context.handle(
+        _isOfflineMeta,
+        isOffline.isAcceptableOrUnknown(data['is_offline']!, _isOfflineMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {ticketNumber};
+  @override
+  BoardedTicket map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BoardedTicket(
+      ticketNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ticket_number'],
+      )!,
+      method: $BoardedTicketsTable.$convertermethod.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}method'],
+        )!,
+      ),
+      boardedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}boarded_at'],
+      )!,
+      isOffline: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_offline'],
+      )!,
+    );
+  }
+
+  @override
+  $BoardedTicketsTable createAlias(String alias) {
+    return $BoardedTicketsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<LocalBoardingMethod, String, String>
+  $convertermethod = const EnumNameConverter<LocalBoardingMethod>(
+    LocalBoardingMethod.values,
+  );
+}
+
+class BoardedTicket extends DataClass implements Insertable<BoardedTicket> {
+  final String ticketNumber;
+  final LocalBoardingMethod method;
+  final DateTime boardedAt;
+
+  /// Vrai si confirmé via l'outbox (en attente de synchronisation), plutôt
+  /// qu'un appel serveur déjà abouti.
+  final bool isOffline;
+  const BoardedTicket({
+    required this.ticketNumber,
+    required this.method,
+    required this.boardedAt,
+    required this.isOffline,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['ticket_number'] = Variable<String>(ticketNumber);
+    {
+      map['method'] = Variable<String>(
+        $BoardedTicketsTable.$convertermethod.toSql(method),
+      );
+    }
+    map['boarded_at'] = Variable<DateTime>(boardedAt);
+    map['is_offline'] = Variable<bool>(isOffline);
+    return map;
+  }
+
+  BoardedTicketsCompanion toCompanion(bool nullToAbsent) {
+    return BoardedTicketsCompanion(
+      ticketNumber: Value(ticketNumber),
+      method: Value(method),
+      boardedAt: Value(boardedAt),
+      isOffline: Value(isOffline),
+    );
+  }
+
+  factory BoardedTicket.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BoardedTicket(
+      ticketNumber: serializer.fromJson<String>(json['ticketNumber']),
+      method: $BoardedTicketsTable.$convertermethod.fromJson(
+        serializer.fromJson<String>(json['method']),
+      ),
+      boardedAt: serializer.fromJson<DateTime>(json['boardedAt']),
+      isOffline: serializer.fromJson<bool>(json['isOffline']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'ticketNumber': serializer.toJson<String>(ticketNumber),
+      'method': serializer.toJson<String>(
+        $BoardedTicketsTable.$convertermethod.toJson(method),
+      ),
+      'boardedAt': serializer.toJson<DateTime>(boardedAt),
+      'isOffline': serializer.toJson<bool>(isOffline),
+    };
+  }
+
+  BoardedTicket copyWith({
+    String? ticketNumber,
+    LocalBoardingMethod? method,
+    DateTime? boardedAt,
+    bool? isOffline,
+  }) => BoardedTicket(
+    ticketNumber: ticketNumber ?? this.ticketNumber,
+    method: method ?? this.method,
+    boardedAt: boardedAt ?? this.boardedAt,
+    isOffline: isOffline ?? this.isOffline,
+  );
+  BoardedTicket copyWithCompanion(BoardedTicketsCompanion data) {
+    return BoardedTicket(
+      ticketNumber: data.ticketNumber.present
+          ? data.ticketNumber.value
+          : this.ticketNumber,
+      method: data.method.present ? data.method.value : this.method,
+      boardedAt: data.boardedAt.present ? data.boardedAt.value : this.boardedAt,
+      isOffline: data.isOffline.present ? data.isOffline.value : this.isOffline,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BoardedTicket(')
+          ..write('ticketNumber: $ticketNumber, ')
+          ..write('method: $method, ')
+          ..write('boardedAt: $boardedAt, ')
+          ..write('isOffline: $isOffline')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(ticketNumber, method, boardedAt, isOffline);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BoardedTicket &&
+          other.ticketNumber == this.ticketNumber &&
+          other.method == this.method &&
+          other.boardedAt == this.boardedAt &&
+          other.isOffline == this.isOffline);
+}
+
+class BoardedTicketsCompanion extends UpdateCompanion<BoardedTicket> {
+  final Value<String> ticketNumber;
+  final Value<LocalBoardingMethod> method;
+  final Value<DateTime> boardedAt;
+  final Value<bool> isOffline;
+  final Value<int> rowid;
+  const BoardedTicketsCompanion({
+    this.ticketNumber = const Value.absent(),
+    this.method = const Value.absent(),
+    this.boardedAt = const Value.absent(),
+    this.isOffline = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BoardedTicketsCompanion.insert({
+    required String ticketNumber,
+    required LocalBoardingMethod method,
+    required DateTime boardedAt,
+    this.isOffline = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : ticketNumber = Value(ticketNumber),
+       method = Value(method),
+       boardedAt = Value(boardedAt);
+  static Insertable<BoardedTicket> custom({
+    Expression<String>? ticketNumber,
+    Expression<String>? method,
+    Expression<DateTime>? boardedAt,
+    Expression<bool>? isOffline,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (ticketNumber != null) 'ticket_number': ticketNumber,
+      if (method != null) 'method': method,
+      if (boardedAt != null) 'boarded_at': boardedAt,
+      if (isOffline != null) 'is_offline': isOffline,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BoardedTicketsCompanion copyWith({
+    Value<String>? ticketNumber,
+    Value<LocalBoardingMethod>? method,
+    Value<DateTime>? boardedAt,
+    Value<bool>? isOffline,
+    Value<int>? rowid,
+  }) {
+    return BoardedTicketsCompanion(
+      ticketNumber: ticketNumber ?? this.ticketNumber,
+      method: method ?? this.method,
+      boardedAt: boardedAt ?? this.boardedAt,
+      isOffline: isOffline ?? this.isOffline,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (ticketNumber.present) {
+      map['ticket_number'] = Variable<String>(ticketNumber.value);
+    }
+    if (method.present) {
+      map['method'] = Variable<String>(
+        $BoardedTicketsTable.$convertermethod.toSql(method.value),
+      );
+    }
+    if (boardedAt.present) {
+      map['boarded_at'] = Variable<DateTime>(boardedAt.value);
+    }
+    if (isOffline.present) {
+      map['is_offline'] = Variable<bool>(isOffline.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BoardedTicketsCompanion(')
+          ..write('ticketNumber: $ticketNumber, ')
+          ..write('method: $method, ')
+          ..write('boardedAt: $boardedAt, ')
+          ..write('isOffline: $isOffline, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ValidatedTripsTable extends ValidatedTrips
+    with TableInfo<$ValidatedTripsTable, ValidatedTrip> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ValidatedTripsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _tripIdMeta = const VerificationMeta('tripId');
+  @override
+  late final GeneratedColumn<int> tripId = GeneratedColumn<int>(
+    'trip_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _validatedAtMeta = const VerificationMeta(
+    'validatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> validatedAt = GeneratedColumn<DateTime>(
+    'validated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [tripId, validatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'validated_trips';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ValidatedTrip> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('trip_id')) {
+      context.handle(
+        _tripIdMeta,
+        tripId.isAcceptableOrUnknown(data['trip_id']!, _tripIdMeta),
+      );
+    }
+    if (data.containsKey('validated_at')) {
+      context.handle(
+        _validatedAtMeta,
+        validatedAt.isAcceptableOrUnknown(
+          data['validated_at']!,
+          _validatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_validatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tripId};
+  @override
+  ValidatedTrip map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ValidatedTrip(
+      tripId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}trip_id'],
+      )!,
+      validatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}validated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ValidatedTripsTable createAlias(String alias) {
+    return $ValidatedTripsTable(attachedDatabase, alias);
+  }
+}
+
+class ValidatedTrip extends DataClass implements Insertable<ValidatedTrip> {
+  final int tripId;
+  final DateTime validatedAt;
+  const ValidatedTrip({required this.tripId, required this.validatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['trip_id'] = Variable<int>(tripId);
+    map['validated_at'] = Variable<DateTime>(validatedAt);
+    return map;
+  }
+
+  ValidatedTripsCompanion toCompanion(bool nullToAbsent) {
+    return ValidatedTripsCompanion(
+      tripId: Value(tripId),
+      validatedAt: Value(validatedAt),
+    );
+  }
+
+  factory ValidatedTrip.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ValidatedTrip(
+      tripId: serializer.fromJson<int>(json['tripId']),
+      validatedAt: serializer.fromJson<DateTime>(json['validatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tripId': serializer.toJson<int>(tripId),
+      'validatedAt': serializer.toJson<DateTime>(validatedAt),
+    };
+  }
+
+  ValidatedTrip copyWith({int? tripId, DateTime? validatedAt}) => ValidatedTrip(
+    tripId: tripId ?? this.tripId,
+    validatedAt: validatedAt ?? this.validatedAt,
+  );
+  ValidatedTrip copyWithCompanion(ValidatedTripsCompanion data) {
+    return ValidatedTrip(
+      tripId: data.tripId.present ? data.tripId.value : this.tripId,
+      validatedAt: data.validatedAt.present
+          ? data.validatedAt.value
+          : this.validatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ValidatedTrip(')
+          ..write('tripId: $tripId, ')
+          ..write('validatedAt: $validatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(tripId, validatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ValidatedTrip &&
+          other.tripId == this.tripId &&
+          other.validatedAt == this.validatedAt);
+}
+
+class ValidatedTripsCompanion extends UpdateCompanion<ValidatedTrip> {
+  final Value<int> tripId;
+  final Value<DateTime> validatedAt;
+  const ValidatedTripsCompanion({
+    this.tripId = const Value.absent(),
+    this.validatedAt = const Value.absent(),
+  });
+  ValidatedTripsCompanion.insert({
+    this.tripId = const Value.absent(),
+    required DateTime validatedAt,
+  }) : validatedAt = Value(validatedAt);
+  static Insertable<ValidatedTrip> custom({
+    Expression<int>? tripId,
+    Expression<DateTime>? validatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (tripId != null) 'trip_id': tripId,
+      if (validatedAt != null) 'validated_at': validatedAt,
+    });
+  }
+
+  ValidatedTripsCompanion copyWith({
+    Value<int>? tripId,
+    Value<DateTime>? validatedAt,
+  }) {
+    return ValidatedTripsCompanion(
+      tripId: tripId ?? this.tripId,
+      validatedAt: validatedAt ?? this.validatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tripId.present) {
+      map['trip_id'] = Variable<int>(tripId.value);
+    }
+    if (validatedAt.present) {
+      map['validated_at'] = Variable<DateTime>(validatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ValidatedTripsCompanion(')
+          ..write('tripId: $tripId, ')
+          ..write('validatedAt: $validatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$LocalDatabase extends GeneratedDatabase {
   _$LocalDatabase(QueryExecutor e) : super(e);
   $LocalDatabaseManager get managers => $LocalDatabaseManager(this);
@@ -5451,6 +6300,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $OfflineParcelsTable offlineParcels = $OfflineParcelsTable(this);
   late final $OfflineValidationsTable offlineValidations =
       $OfflineValidationsTable(this);
+  late final $OfflineParcelNotificationsTable offlineParcelNotifications =
+      $OfflineParcelNotificationsTable(this);
   late final $OutboxEntriesTable outboxEntries = $OutboxEntriesTable(this);
   late final $SyncStateEntriesTable syncStateEntries = $SyncStateEntriesTable(
     this,
@@ -5458,6 +6309,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $SessionProfilesTable sessionProfiles = $SessionProfilesTable(
     this,
   );
+  late final $BoardedTicketsTable boardedTickets = $BoardedTicketsTable(this);
+  late final $ValidatedTripsTable validatedTrips = $ValidatedTripsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5471,9 +6324,12 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     offlineBookings,
     offlineParcels,
     offlineValidations,
+    offlineParcelNotifications,
     outboxEntries,
     syncStateEntries,
     sessionProfiles,
+    boardedTickets,
+    validatedTrips,
   ];
 }
 
@@ -6802,6 +7658,7 @@ typedef $$OfflineBookingsTableCreateCompanionBuilder =
       Value<String?> seatNumber,
       Value<String?> amount,
       Value<String?> paymentMethod,
+      Value<String?> transactionRef,
       required DateTime offlineCreatedAt,
       Value<int> rowid,
     });
@@ -6815,6 +7672,7 @@ typedef $$OfflineBookingsTableUpdateCompanionBuilder =
       Value<String?> seatNumber,
       Value<String?> amount,
       Value<String?> paymentMethod,
+      Value<String?> transactionRef,
       Value<DateTime> offlineCreatedAt,
       Value<int> rowid,
     });
@@ -6865,6 +7723,11 @@ class $$OfflineBookingsTableFilterComposer
 
   ColumnFilters<String> get paymentMethod => $composableBuilder(
     column: $table.paymentMethod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get transactionRef => $composableBuilder(
+    column: $table.transactionRef,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6923,6 +7786,11 @@ class $$OfflineBookingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get transactionRef => $composableBuilder(
+    column: $table.transactionRef,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get offlineCreatedAt => $composableBuilder(
     column: $table.offlineCreatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -6965,6 +7833,11 @@ class $$OfflineBookingsTableAnnotationComposer
 
   GeneratedColumn<String> get paymentMethod => $composableBuilder(
     column: $table.paymentMethod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get transactionRef => $composableBuilder(
+    column: $table.transactionRef,
     builder: (column) => column,
   );
 
@@ -7019,6 +7892,7 @@ class $$OfflineBookingsTableTableManager
                 Value<String?> seatNumber = const Value.absent(),
                 Value<String?> amount = const Value.absent(),
                 Value<String?> paymentMethod = const Value.absent(),
+                Value<String?> transactionRef = const Value.absent(),
                 Value<DateTime> offlineCreatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => OfflineBookingsCompanion(
@@ -7030,6 +7904,7 @@ class $$OfflineBookingsTableTableManager
                 seatNumber: seatNumber,
                 amount: amount,
                 paymentMethod: paymentMethod,
+                transactionRef: transactionRef,
                 offlineCreatedAt: offlineCreatedAt,
                 rowid: rowid,
               ),
@@ -7043,6 +7918,7 @@ class $$OfflineBookingsTableTableManager
                 Value<String?> seatNumber = const Value.absent(),
                 Value<String?> amount = const Value.absent(),
                 Value<String?> paymentMethod = const Value.absent(),
+                Value<String?> transactionRef = const Value.absent(),
                 required DateTime offlineCreatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => OfflineBookingsCompanion.insert(
@@ -7054,6 +7930,7 @@ class $$OfflineBookingsTableTableManager
                 seatNumber: seatNumber,
                 amount: amount,
                 paymentMethod: paymentMethod,
+                transactionRef: transactionRef,
                 offlineCreatedAt: offlineCreatedAt,
                 rowid: rowid,
               ),
@@ -7599,6 +8476,172 @@ typedef $$OfflineValidationsTableProcessedTableManager =
         >,
       ),
       OfflineValidation,
+      PrefetchHooks Function()
+    >;
+typedef $$OfflineParcelNotificationsTableCreateCompanionBuilder =
+    OfflineParcelNotificationsCompanion Function({
+      required String trackingNumber,
+      required DateTime offlineCreatedAt,
+      Value<int> rowid,
+    });
+typedef $$OfflineParcelNotificationsTableUpdateCompanionBuilder =
+    OfflineParcelNotificationsCompanion Function({
+      Value<String> trackingNumber,
+      Value<DateTime> offlineCreatedAt,
+      Value<int> rowid,
+    });
+
+class $$OfflineParcelNotificationsTableFilterComposer
+    extends Composer<_$LocalDatabase, $OfflineParcelNotificationsTable> {
+  $$OfflineParcelNotificationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get trackingNumber => $composableBuilder(
+    column: $table.trackingNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get offlineCreatedAt => $composableBuilder(
+    column: $table.offlineCreatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$OfflineParcelNotificationsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $OfflineParcelNotificationsTable> {
+  $$OfflineParcelNotificationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get trackingNumber => $composableBuilder(
+    column: $table.trackingNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get offlineCreatedAt => $composableBuilder(
+    column: $table.offlineCreatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OfflineParcelNotificationsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $OfflineParcelNotificationsTable> {
+  $$OfflineParcelNotificationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get trackingNumber => $composableBuilder(
+    column: $table.trackingNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get offlineCreatedAt => $composableBuilder(
+    column: $table.offlineCreatedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$OfflineParcelNotificationsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $OfflineParcelNotificationsTable,
+          OfflineParcelNotification,
+          $$OfflineParcelNotificationsTableFilterComposer,
+          $$OfflineParcelNotificationsTableOrderingComposer,
+          $$OfflineParcelNotificationsTableAnnotationComposer,
+          $$OfflineParcelNotificationsTableCreateCompanionBuilder,
+          $$OfflineParcelNotificationsTableUpdateCompanionBuilder,
+          (
+            OfflineParcelNotification,
+            BaseReferences<
+              _$LocalDatabase,
+              $OfflineParcelNotificationsTable,
+              OfflineParcelNotification
+            >,
+          ),
+          OfflineParcelNotification,
+          PrefetchHooks Function()
+        > {
+  $$OfflineParcelNotificationsTableTableManager(
+    _$LocalDatabase db,
+    $OfflineParcelNotificationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OfflineParcelNotificationsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$OfflineParcelNotificationsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$OfflineParcelNotificationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> trackingNumber = const Value.absent(),
+                Value<DateTime> offlineCreatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OfflineParcelNotificationsCompanion(
+                trackingNumber: trackingNumber,
+                offlineCreatedAt: offlineCreatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String trackingNumber,
+                required DateTime offlineCreatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => OfflineParcelNotificationsCompanion.insert(
+                trackingNumber: trackingNumber,
+                offlineCreatedAt: offlineCreatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$OfflineParcelNotificationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $OfflineParcelNotificationsTable,
+      OfflineParcelNotification,
+      $$OfflineParcelNotificationsTableFilterComposer,
+      $$OfflineParcelNotificationsTableOrderingComposer,
+      $$OfflineParcelNotificationsTableAnnotationComposer,
+      $$OfflineParcelNotificationsTableCreateCompanionBuilder,
+      $$OfflineParcelNotificationsTableUpdateCompanionBuilder,
+      (
+        OfflineParcelNotification,
+        BaseReferences<
+          _$LocalDatabase,
+          $OfflineParcelNotificationsTable,
+          OfflineParcelNotification
+        >,
+      ),
+      OfflineParcelNotification,
       PrefetchHooks Function()
     >;
 typedef $$OutboxEntriesTableCreateCompanionBuilder =
@@ -8281,6 +9324,345 @@ typedef $$SessionProfilesTableProcessedTableManager =
       SessionProfile,
       PrefetchHooks Function()
     >;
+typedef $$BoardedTicketsTableCreateCompanionBuilder =
+    BoardedTicketsCompanion Function({
+      required String ticketNumber,
+      required LocalBoardingMethod method,
+      required DateTime boardedAt,
+      Value<bool> isOffline,
+      Value<int> rowid,
+    });
+typedef $$BoardedTicketsTableUpdateCompanionBuilder =
+    BoardedTicketsCompanion Function({
+      Value<String> ticketNumber,
+      Value<LocalBoardingMethod> method,
+      Value<DateTime> boardedAt,
+      Value<bool> isOffline,
+      Value<int> rowid,
+    });
+
+class $$BoardedTicketsTableFilterComposer
+    extends Composer<_$LocalDatabase, $BoardedTicketsTable> {
+  $$BoardedTicketsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get ticketNumber => $composableBuilder(
+    column: $table.ticketNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    LocalBoardingMethod,
+    LocalBoardingMethod,
+    String
+  >
+  get method => $composableBuilder(
+    column: $table.method,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<DateTime> get boardedAt => $composableBuilder(
+    column: $table.boardedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isOffline => $composableBuilder(
+    column: $table.isOffline,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BoardedTicketsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $BoardedTicketsTable> {
+  $$BoardedTicketsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get ticketNumber => $composableBuilder(
+    column: $table.ticketNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get method => $composableBuilder(
+    column: $table.method,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get boardedAt => $composableBuilder(
+    column: $table.boardedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isOffline => $composableBuilder(
+    column: $table.isOffline,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BoardedTicketsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $BoardedTicketsTable> {
+  $$BoardedTicketsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get ticketNumber => $composableBuilder(
+    column: $table.ticketNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumnWithTypeConverter<LocalBoardingMethod, String> get method =>
+      $composableBuilder(column: $table.method, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get boardedAt =>
+      $composableBuilder(column: $table.boardedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isOffline =>
+      $composableBuilder(column: $table.isOffline, builder: (column) => column);
+}
+
+class $$BoardedTicketsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $BoardedTicketsTable,
+          BoardedTicket,
+          $$BoardedTicketsTableFilterComposer,
+          $$BoardedTicketsTableOrderingComposer,
+          $$BoardedTicketsTableAnnotationComposer,
+          $$BoardedTicketsTableCreateCompanionBuilder,
+          $$BoardedTicketsTableUpdateCompanionBuilder,
+          (
+            BoardedTicket,
+            BaseReferences<
+              _$LocalDatabase,
+              $BoardedTicketsTable,
+              BoardedTicket
+            >,
+          ),
+          BoardedTicket,
+          PrefetchHooks Function()
+        > {
+  $$BoardedTicketsTableTableManager(
+    _$LocalDatabase db,
+    $BoardedTicketsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BoardedTicketsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BoardedTicketsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BoardedTicketsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> ticketNumber = const Value.absent(),
+                Value<LocalBoardingMethod> method = const Value.absent(),
+                Value<DateTime> boardedAt = const Value.absent(),
+                Value<bool> isOffline = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BoardedTicketsCompanion(
+                ticketNumber: ticketNumber,
+                method: method,
+                boardedAt: boardedAt,
+                isOffline: isOffline,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String ticketNumber,
+                required LocalBoardingMethod method,
+                required DateTime boardedAt,
+                Value<bool> isOffline = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BoardedTicketsCompanion.insert(
+                ticketNumber: ticketNumber,
+                method: method,
+                boardedAt: boardedAt,
+                isOffline: isOffline,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BoardedTicketsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $BoardedTicketsTable,
+      BoardedTicket,
+      $$BoardedTicketsTableFilterComposer,
+      $$BoardedTicketsTableOrderingComposer,
+      $$BoardedTicketsTableAnnotationComposer,
+      $$BoardedTicketsTableCreateCompanionBuilder,
+      $$BoardedTicketsTableUpdateCompanionBuilder,
+      (
+        BoardedTicket,
+        BaseReferences<_$LocalDatabase, $BoardedTicketsTable, BoardedTicket>,
+      ),
+      BoardedTicket,
+      PrefetchHooks Function()
+    >;
+typedef $$ValidatedTripsTableCreateCompanionBuilder =
+    ValidatedTripsCompanion Function({
+      Value<int> tripId,
+      required DateTime validatedAt,
+    });
+typedef $$ValidatedTripsTableUpdateCompanionBuilder =
+    ValidatedTripsCompanion Function({
+      Value<int> tripId,
+      Value<DateTime> validatedAt,
+    });
+
+class $$ValidatedTripsTableFilterComposer
+    extends Composer<_$LocalDatabase, $ValidatedTripsTable> {
+  $$ValidatedTripsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get tripId => $composableBuilder(
+    column: $table.tripId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get validatedAt => $composableBuilder(
+    column: $table.validatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ValidatedTripsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $ValidatedTripsTable> {
+  $$ValidatedTripsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get tripId => $composableBuilder(
+    column: $table.tripId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get validatedAt => $composableBuilder(
+    column: $table.validatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ValidatedTripsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $ValidatedTripsTable> {
+  $$ValidatedTripsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get validatedAt => $composableBuilder(
+    column: $table.validatedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$ValidatedTripsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $ValidatedTripsTable,
+          ValidatedTrip,
+          $$ValidatedTripsTableFilterComposer,
+          $$ValidatedTripsTableOrderingComposer,
+          $$ValidatedTripsTableAnnotationComposer,
+          $$ValidatedTripsTableCreateCompanionBuilder,
+          $$ValidatedTripsTableUpdateCompanionBuilder,
+          (
+            ValidatedTrip,
+            BaseReferences<
+              _$LocalDatabase,
+              $ValidatedTripsTable,
+              ValidatedTrip
+            >,
+          ),
+          ValidatedTrip,
+          PrefetchHooks Function()
+        > {
+  $$ValidatedTripsTableTableManager(
+    _$LocalDatabase db,
+    $ValidatedTripsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ValidatedTripsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ValidatedTripsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ValidatedTripsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> tripId = const Value.absent(),
+                Value<DateTime> validatedAt = const Value.absent(),
+              }) => ValidatedTripsCompanion(
+                tripId: tripId,
+                validatedAt: validatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> tripId = const Value.absent(),
+                required DateTime validatedAt,
+              }) => ValidatedTripsCompanion.insert(
+                tripId: tripId,
+                validatedAt: validatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ValidatedTripsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $ValidatedTripsTable,
+      ValidatedTrip,
+      $$ValidatedTripsTableFilterComposer,
+      $$ValidatedTripsTableOrderingComposer,
+      $$ValidatedTripsTableAnnotationComposer,
+      $$ValidatedTripsTableCreateCompanionBuilder,
+      $$ValidatedTripsTableUpdateCompanionBuilder,
+      (
+        ValidatedTrip,
+        BaseReferences<_$LocalDatabase, $ValidatedTripsTable, ValidatedTrip>,
+      ),
+      ValidatedTrip,
+      PrefetchHooks Function()
+    >;
 
 class $LocalDatabaseManager {
   final _$LocalDatabase _db;
@@ -8301,10 +9683,20 @@ class $LocalDatabaseManager {
       $$OfflineParcelsTableTableManager(_db, _db.offlineParcels);
   $$OfflineValidationsTableTableManager get offlineValidations =>
       $$OfflineValidationsTableTableManager(_db, _db.offlineValidations);
+  $$OfflineParcelNotificationsTableTableManager
+  get offlineParcelNotifications =>
+      $$OfflineParcelNotificationsTableTableManager(
+        _db,
+        _db.offlineParcelNotifications,
+      );
   $$OutboxEntriesTableTableManager get outboxEntries =>
       $$OutboxEntriesTableTableManager(_db, _db.outboxEntries);
   $$SyncStateEntriesTableTableManager get syncStateEntries =>
       $$SyncStateEntriesTableTableManager(_db, _db.syncStateEntries);
   $$SessionProfilesTableTableManager get sessionProfiles =>
       $$SessionProfilesTableTableManager(_db, _db.sessionProfiles);
+  $$BoardedTicketsTableTableManager get boardedTickets =>
+      $$BoardedTicketsTableTableManager(_db, _db.boardedTickets);
+  $$ValidatedTripsTableTableManager get validatedTrips =>
+      $$ValidatedTripsTableTableManager(_db, _db.validatedTrips);
 }

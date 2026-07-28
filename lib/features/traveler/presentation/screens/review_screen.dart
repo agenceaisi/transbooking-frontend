@@ -5,25 +5,55 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/error/failure_messages.dart';
 import '../../../../core/localization/l10n_extension.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/app_time_format.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../../../../core/widgets/inline_alert.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/secondary_button.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../domain/traveler_booking.dart';
 import '../review_submit_controller.dart';
 import '../widgets/star_rating_input.dart';
 import '../widgets/traveler_task_scaffold.dart';
+
+/// Points forts proposés — l'API (`ReviewCreate`) n'a pas de champ dédié pour
+/// ces jetons : les points cochés sont repris en tête du commentaire libre
+/// (`reviewAspectsSummaryPrefix`) plutôt que silencieusement perdus.
+enum _ReviewAspect {
+  punctuality,
+  comfort,
+  cleanliness,
+  welcome,
+  safety,
+  valueForMoney;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    _ReviewAspect.punctuality => l10n.reviewAspectPunctuality,
+    _ReviewAspect.comfort => l10n.reviewAspectComfort,
+    _ReviewAspect.cleanliness => l10n.reviewAspectCleanliness,
+    _ReviewAspect.welcome => l10n.reviewAspectWelcome,
+    _ReviewAspect.safety => l10n.reviewAspectSafety,
+    _ReviewAspect.valueForMoney => l10n.reviewAspectValueForMoney,
+  };
+}
 
 /// Déposer un avis après un voyage terminé (maquette « Déposer un avis »).
 ///
 /// L'API valide la règle métier (voyage terminé + réservation payée) et refuse
 /// sinon : on affiche alors son message plutôt que de le rejouer côté client.
+/// « Terminé » vient de `trip.status` ([TripStatusKind.completed]), jamais
+/// d'une comparaison locale d'heures — un contrôleur peut clôturer un voyage
+/// avant l'heure d'arrivée prévue (CLAUDE.md workflow voyageur).
 class ReviewScreen extends ConsumerStatefulWidget {
-  const ReviewScreen({required this.tripId, this.routeLabel, super.key});
+  const ReviewScreen({required this.tripId, this.booking, super.key});
 
   final int? tripId;
 
-  /// Libellé du trajet, si transmis (ex. « Ouaga → Bobo »).
-  final String? routeLabel;
+  /// Réservation d'origine, si transmise par la liste « Mes réservations » —
+  /// alimente le rappel de voyage (route, date, compagnie, billet). Absente
+  /// sur un lien profond / rechargement web (l'`extra` de go_router ne
+  /// survit pas), d'où le repli [AppLocalizations.reviewTripFallback].
+  final TravelerBooking? booking;
 
   @override
   ConsumerState<ReviewScreen> createState() => _ReviewScreenState();
@@ -32,6 +62,7 @@ class ReviewScreen extends ConsumerStatefulWidget {
 class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   final _commentController = TextEditingController();
   int _rating = 0;
+  final _selectedAspects = <_ReviewAspect>{};
   bool _submitted = false;
 
   @override
@@ -48,20 +79,32 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
         .submit(
           tripId: tripId,
           rating: _rating,
-          comment: _commentController.text,
+          comment: _buildComment(context),
         );
     if (ok && mounted) setState(() => _submitted = true);
+  }
+
+  /// Fusionne les points forts cochés (facultatifs) en tête du commentaire
+  /// libre — c'est le seul champ de `ReviewCreate` capable de les porter.
+  String _buildComment(BuildContext context) {
+    final free = _commentController.text.trim();
+    if (_selectedAspects.isEmpty) return free;
+    final l10n = context.l10n;
+    final labels = _selectedAspects.map((a) => a.label(l10n)).join(', ');
+    final prefix = l10n.reviewAspectsSummaryPrefix(labels);
+    return free.isEmpty ? prefix : '$prefix\n\n$free';
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final isDesktop = AppBreakpoints.isDesktop(MediaQuery.sizeOf(context).width);
     return TravelerTaskScaffold(
       title: l10n.reviewTitle,
       bottomBar: _submitted || widget.tripId == null ? null : _submitBar(),
       child: widget.tripId == null
           ? _missingTrip()
-          : (_submitted ? _confirmation() : _form()),
+          : (_submitted ? _confirmation() : _form(compact: !isDesktop)),
     );
   }
 
@@ -86,7 +129,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     );
   }
 
-  Widget _form() {
+  Widget _form({required bool compact}) {
     final l10n = context.l10n;
     final submit = ref.watch(reviewSubmitProvider);
     final ratingLabels = <int, String>{
@@ -100,22 +143,33 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       children: [
-        _TripReminder(routeLabel: widget.routeLabel),
+        _TripReminder(booking: widget.booking),
         const SizedBox(height: AppSpacing.xl),
-        Center(
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: compact
+              ? BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: AppRadii.brLg,
+                  border: Border.all(color: AppColors.border),
+                )
+              : null,
           child: Column(
             children: [
               Text(
-                l10n.reviewQuestion,
+                compact ? l10n.reviewQuestionCompact : l10n.reviewQuestion,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.subtitle,
               ),
-              const SizedBox(height: AppSpacing.xxs),
-              Text(l10n.reviewQuestionHint, style: AppTextStyles.caption),
+              if (!compact) ...[
+                const SizedBox(height: AppSpacing.xxs),
+                Text(l10n.reviewQuestionHint, style: AppTextStyles.caption),
+              ],
               const SizedBox(height: AppSpacing.md),
               StarRatingInput(
                 value: _rating,
                 onChanged: (value) => setState(() => _rating = value),
+                size: compact ? 38 : 44,
               ),
               const SizedBox(height: AppSpacing.sm),
               SizedBox(
@@ -137,12 +191,24 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
+        _AspectSection(
+          selected: _selectedAspects,
+          compact: compact,
+          onToggle: (aspect) => setState(() {
+            if (!_selectedAspects.remove(aspect)) {
+              _selectedAspects.add(aspect);
+            }
+          }),
+        ),
+        const SizedBox(height: AppSpacing.lg),
         AppTextField(
           label: l10n.reviewCommentLabel,
           controller: _commentController,
-          optional: true,
+          optional: !compact,
           hintText: l10n.reviewCommentHint,
           maxLength: 1000,
+          minLines: 4,
+          maxLines: 8,
           keyboardType: TextInputType.multiline,
           textCapitalization: TextCapitalization.sentences,
         ),
@@ -155,12 +221,14 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                 : l10n.failureUnexpected,
           ),
         ],
-        const SizedBox(height: AppSpacing.md),
-        Text(
-          l10n.reviewFooter,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.caption,
-        ),
+        if (!compact) ...[
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            l10n.reviewFooter,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.caption,
+          ),
+        ],
       ],
     );
   }
@@ -227,13 +295,14 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 }
 
 class _TripReminder extends StatelessWidget {
-  const _TripReminder({this.routeLabel});
+  const _TripReminder({this.booking});
 
-  final String? routeLabel;
+  final TravelerBooking? booking;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final trip = booking;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -265,13 +334,129 @@ class _TripReminder extends StatelessWidget {
                 Text(l10n.reviewTripDone, style: AppTextStyles.eyebrow),
                 const SizedBox(height: 2),
                 Text(
-                  routeLabel ?? l10n.reviewTripFallback,
+                  trip == null
+                      ? l10n.reviewTripFallback
+                      : '${trip.originCity} → ${trip.destinationCity}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.subtitle,
                 ),
+                if (trip != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    l10n.reviewTripMeta(
+                      AppTimeFormat.mediumDate(context, trip.departureTime),
+                      AppTimeFormat.hourMinute(context, trip.departureTime),
+                      trip.companyName,
+                      trip.ticketNumber,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.caption,
+                  ),
+                ],
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Section « Qu'avez-vous apprécié ? » — jetons à bascule (`Wrap`, pas de
+/// contrainte de hauteur intrinsèque ici donc pas besoin du découpage en
+/// lignes utilisé sur la grille de types de réclamation).
+class _AspectSection extends StatelessWidget {
+  const _AspectSection({
+    required this.selected,
+    required this.compact,
+    required this.onToggle,
+  });
+
+  final Set<_ReviewAspect> selected;
+  final bool compact;
+  final ValueChanged<_ReviewAspect> onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: compact
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
+      children: [
+        Wrap(
+          alignment: compact ? WrapAlignment.start : WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
+          children: [
+            Text(
+              compact ? l10n.reviewAspectsTitleCompact : l10n.reviewAspectsTitle,
+              style: AppTypography.sans(size: 13, weight: FontWeight.w600),
+            ),
+            Text(l10n.reviewAspectsOptional, style: AppTextStyles.caption),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          alignment: compact ? WrapAlignment.start : WrapAlignment.center,
+          children: [
+            for (final aspect in _ReviewAspect.values)
+              _AspectChip(
+                label: aspect.label(l10n),
+                selected: selected.contains(aspect),
+                onTap: () => onToggle(aspect),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AspectChip extends StatelessWidget {
+  const _AspectChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected ? AppColors.primary50 : AppColors.surface,
+      borderRadius: AppRadii.brPill,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadii.brPill,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm + 3,
+            vertical: AppSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: AppRadii.brPill,
+            border: Border.all(
+              color: selected ? AppColors.primary : AppColors.borderStrong,
+              width: 1.5,
+            ),
+          ),
+          child: Text(
+            label,
+            style: AppTypography.sans(
+              size: 13,
+              weight: FontWeight.w600,
+              color: selected ? AppColors.primary900 : AppColors.textSecondary,
+            ),
+          ),
+        ),
       ),
     );
   }

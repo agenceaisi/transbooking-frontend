@@ -2,11 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
 import 'tables/agent_dashboard_tables.dart';
+import 'tables/boarding_tables.dart';
 import 'tables/cache_tables.dart';
 import 'tables/outbox_tables.dart';
 import 'tables/session_tables.dart';
 
 export 'tables/agent_dashboard_tables.dart';
+export 'tables/boarding_tables.dart';
 export 'tables/cache_tables.dart';
 export 'tables/outbox_tables.dart';
 export 'tables/session_tables.dart';
@@ -33,9 +35,12 @@ part 'local_database.g.dart';
     OfflineBookings,
     OfflineParcels,
     OfflineValidations,
+    OfflineParcelNotifications,
     OutboxEntries,
     SyncStateEntries,
     SessionProfiles,
+    BoardedTickets,
+    ValidatedTrips,
   ],
 )
 class LocalDatabase extends _$LocalDatabase {
@@ -58,7 +63,7 @@ class LocalDatabase extends _$LocalDatabase {
   static const String databaseName = 'transbooking_local';
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -76,6 +81,18 @@ class LocalDatabase extends _$LocalDatabase {
       if (from < 2) {
         await migrator.createTable(cachedAgentDepartures);
         await migrator.createTable(cachedAgentAlerts);
+      }
+      // v3 — Mobile Money hors ligne (référence de transaction) et « marquer
+      // prévenu » colis hors ligne, phase 5B rebranchée.
+      if (from < 3) {
+        await migrator.addColumn(offlineBookings, offlineBookings.transactionRef);
+        await migrator.createTable(offlineParcelNotifications);
+      }
+      // v4 — journal local des embarquements confirmés et des voyages
+      // verrouillés, phase 5C (contrôle).
+      if (from < 4) {
+        await migrator.createTable(boardedTickets);
+        await migrator.createTable(validatedTrips);
       }
     },
   );

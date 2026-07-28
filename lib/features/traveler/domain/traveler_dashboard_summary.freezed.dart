@@ -16,7 +16,9 @@ mixin _$TravelerDashboardSummary {
 
  List<TravelerTripPreview> get nextTrips;/// Réservations actives (non annulées) à venir.
  int get activeBookingsCount;/// Réservations en attente de paiement.
- int get pendingCount; List<TravelerNotificationPreview> get recentNotifications;
+ int get pendingCount;/// Billets payés (`paid_count`) — compteur « Payé » de la carte de statut.
+ int get paidCount;/// Billets annulés + remboursés (`cancelled_count`) — compteur « Annulé ».
+ int get cancelledCount; List<TravelerNotificationPreview> get recentNotifications;
 /// Create a copy of TravelerDashboardSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,16 +29,16 @@ $TravelerDashboardSummaryCopyWith<TravelerDashboardSummary> get copyWith => _$Tr
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerDashboardSummary&&const DeepCollectionEquality().equals(other.nextTrips, nextTrips)&&(identical(other.activeBookingsCount, activeBookingsCount) || other.activeBookingsCount == activeBookingsCount)&&(identical(other.pendingCount, pendingCount) || other.pendingCount == pendingCount)&&const DeepCollectionEquality().equals(other.recentNotifications, recentNotifications));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerDashboardSummary&&const DeepCollectionEquality().equals(other.nextTrips, nextTrips)&&(identical(other.activeBookingsCount, activeBookingsCount) || other.activeBookingsCount == activeBookingsCount)&&(identical(other.pendingCount, pendingCount) || other.pendingCount == pendingCount)&&(identical(other.paidCount, paidCount) || other.paidCount == paidCount)&&(identical(other.cancelledCount, cancelledCount) || other.cancelledCount == cancelledCount)&&const DeepCollectionEquality().equals(other.recentNotifications, recentNotifications));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(nextTrips),activeBookingsCount,pendingCount,const DeepCollectionEquality().hash(recentNotifications));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(nextTrips),activeBookingsCount,pendingCount,paidCount,cancelledCount,const DeepCollectionEquality().hash(recentNotifications));
 
 @override
 String toString() {
-  return 'TravelerDashboardSummary(nextTrips: $nextTrips, activeBookingsCount: $activeBookingsCount, pendingCount: $pendingCount, recentNotifications: $recentNotifications)';
+  return 'TravelerDashboardSummary(nextTrips: $nextTrips, activeBookingsCount: $activeBookingsCount, pendingCount: $pendingCount, paidCount: $paidCount, cancelledCount: $cancelledCount, recentNotifications: $recentNotifications)';
 }
 
 
@@ -47,7 +49,7 @@ abstract mixin class $TravelerDashboardSummaryCopyWith<$Res>  {
   factory $TravelerDashboardSummaryCopyWith(TravelerDashboardSummary value, $Res Function(TravelerDashboardSummary) _then) = _$TravelerDashboardSummaryCopyWithImpl;
 @useResult
 $Res call({
- List<TravelerTripPreview> nextTrips, int activeBookingsCount, int pendingCount, List<TravelerNotificationPreview> recentNotifications
+ List<TravelerTripPreview> nextTrips, int activeBookingsCount, int pendingCount, int paidCount, int cancelledCount, List<TravelerNotificationPreview> recentNotifications
 });
 
 
@@ -64,11 +66,13 @@ class _$TravelerDashboardSummaryCopyWithImpl<$Res>
 
 /// Create a copy of TravelerDashboardSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nextTrips = null,Object? activeBookingsCount = null,Object? pendingCount = null,Object? recentNotifications = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nextTrips = null,Object? activeBookingsCount = null,Object? pendingCount = null,Object? paidCount = null,Object? cancelledCount = null,Object? recentNotifications = null,}) {
   return _then(_self.copyWith(
 nextTrips: null == nextTrips ? _self.nextTrips : nextTrips // ignore: cast_nullable_to_non_nullable
 as List<TravelerTripPreview>,activeBookingsCount: null == activeBookingsCount ? _self.activeBookingsCount : activeBookingsCount // ignore: cast_nullable_to_non_nullable
 as int,pendingCount: null == pendingCount ? _self.pendingCount : pendingCount // ignore: cast_nullable_to_non_nullable
+as int,paidCount: null == paidCount ? _self.paidCount : paidCount // ignore: cast_nullable_to_non_nullable
+as int,cancelledCount: null == cancelledCount ? _self.cancelledCount : cancelledCount // ignore: cast_nullable_to_non_nullable
 as int,recentNotifications: null == recentNotifications ? _self.recentNotifications : recentNotifications // ignore: cast_nullable_to_non_nullable
 as List<TravelerNotificationPreview>,
   ));
@@ -155,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  List<TravelerNotificationPreview> recentNotifications)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  int paidCount,  int cancelledCount,  List<TravelerNotificationPreview> recentNotifications)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TravelerDashboardSummary() when $default != null:
-return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.recentNotifications);case _:
+return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.paidCount,_that.cancelledCount,_that.recentNotifications);case _:
   return orElse();
 
 }
@@ -176,10 +180,10 @@ return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  List<TravelerNotificationPreview> recentNotifications)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  int paidCount,  int cancelledCount,  List<TravelerNotificationPreview> recentNotifications)  $default,) {final _that = this;
 switch (_that) {
 case _TravelerDashboardSummary():
-return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.recentNotifications);case _:
+return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.paidCount,_that.cancelledCount,_that.recentNotifications);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +200,10 @@ return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  List<TravelerNotificationPreview> recentNotifications)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<TravelerTripPreview> nextTrips,  int activeBookingsCount,  int pendingCount,  int paidCount,  int cancelledCount,  List<TravelerNotificationPreview> recentNotifications)?  $default,) {final _that = this;
 switch (_that) {
 case _TravelerDashboardSummary() when $default != null:
-return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.recentNotifications);case _:
+return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_that.paidCount,_that.cancelledCount,_that.recentNotifications);case _:
   return null;
 
 }
@@ -211,7 +215,7 @@ return $default(_that.nextTrips,_that.activeBookingsCount,_that.pendingCount,_th
 
 
 class _TravelerDashboardSummary implements TravelerDashboardSummary {
-  const _TravelerDashboardSummary({required final  List<TravelerTripPreview> nextTrips, required this.activeBookingsCount, required this.pendingCount, required final  List<TravelerNotificationPreview> recentNotifications}): _nextTrips = nextTrips,_recentNotifications = recentNotifications;
+  const _TravelerDashboardSummary({required final  List<TravelerTripPreview> nextTrips, required this.activeBookingsCount, required this.pendingCount, required this.paidCount, required this.cancelledCount, required final  List<TravelerNotificationPreview> recentNotifications}): _nextTrips = nextTrips,_recentNotifications = recentNotifications;
   
 
  final  List<TravelerTripPreview> _nextTrips;
@@ -225,6 +229,10 @@ class _TravelerDashboardSummary implements TravelerDashboardSummary {
 @override final  int activeBookingsCount;
 /// Réservations en attente de paiement.
 @override final  int pendingCount;
+/// Billets payés (`paid_count`) — compteur « Payé » de la carte de statut.
+@override final  int paidCount;
+/// Billets annulés + remboursés (`cancelled_count`) — compteur « Annulé ».
+@override final  int cancelledCount;
  final  List<TravelerNotificationPreview> _recentNotifications;
 @override List<TravelerNotificationPreview> get recentNotifications {
   if (_recentNotifications is EqualUnmodifiableListView) return _recentNotifications;
@@ -243,16 +251,16 @@ _$TravelerDashboardSummaryCopyWith<_TravelerDashboardSummary> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerDashboardSummary&&const DeepCollectionEquality().equals(other._nextTrips, _nextTrips)&&(identical(other.activeBookingsCount, activeBookingsCount) || other.activeBookingsCount == activeBookingsCount)&&(identical(other.pendingCount, pendingCount) || other.pendingCount == pendingCount)&&const DeepCollectionEquality().equals(other._recentNotifications, _recentNotifications));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerDashboardSummary&&const DeepCollectionEquality().equals(other._nextTrips, _nextTrips)&&(identical(other.activeBookingsCount, activeBookingsCount) || other.activeBookingsCount == activeBookingsCount)&&(identical(other.pendingCount, pendingCount) || other.pendingCount == pendingCount)&&(identical(other.paidCount, paidCount) || other.paidCount == paidCount)&&(identical(other.cancelledCount, cancelledCount) || other.cancelledCount == cancelledCount)&&const DeepCollectionEquality().equals(other._recentNotifications, _recentNotifications));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_nextTrips),activeBookingsCount,pendingCount,const DeepCollectionEquality().hash(_recentNotifications));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_nextTrips),activeBookingsCount,pendingCount,paidCount,cancelledCount,const DeepCollectionEquality().hash(_recentNotifications));
 
 @override
 String toString() {
-  return 'TravelerDashboardSummary(nextTrips: $nextTrips, activeBookingsCount: $activeBookingsCount, pendingCount: $pendingCount, recentNotifications: $recentNotifications)';
+  return 'TravelerDashboardSummary(nextTrips: $nextTrips, activeBookingsCount: $activeBookingsCount, pendingCount: $pendingCount, paidCount: $paidCount, cancelledCount: $cancelledCount, recentNotifications: $recentNotifications)';
 }
 
 
@@ -263,7 +271,7 @@ abstract mixin class _$TravelerDashboardSummaryCopyWith<$Res> implements $Travel
   factory _$TravelerDashboardSummaryCopyWith(_TravelerDashboardSummary value, $Res Function(_TravelerDashboardSummary) _then) = __$TravelerDashboardSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- List<TravelerTripPreview> nextTrips, int activeBookingsCount, int pendingCount, List<TravelerNotificationPreview> recentNotifications
+ List<TravelerTripPreview> nextTrips, int activeBookingsCount, int pendingCount, int paidCount, int cancelledCount, List<TravelerNotificationPreview> recentNotifications
 });
 
 
@@ -280,11 +288,13 @@ class __$TravelerDashboardSummaryCopyWithImpl<$Res>
 
 /// Create a copy of TravelerDashboardSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nextTrips = null,Object? activeBookingsCount = null,Object? pendingCount = null,Object? recentNotifications = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nextTrips = null,Object? activeBookingsCount = null,Object? pendingCount = null,Object? paidCount = null,Object? cancelledCount = null,Object? recentNotifications = null,}) {
   return _then(_TravelerDashboardSummary(
 nextTrips: null == nextTrips ? _self._nextTrips : nextTrips // ignore: cast_nullable_to_non_nullable
 as List<TravelerTripPreview>,activeBookingsCount: null == activeBookingsCount ? _self.activeBookingsCount : activeBookingsCount // ignore: cast_nullable_to_non_nullable
 as int,pendingCount: null == pendingCount ? _self.pendingCount : pendingCount // ignore: cast_nullable_to_non_nullable
+as int,paidCount: null == paidCount ? _self.paidCount : paidCount // ignore: cast_nullable_to_non_nullable
+as int,cancelledCount: null == cancelledCount ? _self.cancelledCount : cancelledCount // ignore: cast_nullable_to_non_nullable
 as int,recentNotifications: null == recentNotifications ? _self._recentNotifications : recentNotifications // ignore: cast_nullable_to_non_nullable
 as List<TravelerNotificationPreview>,
   ));
@@ -296,7 +306,9 @@ as List<TravelerNotificationPreview>,
 /// @nodoc
 mixin _$TravelerTripPreview {
 
- String get ticketNumber; String get origin; String get destination; DateTime get departureTime; String get seatNumber;/// Valeur technique du statut (`paid`, `pending`, `scheduled`…). Le libellé
+ String get ticketNumber; String get origin; String get destination; DateTime get departureTime; String get seatNumber;/// Nom de la compagnie du trajet (`company_name`).
+ String get companyName;/// Sigle de la compagnie (`company_sigle`), `null` si absent.
+ String? get companySigle;/// Valeur technique du statut (`paid`, `pending`, `scheduled`…). Le libellé
 /// et la couleur sont dérivés côté présentation.
  String get status;
 /// Create a copy of TravelerTripPreview
@@ -309,16 +321,16 @@ $TravelerTripPreviewCopyWith<TravelerTripPreview> get copyWith => _$TravelerTrip
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerTripPreview&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.departureTime, departureTime) || other.departureTime == departureTime)&&(identical(other.seatNumber, seatNumber) || other.seatNumber == seatNumber)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerTripPreview&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.departureTime, departureTime) || other.departureTime == departureTime)&&(identical(other.seatNumber, seatNumber) || other.seatNumber == seatNumber)&&(identical(other.companyName, companyName) || other.companyName == companyName)&&(identical(other.companySigle, companySigle) || other.companySigle == companySigle)&&(identical(other.status, status) || other.status == status));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ticketNumber,origin,destination,departureTime,seatNumber,status);
+int get hashCode => Object.hash(runtimeType,ticketNumber,origin,destination,departureTime,seatNumber,companyName,companySigle,status);
 
 @override
 String toString() {
-  return 'TravelerTripPreview(ticketNumber: $ticketNumber, origin: $origin, destination: $destination, departureTime: $departureTime, seatNumber: $seatNumber, status: $status)';
+  return 'TravelerTripPreview(ticketNumber: $ticketNumber, origin: $origin, destination: $destination, departureTime: $departureTime, seatNumber: $seatNumber, companyName: $companyName, companySigle: $companySigle, status: $status)';
 }
 
 
@@ -329,7 +341,7 @@ abstract mixin class $TravelerTripPreviewCopyWith<$Res>  {
   factory $TravelerTripPreviewCopyWith(TravelerTripPreview value, $Res Function(TravelerTripPreview) _then) = _$TravelerTripPreviewCopyWithImpl;
 @useResult
 $Res call({
- String ticketNumber, String origin, String destination, DateTime departureTime, String seatNumber, String status
+ String ticketNumber, String origin, String destination, DateTime departureTime, String seatNumber, String companyName, String? companySigle, String status
 });
 
 
@@ -346,14 +358,16 @@ class _$TravelerTripPreviewCopyWithImpl<$Res>
 
 /// Create a copy of TravelerTripPreview
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? ticketNumber = null,Object? origin = null,Object? destination = null,Object? departureTime = null,Object? seatNumber = null,Object? status = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? ticketNumber = null,Object? origin = null,Object? destination = null,Object? departureTime = null,Object? seatNumber = null,Object? companyName = null,Object? companySigle = freezed,Object? status = null,}) {
   return _then(_self.copyWith(
 ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,origin: null == origin ? _self.origin : origin // ignore: cast_nullable_to_non_nullable
 as String,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
 as String,departureTime: null == departureTime ? _self.departureTime : departureTime // ignore: cast_nullable_to_non_nullable
 as DateTime,seatNumber: null == seatNumber ? _self.seatNumber : seatNumber // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,companyName: null == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+as String,companySigle: freezed == companySigle ? _self.companySigle : companySigle // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -439,10 +453,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String status)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String companyName,  String? companySigle,  String status)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TravelerTripPreview() when $default != null:
-return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.status);case _:
+return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.companyName,_that.companySigle,_that.status);case _:
   return orElse();
 
 }
@@ -460,10 +474,10 @@ return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departur
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String status)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String companyName,  String? companySigle,  String status)  $default,) {final _that = this;
 switch (_that) {
 case _TravelerTripPreview():
-return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.status);case _:
+return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.companyName,_that.companySigle,_that.status);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -480,10 +494,10 @@ return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departur
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String status)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String ticketNumber,  String origin,  String destination,  DateTime departureTime,  String seatNumber,  String companyName,  String? companySigle,  String status)?  $default,) {final _that = this;
 switch (_that) {
 case _TravelerTripPreview() when $default != null:
-return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.status);case _:
+return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departureTime,_that.seatNumber,_that.companyName,_that.companySigle,_that.status);case _:
   return null;
 
 }
@@ -495,7 +509,7 @@ return $default(_that.ticketNumber,_that.origin,_that.destination,_that.departur
 
 
 class _TravelerTripPreview implements TravelerTripPreview {
-  const _TravelerTripPreview({required this.ticketNumber, required this.origin, required this.destination, required this.departureTime, required this.seatNumber, required this.status});
+  const _TravelerTripPreview({required this.ticketNumber, required this.origin, required this.destination, required this.departureTime, required this.seatNumber, required this.companyName, this.companySigle, required this.status});
   
 
 @override final  String ticketNumber;
@@ -503,6 +517,10 @@ class _TravelerTripPreview implements TravelerTripPreview {
 @override final  String destination;
 @override final  DateTime departureTime;
 @override final  String seatNumber;
+/// Nom de la compagnie du trajet (`company_name`).
+@override final  String companyName;
+/// Sigle de la compagnie (`company_sigle`), `null` si absent.
+@override final  String? companySigle;
 /// Valeur technique du statut (`paid`, `pending`, `scheduled`…). Le libellé
 /// et la couleur sont dérivés côté présentation.
 @override final  String status;
@@ -517,16 +535,16 @@ _$TravelerTripPreviewCopyWith<_TravelerTripPreview> get copyWith => __$TravelerT
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerTripPreview&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.departureTime, departureTime) || other.departureTime == departureTime)&&(identical(other.seatNumber, seatNumber) || other.seatNumber == seatNumber)&&(identical(other.status, status) || other.status == status));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerTripPreview&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.origin, origin) || other.origin == origin)&&(identical(other.destination, destination) || other.destination == destination)&&(identical(other.departureTime, departureTime) || other.departureTime == departureTime)&&(identical(other.seatNumber, seatNumber) || other.seatNumber == seatNumber)&&(identical(other.companyName, companyName) || other.companyName == companyName)&&(identical(other.companySigle, companySigle) || other.companySigle == companySigle)&&(identical(other.status, status) || other.status == status));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,ticketNumber,origin,destination,departureTime,seatNumber,status);
+int get hashCode => Object.hash(runtimeType,ticketNumber,origin,destination,departureTime,seatNumber,companyName,companySigle,status);
 
 @override
 String toString() {
-  return 'TravelerTripPreview(ticketNumber: $ticketNumber, origin: $origin, destination: $destination, departureTime: $departureTime, seatNumber: $seatNumber, status: $status)';
+  return 'TravelerTripPreview(ticketNumber: $ticketNumber, origin: $origin, destination: $destination, departureTime: $departureTime, seatNumber: $seatNumber, companyName: $companyName, companySigle: $companySigle, status: $status)';
 }
 
 
@@ -537,7 +555,7 @@ abstract mixin class _$TravelerTripPreviewCopyWith<$Res> implements $TravelerTri
   factory _$TravelerTripPreviewCopyWith(_TravelerTripPreview value, $Res Function(_TravelerTripPreview) _then) = __$TravelerTripPreviewCopyWithImpl;
 @override @useResult
 $Res call({
- String ticketNumber, String origin, String destination, DateTime departureTime, String seatNumber, String status
+ String ticketNumber, String origin, String destination, DateTime departureTime, String seatNumber, String companyName, String? companySigle, String status
 });
 
 
@@ -554,14 +572,16 @@ class __$TravelerTripPreviewCopyWithImpl<$Res>
 
 /// Create a copy of TravelerTripPreview
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? ticketNumber = null,Object? origin = null,Object? destination = null,Object? departureTime = null,Object? seatNumber = null,Object? status = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? ticketNumber = null,Object? origin = null,Object? destination = null,Object? departureTime = null,Object? seatNumber = null,Object? companyName = null,Object? companySigle = freezed,Object? status = null,}) {
   return _then(_TravelerTripPreview(
 ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,origin: null == origin ? _self.origin : origin // ignore: cast_nullable_to_non_nullable
 as String,destination: null == destination ? _self.destination : destination // ignore: cast_nullable_to_non_nullable
 as String,departureTime: null == departureTime ? _self.departureTime : departureTime // ignore: cast_nullable_to_non_nullable
 as DateTime,seatNumber: null == seatNumber ? _self.seatNumber : seatNumber // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,companyName: null == companyName ? _self.companyName : companyName // ignore: cast_nullable_to_non_nullable
+as String,companySigle: freezed == companySigle ? _self.companySigle : companySigle // ignore: cast_nullable_to_non_nullable
+as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -572,7 +592,9 @@ as String,
 /// @nodoc
 mixin _$TravelerNotificationPreview {
 
- int get id; String get title; String get body; bool get isRead; DateTime get createdAt;
+ int get id; String get title; String get body;/// Type technique (`type`) → choix de l'icône et de la couleur côté UI.
+ NotificationKind get kind;/// Libellé FR du type (`type_display`), facultatif.
+ String? get typeDisplay; bool get isRead; DateTime get createdAt;
 /// Create a copy of TravelerNotificationPreview
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -583,16 +605,16 @@ $TravelerNotificationPreviewCopyWith<TravelerNotificationPreview> get copyWith =
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerNotificationPreview&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerNotificationPreview&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.typeDisplay, typeDisplay) || other.typeDisplay == typeDisplay)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,isRead,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,kind,typeDisplay,isRead,createdAt);
 
 @override
 String toString() {
-  return 'TravelerNotificationPreview(id: $id, title: $title, body: $body, isRead: $isRead, createdAt: $createdAt)';
+  return 'TravelerNotificationPreview(id: $id, title: $title, body: $body, kind: $kind, typeDisplay: $typeDisplay, isRead: $isRead, createdAt: $createdAt)';
 }
 
 
@@ -603,7 +625,7 @@ abstract mixin class $TravelerNotificationPreviewCopyWith<$Res>  {
   factory $TravelerNotificationPreviewCopyWith(TravelerNotificationPreview value, $Res Function(TravelerNotificationPreview) _then) = _$TravelerNotificationPreviewCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, String body, bool isRead, DateTime createdAt
+ int id, String title, String body, NotificationKind kind, String? typeDisplay, bool isRead, DateTime createdAt
 });
 
 
@@ -620,12 +642,14 @@ class _$TravelerNotificationPreviewCopyWithImpl<$Res>
 
 /// Create a copy of TravelerNotificationPreview
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? isRead = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? body = null,Object? kind = null,Object? typeDisplay = freezed,Object? isRead = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
-as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as NotificationKind,typeDisplay: freezed == typeDisplay ? _self.typeDisplay : typeDisplay // ignore: cast_nullable_to_non_nullable
+as String?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -712,10 +736,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String body,  bool isRead,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String body,  NotificationKind kind,  String? typeDisplay,  bool isRead,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TravelerNotificationPreview() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.kind,_that.typeDisplay,_that.isRead,_that.createdAt);case _:
   return orElse();
 
 }
@@ -733,10 +757,10 @@ return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);ca
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String body,  bool isRead,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String body,  NotificationKind kind,  String? typeDisplay,  bool isRead,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _TravelerNotificationPreview():
-return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.kind,_that.typeDisplay,_that.isRead,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -753,10 +777,10 @@ return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);ca
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String body,  bool isRead,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String body,  NotificationKind kind,  String? typeDisplay,  bool isRead,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TravelerNotificationPreview() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.body,_that.kind,_that.typeDisplay,_that.isRead,_that.createdAt);case _:
   return null;
 
 }
@@ -768,12 +792,16 @@ return $default(_that.id,_that.title,_that.body,_that.isRead,_that.createdAt);ca
 
 
 class _TravelerNotificationPreview implements TravelerNotificationPreview {
-  const _TravelerNotificationPreview({required this.id, required this.title, required this.body, required this.isRead, required this.createdAt});
+  const _TravelerNotificationPreview({required this.id, required this.title, required this.body, required this.kind, this.typeDisplay, required this.isRead, required this.createdAt});
   
 
 @override final  int id;
 @override final  String title;
 @override final  String body;
+/// Type technique (`type`) → choix de l'icône et de la couleur côté UI.
+@override final  NotificationKind kind;
+/// Libellé FR du type (`type_display`), facultatif.
+@override final  String? typeDisplay;
 @override final  bool isRead;
 @override final  DateTime createdAt;
 
@@ -787,16 +815,16 @@ _$TravelerNotificationPreviewCopyWith<_TravelerNotificationPreview> get copyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerNotificationPreview&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerNotificationPreview&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.typeDisplay, typeDisplay) || other.typeDisplay == typeDisplay)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,body,isRead,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,body,kind,typeDisplay,isRead,createdAt);
 
 @override
 String toString() {
-  return 'TravelerNotificationPreview(id: $id, title: $title, body: $body, isRead: $isRead, createdAt: $createdAt)';
+  return 'TravelerNotificationPreview(id: $id, title: $title, body: $body, kind: $kind, typeDisplay: $typeDisplay, isRead: $isRead, createdAt: $createdAt)';
 }
 
 
@@ -807,7 +835,7 @@ abstract mixin class _$TravelerNotificationPreviewCopyWith<$Res> implements $Tra
   factory _$TravelerNotificationPreviewCopyWith(_TravelerNotificationPreview value, $Res Function(_TravelerNotificationPreview) _then) = __$TravelerNotificationPreviewCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, String body, bool isRead, DateTime createdAt
+ int id, String title, String body, NotificationKind kind, String? typeDisplay, bool isRead, DateTime createdAt
 });
 
 
@@ -824,12 +852,14 @@ class __$TravelerNotificationPreviewCopyWithImpl<$Res>
 
 /// Create a copy of TravelerNotificationPreview
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? isRead = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? body = null,Object? kind = null,Object? typeDisplay = freezed,Object? isRead = null,Object? createdAt = null,}) {
   return _then(_TravelerNotificationPreview(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,body: null == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
-as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
+as String,kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
+as NotificationKind,typeDisplay: freezed == typeDisplay ? _self.typeDisplay : typeDisplay // ignore: cast_nullable_to_non_nullable
+as String?,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
 as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

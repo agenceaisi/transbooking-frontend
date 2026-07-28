@@ -11,6 +11,7 @@ import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/error_state.dart';
 import '../../../../core/widgets/loading_skeleton.dart';
 import '../../../../core/widgets/status_badge.dart';
+import '../../../auth/presentation/session_controller.dart';
 import '../../domain/created_booking.dart';
 import '../../domain/traveler_booking.dart';
 import '../traveler_providers.dart';
@@ -22,6 +23,9 @@ import '../widgets/traveler_shell.dart';
 enum _BookingFilter { all, paid, unpaid, cancelled }
 
 /// Mes réservations (maquette « Mes réservations & Billet », écran 1).
+///
+/// Disposition fidèle au handoff mobile : bandeau indigo (nom + titre) et barre
+/// de filtres fixes en tête, liste de billets défilante en dessous.
 class MyBookingsScreen extends ConsumerStatefulWidget {
   const MyBookingsScreen({super.key});
 
@@ -52,36 +56,38 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final bookings = ref.watch(myBookingsProvider);
+    final userName = ref.watch(sessionControllerProvider).displayName;
 
     return TravelerShell(
       current: TravelerDestination.bookings,
       bookingsBadge: bookings.value == null
           ? null
           : _activeCount(bookings.value!),
-      child: RefreshIndicator(
-        onRefresh: () async => ref.invalidate(myBookingsProvider),
-        child: ListView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          children: [
-            Text(l10n.bookingsTitle, style: AppTextStyles.pageTitle),
-            const SizedBox(height: AppSpacing.xxs),
-            Text(l10n.bookingsSubtitle, style: AppTextStyles.caption),
-            const SizedBox(height: AppSpacing.md),
-            bookings.when(
-              loading: () => const _BookingsSkeleton(),
-              error: (error, _) => Padding(
-                padding: const EdgeInsets.only(top: AppSpacing.xxl),
-                child: ErrorState(
-                  failure: error is Failure ? error : null,
-                  onRetry: () => ref.invalidate(myBookingsProvider),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Header(userName: userName),
+          _FilterBar(
+            selected: _filter,
+            onSelect: (filter) => setState(() => _filter = filter),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () async => ref.invalidate(myBookingsProvider),
+              child: bookings.when(
+                loading: () => const _BookingsSkeleton(),
+                error: (error, _) => _ScrollFill(
+                  child: ErrorState(
+                    failure: error is Failure ? error : null,
+                    onRetry: () => ref.invalidate(myBookingsProvider),
+                  ),
                 ),
+                data: _list,
               ),
-              data: (list) => _list(list),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -90,59 +96,44 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> {
     final l10n = context.l10n;
     final filtered = bookings.where(_matches).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          children: [
-            for (final filter in _BookingFilter.values)
-              _FilterChip(
-                label: _filterLabel(l10n, filter),
-                count: _countFor(bookings, filter),
-                selected: _filter == filter,
-                onTap: () => setState(() => _filter = filter),
-              ),
-          ],
+    if (bookings.isEmpty) {
+      return _ScrollFill(
+        child: EmptyState(
+          icon: Icons.confirmation_number_outlined,
+          title: l10n.bookingsEmptyTitle,
+          message: l10n.bookingsEmptyMessage,
+          actionLabel: l10n.bookingsEmptyCta,
+          onAction: () => context.goNamed(AppRoutes.searchResultsName),
         ),
-        const SizedBox(height: AppSpacing.md),
-        if (bookings.isEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xl),
-            child: EmptyState(
-              icon: Icons.confirmation_number_outlined,
-              title: l10n.bookingsEmptyTitle,
-              message: l10n.bookingsEmptyMessage,
-              actionLabel: l10n.bookingsEmptyCta,
-              onAction: () => context.goNamed(AppRoutes.searchResultsName),
-            ),
-          )
-        else if (filtered.isEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xl),
-            child: EmptyState(
-              icon: Icons.filter_alt_off_outlined,
-              title: l10n.bookingsNoMatchTitle,
-              message: l10n.bookingsNoMatchMessage,
-            ),
-          )
-        else
-          for (final booking in filtered)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: _BookingCard(
-                booking: booking,
-                onView: () => context.pushNamed(
-                  AppRoutes.travelerTicketName,
-                  pathParameters: {'id': '${booking.id}'},
-                ),
-                onCancel: booking.isCancellable
-                    ? () => _confirmCancel(booking)
-                    : null,
-              ),
-            ),
-      ],
+      );
+    }
+    if (filtered.isEmpty) {
+      return _ScrollFill(
+        child: EmptyState(
+          icon: Icons.filter_alt_off_outlined,
+          title: l10n.bookingsNoMatchTitle,
+          message: l10n.bookingsNoMatchMessage,
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: filtered.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, index) {
+        final booking = filtered[index];
+        return _BookingCard(
+          booking: booking,
+          onView: () => context.pushNamed(
+            AppRoutes.travelerTicketName,
+            pathParameters: {'id': '${booking.id}'},
+          ),
+          onCancel: booking.isCancellable ? () => _confirmCancel(booking) : null,
+          onReview: booking.isReviewable ? () => _openReview(booking) : null,
+        );
+      },
     );
   }
 
@@ -150,35 +141,122 @@ class _MyBookingsScreenState extends ConsumerState<MyBookingsScreen> {
     await showBookingCancelDialog(context, ref, booking: booking);
   }
 
-  String _filterLabel(dynamic l10n, _BookingFilter filter) => switch (filter) {
-    _BookingFilter.all => l10n.bookingsFilterAll,
-    _BookingFilter.paid => l10n.bookingsFilterPaid,
-    _BookingFilter.unpaid => l10n.bookingsFilterUnpaid,
-    _BookingFilter.cancelled => l10n.bookingsFilterCancelled,
-  };
+  void _openReview(TravelerBooking booking) {
+    context.pushNamed(
+      AppRoutes.travelerReviewName,
+      pathParameters: {'tripId': '${booking.tripId}'},
+      extra: booking,
+    );
+  }
+}
 
-  int _countFor(List<TravelerBooking> bookings, _BookingFilter filter) {
-    if (filter == _BookingFilter.all) return bookings.length;
-    return bookings.where((booking) {
-      final saved = _filter;
-      _filter = filter;
-      final result = _matches(booking);
-      _filter = saved;
-      return result;
-    }).length;
+/// Bandeau indigo en tête d'écran : nom du voyageur (atténué) puis titre.
+class _Header extends StatelessWidget {
+  const _Header({required this.userName});
+
+  final String? userName;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = userName?.trim();
+    return Container(
+      width: double.infinity,
+      color: AppColors.primary700,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            AppSpacing.md,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (name != null && name.isNotEmpty) ...[
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.sans(
+                    size: 12,
+                    color: AppColors.onPrimaryMuted,
+                  ),
+                ),
+                const SizedBox(height: 2),
+              ],
+              Text(
+                context.l10n.bookingsTitle,
+                style: AppTypography.sans(
+                  size: 20,
+                  weight: FontWeight.w800,
+                  color: AppColors.onPrimary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Barre de filtres par statut — pastilles défilables (indigo plein si actif).
+class _FilterBar extends StatelessWidget {
+  const _FilterBar({required this.selected, required this.onSelect});
+
+  final _BookingFilter selected;
+  final ValueChanged<_BookingFilter> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final labels = {
+      _BookingFilter.all: l10n.bookingsFilterAll,
+      _BookingFilter.paid: l10n.bookingsFilterPaid,
+      _BookingFilter.unpaid: l10n.bookingsFilterUnpaid,
+      _BookingFilter.cancelled: l10n.bookingsFilterCancelled,
+    };
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.borderSoft)),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            for (final filter in _BookingFilter.values)
+              Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.xs),
+                child: _FilterChip(
+                  label: labels[filter]!,
+                  selected: selected == filter,
+                  onTap: () => onSelect(filter),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class _FilterChip extends StatelessWidget {
   const _FilterChip({
     required this.label,
-    required this.count,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
-  final int count;
   final bool selected;
   final VoidCallback onTap;
 
@@ -186,25 +264,25 @@ class _FilterChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: selected ? AppColors.primary : AppColors.surface,
-      borderRadius: AppRadii.brMd,
+      borderRadius: AppRadii.brPill,
       child: InkWell(
         onTap: onTap,
-        borderRadius: AppRadii.brMd,
+        borderRadius: AppRadii.brPill,
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm + 1,
-            vertical: AppSpacing.xs + 1,
+            horizontal: AppSpacing.md - 2,
+            vertical: AppSpacing.xs - 1,
           ),
           decoration: BoxDecoration(
-            borderRadius: AppRadii.brMd,
+            borderRadius: AppRadii.brPill,
             border: Border.all(
               color: selected ? AppColors.primary : AppColors.border,
             ),
           ),
           child: Text(
-            '$label · $count',
+            label,
             style: AppTypography.sans(
-              size: 13,
+              size: 12.5,
               weight: FontWeight.w600,
               color: selected ? AppColors.onPrimary : AppColors.textStrong,
             ),
@@ -220,11 +298,18 @@ class _BookingCard extends StatelessWidget {
     required this.booking,
     required this.onView,
     required this.onCancel,
+    required this.onReview,
   });
 
   final TravelerBooking booking;
   final VoidCallback onView;
   final VoidCallback? onCancel;
+
+  /// Non nul seulement si le voyage est éligible (`booking.isReviewable`) :
+  /// voyage terminé côté serveur + réservation payée. Remplace l'action
+  /// « Annuler » — devenue sans objet une fois le voyage passé — plutôt que
+  /// d'ajouter une 4ᵉ action à la carte.
+  final VoidCallback? onReview;
 
   @override
   Widget build(BuildContext context) {
@@ -238,7 +323,7 @@ class _BookingCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: AppRadii.brCard,
+          borderRadius: AppRadii.brLg,
           border: Border.all(color: AppColors.border),
         ),
         clipBehavior: Clip.antiAlias,
@@ -257,7 +342,7 @@ class _BookingCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: cancelled
                               ? AppColors.surfaceSubtle
-                              : AppColors.primary50,
+                              : AppColors.primary100,
                           borderRadius: AppRadii.brMd,
                         ),
                         child: Icon(
@@ -275,18 +360,28 @@ class _BookingCard extends StatelessWidget {
                           children: [
                             Text(
                               '${booking.originCity} → ${booking.destinationCity}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: AppTypography.sans(
                                 size: 14.5,
                                 weight: FontWeight.w700,
                               ),
                             ),
+                            const SizedBox(height: 1),
                             Text(
+                              '${booking.companyName} · '
                               '${l10n.bookingsSeat} ${booking.seatNumber}',
-                              style: AppTextStyles.caption,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTypography.sans(
+                                size: 11.5,
+                                color: AppColors.textTertiary,
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: AppSpacing.sm),
                       StatusBadge(
                         label: booking.statusDisplay,
                         type: _statusType(booking.status),
@@ -294,7 +389,7 @@ class _BookingCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  const Divider(height: 1),
+                  const Divider(height: 1, color: AppColors.borderSoft),
                   const SizedBox(height: AppSpacing.sm),
                   Row(
                     children: [
@@ -318,28 +413,44 @@ class _BookingCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(height: 1),
-            Row(
-              children: [
-                _CardAction(
-                  label: l10n.bookingsView,
-                  icon: Icons.visibility_outlined,
-                  onTap: onView,
-                ),
-                const _ActionDivider(),
-                _CardAction(
-                  label: l10n.bookingsDownload,
-                  icon: Icons.download_outlined,
-                  onTap: () => _downloadUnavailable(context),
-                ),
-                const _ActionDivider(),
-                _CardAction(
-                  label: l10n.bookingsCancel,
-                  icon: Icons.close_rounded,
-                  destructive: true,
-                  onTap: onCancel,
-                ),
-              ],
+            const Divider(height: 1, color: AppColors.borderSoft),
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  _CardAction(
+                    label: l10n.bookingsView,
+                    tone: _ActionTone.primary,
+                    onTap: onView,
+                  ),
+                  const VerticalDivider(
+                    width: 1,
+                    thickness: 1,
+                    color: AppColors.borderSoft,
+                  ),
+                  _CardAction(
+                    label: l10n.bookingsDownload,
+                    tone: _ActionTone.neutral,
+                    onTap: () => _downloadUnavailable(context),
+                  ),
+                  const VerticalDivider(
+                    width: 1,
+                    thickness: 1,
+                    color: AppColors.borderSoft,
+                  ),
+                  if (onReview != null)
+                    _CardAction(
+                      label: l10n.bookingsReview,
+                      tone: _ActionTone.primary,
+                      onTap: onReview,
+                    )
+                  else
+                    _CardAction(
+                      label: l10n.bookingsCancel,
+                      tone: _ActionTone.danger,
+                      onTap: onCancel,
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -375,7 +486,10 @@ class _Meta extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.eyebrow),
+        Text(
+          label,
+          style: AppTypography.sans(size: 11, color: AppColors.textTertiary),
+        ),
         const SizedBox(height: 2),
         Text(
           value,
@@ -383,8 +497,8 @@ class _Meta extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: mono
               ? AppTextStyles.referenceSmall.copyWith(
-                  fontSize: 13,
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textStrong,
                 )
               : AppTypography.sans(size: 13, weight: FontWeight.w600),
         ),
@@ -393,46 +507,44 @@ class _Meta extends StatelessWidget {
   }
 }
 
+/// Ton d'une action de carte : principal (Voir), neutre (PDF), destructif
+/// (Annuler).
+enum _ActionTone { primary, neutral, danger }
+
 class _CardAction extends StatelessWidget {
   const _CardAction({
     required this.label,
-    required this.icon,
+    required this.tone,
     required this.onTap,
-    this.destructive = false,
   });
 
   final String label;
-  final IconData icon;
+  final _ActionTone tone;
   final VoidCallback? onTap;
-  final bool destructive;
 
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final color = !enabled
-        ? AppColors.textTertiary
-        : destructive
-        ? AppStatusColors.danger.foreground
-        : AppColors.primary;
+    final base = switch (tone) {
+      _ActionTone.primary => AppColors.primary,
+      _ActionTone.neutral => AppColors.textStrong,
+      _ActionTone.danger => AppStatusColors.danger.foreground,
+    };
+    final color = enabled ? base : AppColors.textTertiary;
+
     return Expanded(
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 1),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 16, color: color),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                label,
-                style: AppTypography.sans(
-                  size: 12.5,
-                  weight: FontWeight.w600,
-                  color: color,
-                ),
-              ),
-            ],
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm - 1),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: AppTypography.sans(
+              size: 12.5,
+              weight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ),
       ),
@@ -440,12 +552,27 @@ class _CardAction extends StatelessWidget {
   }
 }
 
-class _ActionDivider extends StatelessWidget {
-  const _ActionDivider();
+/// Rend un contenu (état vide / erreur) défilant et centré, pour que le
+/// « tirer pour rafraîchir » reste actif même sans liste.
+class _ScrollFill extends StatelessWidget {
+  const _ScrollFill({required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(height: 24, child: VerticalDivider(width: 1));
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Center(child: child),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -454,11 +581,15 @@ class _BookingsSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        LoadingSkeleton(height: 150, borderRadius: AppRadii.brCard),
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      physics: const AlwaysScrollableScrollPhysics(),
+      children: const [
+        LoadingSkeleton(height: 150, borderRadius: AppRadii.brLg),
         SizedBox(height: AppSpacing.sm),
-        LoadingSkeleton(height: 150, borderRadius: AppRadii.brCard),
+        LoadingSkeleton(height: 150, borderRadius: AppRadii.brLg),
+        SizedBox(height: AppSpacing.sm),
+        LoadingSkeleton(height: 150, borderRadius: AppRadii.brLg),
       ],
     );
   }

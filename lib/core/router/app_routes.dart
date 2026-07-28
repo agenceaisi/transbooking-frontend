@@ -106,6 +106,37 @@ abstract final class AppRoutes {
   static const String agent = '/agent';
   static const String agentName = 'agent';
 
+  /// Programme du jour — planning des départs de l'agent.
+  static const String agentSchedule = '/agent/programme';
+  static const String agentScheduleName = 'agent-programme';
+
+  /// Enregistrement d'un passager au guichet.
+  static const String agentNewPassenger = '/agent/passager/nouveau';
+  static const String agentNewPassengerName = 'agent-nouveau-passager';
+
+  /// Enregistrement d'un colis au guichet.
+  static const String agentNewParcel = '/agent/colis/nouveau';
+  static const String agentNewParcelName = 'agent-nouveau-colis';
+
+  /// Colis arrivés, en attente de notification au destinataire.
+  static const String agentParcelArrivals = '/agent/colis/arrivees';
+  static const String agentParcelArrivalsName = 'agent-colis-arrivees';
+
+  /// Liste des passagers & embarquement d'un voyage (phase 5C, contrôleur).
+  static const String agentBoardingList = '/agent/embarquement';
+  static const String agentBoardingListName = 'agent-embarquement';
+  static String agentBoardingListPath(int tripId) =>
+      '$agentBoardingList/$tripId';
+
+  /// Scanner de billets à l'embarquement — indépendant d'un voyage précis, le
+  /// trajet se résout depuis le billet scanné (guide §6.7).
+  static const String agentScanQr = '/agent/scan';
+  static const String agentScanQrName = 'agent-scan';
+
+  /// Historique des synchronisations (`GET /agent/sync/logs/`, guide §6.15).
+  static const String agentSyncHistory = '/agent/synchro/historique';
+  static const String agentSyncHistoryName = 'agent-synchro-historique';
+
   static const String companyAdmin = '/compagnie';
   static const String companyAdminName = 'compagnie';
 

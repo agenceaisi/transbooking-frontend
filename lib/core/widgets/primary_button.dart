@@ -41,12 +41,23 @@ class PrimaryButton extends StatelessWidget {
         foregroundColor: AppColors.onPrimary,
         disabledBackgroundColor: AppColors.borderStrong,
         disabledForegroundColor: AppColors.white,
-        minimumSize: const Size.fromHeight(AppSizes.control),
+        // `Size.fromHeight` impose une largeur minimale infinie (bouton pleine
+        // largeur) : incompatible avec un placement en largeur non bornée
+        // (enfant non-flexible d'une Row). En mode ajusté au contenu, largeur
+        // minimale nulle pour laisser le bouton s'adapter à son libellé.
+        minimumSize: expand
+            ? const Size.fromHeight(AppSizes.control)
+            : const Size(0, AppSizes.control),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.brMd),
         textStyle: AppTextStyles.button,
       ),
-      child: _ButtonContent(label: label, icon: icon, isLoading: isLoading),
+      child: _ButtonContent(
+        label: label,
+        icon: icon,
+        isLoading: isLoading,
+        expand: expand,
+      ),
     );
 
     return expand ? SizedBox(width: double.infinity, child: button) : button;
@@ -59,12 +70,19 @@ class _ButtonContent extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.isLoading,
+    this.expand = true,
     this.color,
   });
 
   final String label;
   final IconData? icon;
   final bool isLoading;
+
+  /// Reprend le mode du bouton parent : en pleine largeur (`true`) le contenu
+  /// dispose d'une largeur bornée et peut replier le libellé ; en ajustement au
+  /// contenu (`false`) la largeur est **non bornée**, il faut donc éviter
+  /// `Flexible` — sinon « BoxConstraints forces an infinite width ».
+  final bool expand;
   final Color? color;
 
   @override
@@ -87,9 +105,13 @@ class _ButtonContent extends StatelessWidget {
       children: [
         Icon(icon, size: AppSizes.iconSm),
         const SizedBox(width: AppSpacing.xs),
-        // Souple : un libellé long sur un écran étroit se replie au lieu de
-        // déborder du bouton.
-        Flexible(child: Text(label, textAlign: TextAlign.center)),
+        // Souple : sur un bouton pleine largeur, un libellé long se replie au
+        // lieu de déborder. En mode ajusté au contenu (largeur non bornée), le
+        // texte s'affiche tel quel — `Flexible` y planterait.
+        if (expand)
+          Flexible(child: Text(label, textAlign: TextAlign.center))
+        else
+          Text(label, textAlign: TextAlign.center),
       ],
     );
   }
@@ -102,6 +124,7 @@ class SecondaryButtonContent extends StatelessWidget {
     required this.icon,
     required this.isLoading,
     required this.color,
+    this.expand = true,
     super.key,
   });
 
@@ -109,12 +132,14 @@ class SecondaryButtonContent extends StatelessWidget {
   final IconData? icon;
   final bool isLoading;
   final Color color;
+  final bool expand;
 
   @override
   Widget build(BuildContext context) => _ButtonContent(
     label: label,
     icon: icon,
     isLoading: isLoading,
+    expand: expand,
     color: color,
   );
 }

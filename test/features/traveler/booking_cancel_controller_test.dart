@@ -16,6 +16,7 @@ void main() {
   TravelerBooking cancelledBooking() => TravelerBooking(
     id: 55,
     ticketNumber: 'BF2026009999',
+    tripId: 900,
     originCity: 'Ouagadougou',
     destinationCity: 'Bobo-Dioulasso',
     companyName: 'Faso Express',

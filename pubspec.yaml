@@ -29,6 +29,9 @@ dependencies:
   intl: ^0.20.2
   json_annotation: ^4.12.0
   logger: ^2.7.0
+  # Scan QR (contrôleur — embarquement) : caméra multiplateforme
+  # Android/iOS/Web, validé par l'utilisateur (dérogation CLAUDE.md §2).
+  mobile_scanner: ^7.1.4
   riverpod_annotation: ^4.0.3
 
 dev_dependencies:

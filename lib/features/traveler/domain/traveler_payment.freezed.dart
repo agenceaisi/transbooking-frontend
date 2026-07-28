@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 mixin _$TravelerPayment {
 
  int get id; String get ticketNumber;/// Montant, lecture seule (chaîne décimale de l'API).
- String get amount; String get methodDisplay; PaymentStatus? get status; String get statusDisplay;/// Date de paiement si réglé, sinon date de création.
+ String get amount;/// Valeur technique du moyen (`Method80cEnum`) — sert à colorer la pastille
+/// de l'opérateur dans l'historique. Le libellé reste [methodDisplay].
+ String get methodWire; String get methodDisplay; PaymentStatus? get status; String get statusDisplay;/// Date de paiement si réglé, sinon date de création.
  DateTime get date;
 /// Create a copy of TravelerPayment
 /// with the given fields replaced by the non-null parameter values.
@@ -27,16 +29,16 @@ $TravelerPaymentCopyWith<TravelerPayment> get copyWith => _$TravelerPaymentCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerPayment&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.methodDisplay, methodDisplay) || other.methodDisplay == methodDisplay)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusDisplay, statusDisplay) || other.statusDisplay == statusDisplay)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TravelerPayment&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.methodWire, methodWire) || other.methodWire == methodWire)&&(identical(other.methodDisplay, methodDisplay) || other.methodDisplay == methodDisplay)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusDisplay, statusDisplay) || other.statusDisplay == statusDisplay)&&(identical(other.date, date) || other.date == date));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,amount,methodDisplay,status,statusDisplay,date);
+int get hashCode => Object.hash(runtimeType,id,ticketNumber,amount,methodWire,methodDisplay,status,statusDisplay,date);
 
 @override
 String toString() {
-  return 'TravelerPayment(id: $id, ticketNumber: $ticketNumber, amount: $amount, methodDisplay: $methodDisplay, status: $status, statusDisplay: $statusDisplay, date: $date)';
+  return 'TravelerPayment(id: $id, ticketNumber: $ticketNumber, amount: $amount, methodWire: $methodWire, methodDisplay: $methodDisplay, status: $status, statusDisplay: $statusDisplay, date: $date)';
 }
 
 
@@ -47,7 +49,7 @@ abstract mixin class $TravelerPaymentCopyWith<$Res>  {
   factory $TravelerPaymentCopyWith(TravelerPayment value, $Res Function(TravelerPayment) _then) = _$TravelerPaymentCopyWithImpl;
 @useResult
 $Res call({
- int id, String ticketNumber, String amount, String methodDisplay, PaymentStatus? status, String statusDisplay, DateTime date
+ int id, String ticketNumber, String amount, String methodWire, String methodDisplay, PaymentStatus? status, String statusDisplay, DateTime date
 });
 
 
@@ -64,11 +66,12 @@ class _$TravelerPaymentCopyWithImpl<$Res>
 
 /// Create a copy of TravelerPayment
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ticketNumber = null,Object? amount = null,Object? methodDisplay = null,Object? status = freezed,Object? statusDisplay = null,Object? date = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? ticketNumber = null,Object? amount = null,Object? methodWire = null,Object? methodDisplay = null,Object? status = freezed,Object? statusDisplay = null,Object? date = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as String,methodWire: null == methodWire ? _self.methodWire : methodWire // ignore: cast_nullable_to_non_nullable
 as String,methodDisplay: null == methodDisplay ? _self.methodDisplay : methodDisplay // ignore: cast_nullable_to_non_nullable
 as String,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PaymentStatus?,statusDisplay: null == statusDisplay ? _self.statusDisplay : statusDisplay // ignore: cast_nullable_to_non_nullable
@@ -158,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String ticketNumber,  String amount,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String ticketNumber,  String amount,  String methodWire,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TravelerPayment() when $default != null:
-return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
+return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodWire,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
   return orElse();
 
 }
@@ -179,10 +182,10 @@ return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String ticketNumber,  String amount,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String ticketNumber,  String amount,  String methodWire,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)  $default,) {final _that = this;
 switch (_that) {
 case _TravelerPayment():
-return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
+return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodWire,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +202,10 @@ return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String ticketNumber,  String amount,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String ticketNumber,  String amount,  String methodWire,  String methodDisplay,  PaymentStatus? status,  String statusDisplay,  DateTime date)?  $default,) {final _that = this;
 switch (_that) {
 case _TravelerPayment() when $default != null:
-return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
+return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodWire,_that.methodDisplay,_that.status,_that.statusDisplay,_that.date);case _:
   return null;
 
 }
@@ -214,13 +217,16 @@ return $default(_that.id,_that.ticketNumber,_that.amount,_that.methodDisplay,_th
 
 
 class _TravelerPayment implements TravelerPayment {
-  const _TravelerPayment({required this.id, required this.ticketNumber, required this.amount, required this.methodDisplay, this.status, required this.statusDisplay, required this.date});
+  const _TravelerPayment({required this.id, required this.ticketNumber, required this.amount, required this.methodWire, required this.methodDisplay, this.status, required this.statusDisplay, required this.date});
   
 
 @override final  int id;
 @override final  String ticketNumber;
 /// Montant, lecture seule (chaîne décimale de l'API).
 @override final  String amount;
+/// Valeur technique du moyen (`Method80cEnum`) — sert à colorer la pastille
+/// de l'opérateur dans l'historique. Le libellé reste [methodDisplay].
+@override final  String methodWire;
 @override final  String methodDisplay;
 @override final  PaymentStatus? status;
 @override final  String statusDisplay;
@@ -237,16 +243,16 @@ _$TravelerPaymentCopyWith<_TravelerPayment> get copyWith => __$TravelerPaymentCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerPayment&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.methodDisplay, methodDisplay) || other.methodDisplay == methodDisplay)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusDisplay, statusDisplay) || other.statusDisplay == statusDisplay)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TravelerPayment&&(identical(other.id, id) || other.id == id)&&(identical(other.ticketNumber, ticketNumber) || other.ticketNumber == ticketNumber)&&(identical(other.amount, amount) || other.amount == amount)&&(identical(other.methodWire, methodWire) || other.methodWire == methodWire)&&(identical(other.methodDisplay, methodDisplay) || other.methodDisplay == methodDisplay)&&(identical(other.status, status) || other.status == status)&&(identical(other.statusDisplay, statusDisplay) || other.statusDisplay == statusDisplay)&&(identical(other.date, date) || other.date == date));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,ticketNumber,amount,methodDisplay,status,statusDisplay,date);
+int get hashCode => Object.hash(runtimeType,id,ticketNumber,amount,methodWire,methodDisplay,status,statusDisplay,date);
 
 @override
 String toString() {
-  return 'TravelerPayment(id: $id, ticketNumber: $ticketNumber, amount: $amount, methodDisplay: $methodDisplay, status: $status, statusDisplay: $statusDisplay, date: $date)';
+  return 'TravelerPayment(id: $id, ticketNumber: $ticketNumber, amount: $amount, methodWire: $methodWire, methodDisplay: $methodDisplay, status: $status, statusDisplay: $statusDisplay, date: $date)';
 }
 
 
@@ -257,7 +263,7 @@ abstract mixin class _$TravelerPaymentCopyWith<$Res> implements $TravelerPayment
   factory _$TravelerPaymentCopyWith(_TravelerPayment value, $Res Function(_TravelerPayment) _then) = __$TravelerPaymentCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String ticketNumber, String amount, String methodDisplay, PaymentStatus? status, String statusDisplay, DateTime date
+ int id, String ticketNumber, String amount, String methodWire, String methodDisplay, PaymentStatus? status, String statusDisplay, DateTime date
 });
 
 
@@ -274,11 +280,12 @@ class __$TravelerPaymentCopyWithImpl<$Res>
 
 /// Create a copy of TravelerPayment
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ticketNumber = null,Object? amount = null,Object? methodDisplay = null,Object? status = freezed,Object? statusDisplay = null,Object? date = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? ticketNumber = null,Object? amount = null,Object? methodWire = null,Object? methodDisplay = null,Object? status = freezed,Object? statusDisplay = null,Object? date = null,}) {
   return _then(_TravelerPayment(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,ticketNumber: null == ticketNumber ? _self.ticketNumber : ticketNumber // ignore: cast_nullable_to_non_nullable
 as String,amount: null == amount ? _self.amount : amount // ignore: cast_nullable_to_non_nullable
+as String,methodWire: null == methodWire ? _self.methodWire : methodWire // ignore: cast_nullable_to_non_nullable
 as String,methodDisplay: null == methodDisplay ? _self.methodDisplay : methodDisplay // ignore: cast_nullable_to_non_nullable
 as String,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as PaymentStatus?,statusDisplay: null == statusDisplay ? _self.statusDisplay : statusDisplay // ignore: cast_nullable_to_non_nullable

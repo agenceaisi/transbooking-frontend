@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/localization/l10n_extension.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/sync/connection_providers.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/app_time_format.dart';
@@ -13,10 +15,13 @@ import '../../../auth/domain/user_role.dart';
 import '../../../auth/presentation/session_controller.dart';
 import '../../domain/agent_dashboard.dart';
 import '../agent_dashboard_controller.dart';
+import '../agent_sync_bootstrap.dart';
+import '../seat_correction_listener.dart';
 import '../widgets/agent_alerts_card.dart';
 import '../widgets/agent_bottom_nav.dart';
 import '../widgets/agent_header.dart';
 import '../widgets/agent_quick_actions.dart';
+import '../widgets/agent_quick_search_card.dart';
 import '../widgets/next_boarding_card.dart';
 import '../widgets/next_departures_card.dart';
 import '../widgets/pending_sync_sheet.dart';
@@ -34,6 +39,13 @@ class AgentDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Fait vivre le moteur de synchronisation tant que l'écran agent est à
+    // l'écran (CLAUDE.md §6) : téléchargement matinal au retour du réseau,
+    // puis envoi de l'outbox dès qu'il y a quelque chose en attente.
+    ref.watch(agentSyncBootstrapProvider);
+    // Modale « billet corrigé » dès qu'une synchro réattribue un siège.
+    listenForSeatCorrections(ref, context);
+
     final session = ref.watch(sessionControllerProvider);
     final role = session.role ?? UserRole.agentGuichet;
     final isController = role == UserRole.controleur;
@@ -102,28 +114,28 @@ class AgentDashboardScreen extends ConsumerWidget {
         AgentNavItem(
           label: l10n.agentNavScan,
           icon: Icons.qr_code_scanner,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentScanQr),
         ),
         AgentNavItem(
           label: l10n.agentNavPassengers,
           icon: Icons.format_list_bulleted,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentSchedule),
         ),
       ] else ...[
         AgentNavItem(
           label: l10n.agentNavPassengers,
           icon: Icons.person_outline,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentNewPassenger),
         ),
         AgentNavItem(
           label: l10n.agentNavParcels,
           icon: Icons.inventory_2_outlined,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentNewParcel),
         ),
         AgentNavItem(
           label: l10n.agentNavScan,
           icon: Icons.qr_code_scanner,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentScanQr),
         ),
       ],
       AgentNavItem(
@@ -159,7 +171,9 @@ class _DashboardBody extends ConsumerWidget {
     final alerts = AgentAlertsCard(
       alerts: snapshot.alerts,
       pendingAlerts: snapshot.pendingAlerts,
-      onOpenAlert: (_) => _showComingSoon(context),
+      onOpenAlert: (alert) => alert.kind == AgentAlertKind.parcel
+          ? context.push(AppRoutes.agentParcelArrivals)
+          : _showComingSoon(context),
     );
 
     final actions = AgentQuickActions(
@@ -171,16 +185,29 @@ class _DashboardBody extends ConsumerWidget {
         ? NextBoardingCard(
             departure: snapshot.nextDeparture,
             lastUpdatedLabel: _lastUpdatedLabel(context, snapshot),
-            onScan: () => _showComingSoon(context),
-            onViewPassengers: () => _showComingSoon(context),
+            onScan: () => context.push(AppRoutes.agentScanQr),
+            onViewPassengers: snapshot.nextDeparture == null
+                ? () {}
+                : () => context.push(
+                    AppRoutes.agentBoardingListPath(
+                      snapshot.nextDeparture!.tripId,
+                    ),
+                  ),
           )
         : NextDeparturesCard(
             departures: snapshot.departures,
             lastUpdatedLabel: _lastUpdatedLabel(context, snapshot),
             isCompact: isCompact,
-            onOpenSchedule: () => _showComingSoon(context),
-            onViewPassengers: (_) => _showComingSoon(context),
-            onAddPassenger: (_) => _showComingSoon(context),
+            onOpenSchedule: () => context.push(AppRoutes.agentSchedule),
+            onViewPassengers: (departure) => context.push(
+              AppRoutes.agentBoardingListPath(departure.tripId),
+            ),
+            // Le départ choisi ici est un `AgentDeparture` (tableau de bord),
+            // sans le tarif qu'exige l'enregistrement (`AgentTrip`, guide
+            // §6.6) : direction l'écran, qui fait choisir le voyage parmi
+            // le programme du jour plutôt que de propager une donnée
+            // incomplète.
+            onAddPassenger: (_) => context.push(AppRoutes.agentNewPassenger),
           );
 
     if (isCompact) {
@@ -188,6 +215,8 @@ class _DashboardBody extends ConsumerWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
           banner,
+          const SizedBox(height: AppSpacing.md),
+          const AgentQuickSearchCard(),
           const SizedBox(height: AppSpacing.md),
           _SectionLabel(context.l10n.agentQuickActionsTitle),
           actions,
@@ -202,6 +231,8 @@ class _DashboardBody extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.xl),
       children: [
+        const AgentQuickSearchCard(),
+        const SizedBox(height: AppSpacing.lg),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -264,14 +295,13 @@ class _DashboardBody extends ConsumerWidget {
   /// Actions rapides du rôle courant, telles que la maquette les ordonne.
   List<AgentQuickAction> _quickActions(BuildContext context, bool controller) {
     final l10n = context.l10n;
-    void comingSoon() => _showComingSoon(context);
 
     final scan = AgentQuickAction(
       label: l10n.agentActionScanQr,
       icon: Icons.qr_code_scanner,
       background: AppColors.primary,
       foreground: AppColors.onPrimary,
-      onPressed: comingSoon,
+      onPressed: () => context.push(AppRoutes.agentScanQr),
     );
 
     if (controller) {
@@ -282,8 +312,9 @@ class _DashboardBody extends ConsumerWidget {
           icon: Icons.format_list_bulleted,
           background: AppColors.primary100,
           foreground: AppColors.primary900,
-          onPressed: comingSoon,
+          onPressed: () => context.push(AppRoutes.agentSchedule),
         ),
+        ..._sharedActions(context),
       ];
     }
 
@@ -293,23 +324,48 @@ class _DashboardBody extends ConsumerWidget {
         icon: Icons.person_add_alt_outlined,
         background: AppColors.primary100,
         foreground: AppColors.primary900,
-        onPressed: comingSoon,
+        onPressed: () => context.push(AppRoutes.agentNewPassenger),
       ),
       AgentQuickAction(
         label: l10n.agentActionRegisterParcel,
         icon: Icons.inventory_2_outlined,
         background: AppStatusColors.warning.background,
         foreground: AppStatusColors.warning.foreground,
-        onPressed: comingSoon,
+        onPressed: () => context.push(AppRoutes.agentNewParcel),
       ),
       AgentQuickAction(
         label: l10n.agentActionDaySchedule,
         icon: Icons.calendar_today_outlined,
         background: AppStatusColors.info.background,
         foreground: AppStatusColors.info.foreground,
-        onPressed: comingSoon,
+        onPressed: () => context.push(AppRoutes.agentSchedule),
       ),
       scan,
+      ..._sharedActions(context),
+    ];
+  }
+
+  /// Actions communes aux deux rôles (guide §6.15) — l'historique de synchro
+  /// est un écran réel ; les statistiques du jour n'ont pas encore
+  /// d'endpoint agent dédié (CLAUDE.md §7 : pas d'endpoint inventé).
+  List<AgentQuickAction> _sharedActions(BuildContext context) {
+    final l10n = context.l10n;
+
+    return [
+      AgentQuickAction(
+        label: l10n.agentActionSyncHistory,
+        icon: Icons.history,
+        background: AppColors.primary100,
+        foreground: AppColors.primary900,
+        onPressed: () => context.push(AppRoutes.agentSyncHistory),
+      ),
+      AgentQuickAction(
+        label: l10n.agentActionDayStats,
+        icon: Icons.query_stats_outlined,
+        background: AppStatusColors.info.background,
+        foreground: AppStatusColors.info.foreground,
+        onPressed: () => _showComingSoon(context),
+      ),
     ];
   }
 }

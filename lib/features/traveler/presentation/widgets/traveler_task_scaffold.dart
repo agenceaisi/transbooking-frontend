@@ -97,7 +97,15 @@ class TravelerTaskScaffold extends StatelessWidget {
               ),
               child: SafeArea(
                 top: false,
-                child: Center(
+                // `heightFactor: 1` est essentiel : un `Center` nu reçoit une
+                // hauteur *lâche* (bornée par tout l'espace restant de la
+                // page) et s'étend pour la remplir — Scaffold réserve alors
+                // toute cette hauteur à la barre basse et écrase le corps de
+                // la page à 0 px (régression découverte en vérifiant le rendu
+                // de « Déposer un avis »). `heightFactor: 1` force l'auto-
+                // dimensionnement au contenu, comme un `Center` l'affiche.
+                child: Align(
+                  heightFactor: 1,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(maxWidth: maxContentWidth),
                     child: Padding(

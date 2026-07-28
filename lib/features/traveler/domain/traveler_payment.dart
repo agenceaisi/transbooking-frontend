@@ -16,6 +16,10 @@ abstract class TravelerPayment with _$TravelerPayment {
 
     /// Montant, lecture seule (chaîne décimale de l'API).
     required String amount,
+
+    /// Valeur technique du moyen (`Method80cEnum`) — sert à colorer la pastille
+    /// de l'opérateur dans l'historique. Le libellé reste [methodDisplay].
+    required String methodWire,
     required String methodDisplay,
     PaymentStatus? status,
     required String statusDisplay,
