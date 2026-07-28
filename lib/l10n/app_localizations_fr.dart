@@ -456,10 +456,44 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agentActionPassengerList => 'Liste des passagers · embarquement';
 
   @override
+  String get agentActionSyncHistory => 'Historique de synchro';
+
+  @override
+  String get agentActionDayStats => 'Statistiques du jour';
+
+  @override
+  String get agentQuickSearchTitle => 'Recherche rapide';
+
+  @override
+  String get agentQuickSearchHint => 'Nom ou numéro de billet';
+
+  @override
+  String get agentQuickSearchEmpty =>
+      'Aucun passager ne correspond à cette recherche.';
+
+  @override
+  String get agentQuickSearchError => 'Recherche indisponible pour l\'instant.';
+
+  @override
+  String agentQuickSearchMore(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '+ $count autres résultats — affinez la recherche',
+      one: '+ 1 autre résultat — affinez la recherche',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get agentNextDeparturesTitle => 'Prochains départs';
 
   @override
   String get agentFullSchedule => 'Programme complet';
+
+  @override
+  String get agentNextDeparturesFilterEmpty =>
+      'Aucun départ ne correspond à ces filtres.';
 
   @override
   String agentSeatsAvailable(int count) {
@@ -482,19 +516,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agentDepartureCancelled => 'Annulé';
 
   @override
-  String agentPassengersRegistered(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count passagers',
-      one: '1 passager',
-      zero: 'aucun passager',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get agentViewPassengerList => 'Voir la liste des passagers';
+  String get agentViewPassengerList => 'Liste des passagers';
 
   @override
   String get agentViewPassengerListShort => 'Liste passagers';
@@ -575,6 +597,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get agentPendingValidation => 'Embarquement';
 
   @override
+  String get agentPendingParcelNotification => 'Colis prévenu';
+
+  @override
   String get agentPendingStatusPending => 'En attente';
 
   @override
@@ -585,7 +610,359 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agentSyncEngineNotice =>
-      'L\'envoi automatique arrive avec le module hors-ligne. Vos saisies restent conservées sur l\'appareil.';
+      'L\'envoi se fait automatiquement dès que la connexion est disponible. Vos saisies restent conservées sur l\'appareil en attendant.';
+
+  @override
+  String get agentSyncRetryButton => 'Réessayer l\'envoi';
+
+  @override
+  String get agentSyncRetrying => 'Nouvel envoi…';
+
+  @override
+  String get actionRefresh => 'Actualiser';
+
+  @override
+  String get agentTripStatusScheduled => 'Programmé';
+
+  @override
+  String get agentTripStatusInProgress => 'En cours';
+
+  @override
+  String get agentTripStatusCompleted => 'Terminé';
+
+  @override
+  String get agentAmountPendingSync => 'Calculé à la synchronisation';
+
+  @override
+  String get agentScheduleTitle => 'Programme du jour';
+
+  @override
+  String get agentScheduleFilterDestination => 'Destination';
+
+  @override
+  String get agentScheduleFilterVehicle => 'Véhicule';
+
+  @override
+  String get agentScheduleEmptyTitle => 'Aucun voyage programmé';
+
+  @override
+  String get agentScheduleEmptyMessage =>
+      'Le programme du jour n\'a pas encore été publié, ou aucun voyage ne correspond aux filtres.';
+
+  @override
+  String get agentSchedulePassengerList => 'Liste passagers';
+
+  @override
+  String get agentScheduleAddPassenger => '+ Ajouter';
+
+  @override
+  String get agentPassengerTitle => 'Enregistrer un passager';
+
+  @override
+  String get agentPassengerConfirmedTitle => 'Passager enregistré';
+
+  @override
+  String get agentPassengerQueuedTitle => 'Passager mis en attente';
+
+  @override
+  String get agentPassengerQueuedNotice =>
+      'L\'enregistrement sera envoyé au serveur dès le retour du réseau. Le siège et le billet définitifs arriveront à ce moment-là.';
+
+  @override
+  String get agentPassengerOfflineNotice =>
+      'Hors ligne : l\'enregistrement sera mis en attente et envoyé au retour du réseau.';
+
+  @override
+  String get agentPassengerStepTrip => '1 · Choix du voyage';
+
+  @override
+  String get agentPassengerStepInfo => '2 · Informations du passager';
+
+  @override
+  String get agentPassengerStepSeat => '3 · Siège';
+
+  @override
+  String get agentPassengerStepPayment => '4 · Paiement';
+
+  @override
+  String get agentPassengerFirstName => 'Prénom';
+
+  @override
+  String get agentPassengerFirstNameRequired => 'Le prénom est obligatoire.';
+
+  @override
+  String get agentPassengerLastName => 'Nom';
+
+  @override
+  String get agentPassengerLastNameRequired => 'Le nom est obligatoire.';
+
+  @override
+  String get agentPassengerPhoneInvalid =>
+      'Entrez un numéro valide à 8 chiffres.';
+
+  @override
+  String get agentPassengerTripRequired => 'Choisissez un voyage.';
+
+  @override
+  String get agentPassengerSeatAuto =>
+      'Attribution automatique par le serveur · non modifiable';
+
+  @override
+  String get agentPassengerTransactionRef => 'Numéro de transaction';
+
+  @override
+  String get agentPassengerTransactionRefHint => 'Ex. MP240912.1834.A45678';
+
+  @override
+  String get agentPassengerTransactionRefRequired =>
+      'Le numéro de transaction est requis.';
+
+  @override
+  String get agentPassengerAmountLabel => 'Montant à payer';
+
+  @override
+  String get agentPassengerSubmit => 'Valider et imprimer le billet';
+
+  @override
+  String get agentPassengerTicketLabel => 'Passager';
+
+  @override
+  String get agentPassengerTripLabel => 'Trajet';
+
+  @override
+  String get agentPassengerSeatLabel => 'Siège';
+
+  @override
+  String get agentPassengerPrint => 'Imprimer le billet';
+
+  @override
+  String get agentPassengerNewOne => '+ Enregistrer un autre passager';
+
+  @override
+  String get agentPaymentCash => 'Espèces';
+
+  @override
+  String get agentSeatCorrectedBadge => 'Conflit de siège · Hors-ligne';
+
+  @override
+  String get agentSeatCorrectedTitle => 'Un autre siège vous a été attribué';
+
+  @override
+  String agentSeatCorrectedBody(String passenger, String seat) {
+    return 'À la synchronisation, le siège réservé hors ligne pour $passenger était déjà occupé. Le siège $seat lui a été attribué automatiquement.';
+  }
+
+  @override
+  String agentSeatCorrectedBodyWithOriginal(
+    String passenger,
+    String originalSeat,
+    String newSeat,
+  ) {
+    return 'À la reconnexion, le siège $originalSeat réservé hors ligne était déjà occupé par un autre passager. Le siège $newSeat a été attribué automatiquement à $passenger.';
+  }
+
+  @override
+  String get agentSeatCorrectedNewSeatLabel => 'Nouveau siège';
+
+  @override
+  String get agentParcelTitle => 'Enregistrer un colis';
+
+  @override
+  String get agentParcelConfirmedTitle => 'Colis enregistré';
+
+  @override
+  String get agentParcelQueuedTitle => 'Colis mis en attente';
+
+  @override
+  String get agentParcelQueuedNotice =>
+      'L\'enregistrement sera envoyé au serveur dès le retour du réseau. Le tarif définitif et le QR arriveront à ce moment-là.';
+
+  @override
+  String get agentParcelOriginUnknownTitle => 'Gare de départ inconnue';
+
+  @override
+  String get agentParcelOriginUnknownMessage =>
+      'Le programme du jour doit être chargé au moins une fois pour connaître votre gare de départ. Ouvrez d\'abord « Programme du jour ».';
+
+  @override
+  String get agentParcelStepSender => '1 · Expéditeur';
+
+  @override
+  String get agentParcelStepRecipient => '2 · Destinataire';
+
+  @override
+  String get agentParcelStepParcel => '3 · Colis';
+
+  @override
+  String get agentParcelFullName => 'Nom complet';
+
+  @override
+  String get agentParcelNameRequired => 'Le nom complet est obligatoire.';
+
+  @override
+  String get agentParcelPhoneInvalid => 'Entrez un numéro valide à 8 chiffres.';
+
+  @override
+  String get agentParcelOriginCity => 'Ville de départ';
+
+  @override
+  String get agentParcelDestCity => 'Ville de destination';
+
+  @override
+  String get agentParcelCityRequired => 'Choisissez une ville de destination.';
+
+  @override
+  String get agentParcelNature => 'Nature du colis';
+
+  @override
+  String get agentParcelNatureRequired => 'Précisez la nature du colis.';
+
+  @override
+  String get agentParcelWeight => 'Poids (kg)';
+
+  @override
+  String get agentParcelWeightRequired => 'Indiquez un poids valide.';
+
+  @override
+  String get agentParcelSubmit => 'Valider';
+
+  @override
+  String get agentParcelSenderLabel => 'Expéditeur';
+
+  @override
+  String get agentParcelRecipientLabel => 'Destinataire';
+
+  @override
+  String get agentParcelTripLabel => 'Trajet';
+
+  @override
+  String get agentParcelWeightLabel => 'Poids';
+
+  @override
+  String get agentParcelTariffLabel => 'Tarif payé';
+
+  @override
+  String get agentParcelNewOne => '+ Enregistrer un autre colis';
+
+  @override
+  String get agentParcelArrivalsTitle => 'Colis arrivés';
+
+  @override
+  String get agentParcelArrivalsOfflineNotice =>
+      'Hors ligne : le SMS nécessite le réseau. « Marquer prévenu » reste possible, mis en attente jusqu\'au retour du réseau.';
+
+  @override
+  String get agentParcelArrivalsEmptyTitle =>
+      'Tous les destinataires ont été prévenus';
+
+  @override
+  String get agentParcelArrivalsEmptyMessage =>
+      'Les colis arrivés en attente de notification s\'afficheront ici.';
+
+  @override
+  String get agentParcelArrivedBadge => 'Arrivé';
+
+  @override
+  String get agentSyncLogsTitle => 'Historique de synchronisation';
+
+  @override
+  String get agentSyncLogsEmptyTitle =>
+      'Aucune synchronisation pour l\'instant';
+
+  @override
+  String get agentSyncLogsEmptyMessage =>
+      'L\'historique de vos synchronisations s\'affichera ici.';
+
+  @override
+  String get agentSyncLogsBadgeOk => 'Synchronisé';
+
+  @override
+  String agentSyncLogsBadgeConflicts(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conflits résolus',
+      one: '1 conflit résolu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String agentSyncLogsBadgeErrors(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count erreurs',
+      one: '1 erreur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentSyncLogsNoWrites => 'Aucune écriture envoyée';
+
+  @override
+  String agentSyncLogsBookingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count billets',
+      one: '1 billet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String agentSyncLogsParcelsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count colis',
+      one: '1 colis',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String agentSyncLogsValidationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count embarquements',
+      one: '1 embarquement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String agentSyncLogsNotificationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count notifications colis',
+      one: '1 notification colis',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentParcelSendSms => 'Envoyer un SMS';
+
+  @override
+  String get agentParcelSmsSent => 'SMS déjà envoyé';
+
+  @override
+  String get agentParcelSmsUnavailable => 'SMS indisponible hors ligne';
+
+  @override
+  String get agentParcelCall => 'Appeler';
+
+  @override
+  String get agentParcelMarkNotified => 'Marquer prévenu';
+
+  @override
+  String get agentParcelMarkNotifiedQueued =>
+      'Marquer prévenu (mise en attente)';
 
   @override
   String get agentNavHome => 'Accueil';
@@ -601,6 +978,252 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get agentNavProfile => 'Profil';
+
+  @override
+  String get actionConfirm => 'Confirmer';
+
+  @override
+  String get agentBoardingTitle => 'Liste des passagers';
+
+  @override
+  String get agentBoardingOfflineNotice =>
+      'Scans et coches enregistrés localement, synchronisation automatique au retour du réseau.';
+
+  @override
+  String agentBoardingPassengersTitle(int count) {
+    return 'Passagers ($count)';
+  }
+
+  @override
+  String get agentBoardingEmpty =>
+      'Aucun passager inscrit sur ce voyage pour l\'instant.';
+
+  @override
+  String agentBoardingSeat(String seat) {
+    return 'Siège $seat';
+  }
+
+  @override
+  String get agentBoardingPaid => 'Payé';
+
+  @override
+  String get agentBoardingUnpaid => 'Non payé';
+
+  @override
+  String get agentBoardingUnpaidCannotBoard =>
+      'Ce billet n\'est pas payé : il ne peut pas embarquer.';
+
+  @override
+  String get agentBoardingProgressLabel => 'Embarquement';
+
+  @override
+  String agentBoardingProgressOfRegistered(int boarded, int registered) {
+    return '$boarded / $registered inscrits';
+  }
+
+  @override
+  String get agentBoardingStatRegistered => 'Inscrits';
+
+  @override
+  String get agentBoardingStatPaid => 'Payés';
+
+  @override
+  String get agentBoardingStatUnpaid => 'Non payés';
+
+  @override
+  String get agentBoardingStatBoarded => 'Embarqués';
+
+  @override
+  String get agentBoardingStatAbsent => 'Absents';
+
+  @override
+  String get agentBoardingStatRemaining => 'Places restantes';
+
+  @override
+  String get agentBoardingScanAction => 'Scanner un QR code';
+
+  @override
+  String get agentBoardingAllAction => 'Tout embarquer';
+
+  @override
+  String get agentBoardingLastMinuteAction => '+ Dernière minute';
+
+  @override
+  String get agentBoardingDownloadList => 'Télécharger / imprimer la liste';
+
+  @override
+  String agentBoardingValidatedBanner(int boarded, int absent) {
+    return 'Embarquement validé · $boarded embarqués, $absent absents.';
+  }
+
+  @override
+  String agentBoardingValidatedBannerAt(String time, int boarded, int absent) {
+    return 'Embarquement validé à $time · $boarded embarqués, $absent absents.';
+  }
+
+  @override
+  String get agentBoardingValidateAction => 'Valider l\'embarquement';
+
+  @override
+  String get agentBoardingValidateRequiresOnline =>
+      'Nécessite une connexion : verrouille l\'embarquement côté serveur.';
+
+  @override
+  String get agentBoardingValidateTitle => 'Valider l\'embarquement ?';
+
+  @override
+  String agentBoardingValidateMessage(int boarded, int absent) {
+    return 'Cette action est définitive. La liste sera verrouillée avec $boarded passagers embarqués et $absent absents. Aucune modification ne sera possible après validation.';
+  }
+
+  @override
+  String get agentBoardingValidateConfirm => 'Oui, valider';
+
+  @override
+  String get agentBoardingValidatedToast =>
+      'Embarquement validé et verrouillé.';
+
+  @override
+  String get agentBoardingAllTitle => 'Embarquer tous les passagers ?';
+
+  @override
+  String agentBoardingAllMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Les $count passagers restants seront marqués comme embarqués.',
+      one: 'Le passager restant sera marqué comme embarqué.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String agentBoardingAllBoarded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count passagers embarqués.',
+      one: '1 passager embarqué.',
+      zero: 'Aucun passager restant à embarquer.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get agentBoardingLastMinuteTitle => 'Passager de dernière minute';
+
+  @override
+  String get agentBoardingLastMinuteConfirm => 'Ajouter';
+
+  @override
+  String get agentBoardingLastMinuteAdded =>
+      'Passager ajouté à la liste d\'embarquement.';
+
+  @override
+  String get agentScanTitle => 'Scanner un billet';
+
+  @override
+  String get agentScanHistory => 'Historique';
+
+  @override
+  String get agentScanAlignHint => 'Alignez le QR code du billet dans le cadre';
+
+  @override
+  String get agentScanKeepCameraOn =>
+      'La caméra reste active — enchaînez les scans sans fermer l\'appareil.';
+
+  @override
+  String get agentScanCameraError =>
+      'Caméra indisponible. Vérifiez l\'autorisation d\'accès dans les réglages.';
+
+  @override
+  String get agentScanOnlineNote => 'En ligne · vérification en temps réel';
+
+  @override
+  String get agentScanOfflineNote =>
+      'Hors ligne · vérification via la liste téléchargée le matin';
+
+  @override
+  String get agentScanFieldPassenger => 'Passager';
+
+  @override
+  String get agentScanFieldTrip => 'Trajet';
+
+  @override
+  String get agentScanFieldSeat => 'Siège';
+
+  @override
+  String get agentScanMarkBoarded => 'Marquer embarqué';
+
+  @override
+  String get agentScanContinue => 'Continuer le scan';
+
+  @override
+  String get agentScanResultValidTitle => 'Billet valide';
+
+  @override
+  String get agentScanResultValidMessage =>
+      'Ce billet est valide et peut embarquer.';
+
+  @override
+  String get agentScanResultUnpaidTitle => 'Paiement non confirmé';
+
+  @override
+  String get agentScanResultUnpaidMessage =>
+      'Ce billet n\'est pas encore payé. Le passager ne peut pas embarquer avec ce billet.';
+
+  @override
+  String get agentScanResultCancelledTitle => 'Réservation annulée';
+
+  @override
+  String get agentScanResultCancelledMessage =>
+      'Cette réservation a été annulée. Le passager ne peut pas embarquer avec ce billet.';
+
+  @override
+  String get agentScanResultRefundedTitle => 'Réservation remboursée';
+
+  @override
+  String get agentScanResultRefundedMessage =>
+      'Cette réservation a été remboursée. Le passager ne peut pas embarquer avec ce billet.';
+
+  @override
+  String get agentScanResultUsedTitle => 'Billet déjà utilisé';
+
+  @override
+  String get agentScanResultUsedMessage =>
+      'Ce passager a déjà embarqué. Aucune action supplémentaire n\'est nécessaire.';
+
+  @override
+  String get agentScanResultInvalidTitle => 'Billet invalide';
+
+  @override
+  String get agentScanResultInvalidMessage =>
+      'Ce billet n\'est pas valide pour l\'embarquement d\'aujourd\'hui.';
+
+  @override
+  String get agentScanResultNotFoundTitle => 'Code non reconnu';
+
+  @override
+  String get agentScanResultNotFoundMessage =>
+      'Ce QR code ne correspond à aucun billet connu de votre compagnie. Vérifiez qu\'il s\'agit bien d\'un billet TransBooking BF.';
+
+  @override
+  String get agentScanHistoryTitle => 'Historique des scans';
+
+  @override
+  String get agentScanHistoryEmpty => 'Aucun billet scanné pour l\'instant.';
+
+  @override
+  String agentScanHistoryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count billets scannés · 50 derniers conservés',
+      one: '1 billet scanné · 50 derniers conservés',
+      zero: 'Aucun billet scanné',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get publicNavHome => 'Accueil';
@@ -1417,6 +2040,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dashUpcoming => 'Voyages à venir';
 
   @override
+  String get dashScheduledTrips => 'Voyages programmés';
+
+  @override
+  String get dashTicketStatus => 'Statut des billets';
+
+  @override
+  String get dashStatusPaid => 'Payé';
+
+  @override
+  String get dashStatusPending => 'En attente';
+
+  @override
+  String get dashStatusCancelled => 'Annulé';
+
+  @override
+  String get dashSeeAll => 'Tout voir';
+
+  @override
   String get dashActionSearch => 'Rechercher un trajet';
 
   @override
@@ -1473,7 +2114,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get bookingsSeat => 'Siège';
 
   @override
-  String get bookingsDate => 'Date & heure';
+  String get bookingsDate => 'Date';
 
   @override
   String get bookingsTicketNo => 'N° billet';
@@ -1486,6 +2127,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get bookingsCancel => 'Annuler';
+
+  @override
+  String get bookingsReview => 'Noter';
 
   @override
   String get bookingsDownloadUnavailable =>
@@ -1686,10 +2330,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reviewTripFallback => 'Votre dernier voyage';
 
   @override
+  String reviewTripMeta(
+    String date,
+    String time,
+    String company,
+    String ticket,
+  ) {
+    return '$date · $time · $company · Billet $ticket';
+  }
+
+  @override
   String get reviewQuestion => 'Comment s\'est passé votre voyage ?';
 
   @override
   String get reviewQuestionHint => 'Attribuez une note de 1 à 5 étoiles.';
+
+  @override
+  String get reviewQuestionCompact => 'Votre note';
 
   @override
   String get reviewRatingPrompt => 'Touchez une étoile';
@@ -1710,11 +2367,43 @@ class AppLocalizationsFr extends AppLocalizations {
   String get reviewRating5 => 'Excellent !';
 
   @override
+  String get reviewAspectsTitle => 'Qu\'avez-vous apprécié ?';
+
+  @override
+  String get reviewAspectsTitleCompact => 'Points forts';
+
+  @override
+  String get reviewAspectsOptional => '(facultatif)';
+
+  @override
+  String get reviewAspectPunctuality => 'Ponctualité';
+
+  @override
+  String get reviewAspectComfort => 'Confort';
+
+  @override
+  String get reviewAspectCleanliness => 'Propreté';
+
+  @override
+  String get reviewAspectWelcome => 'Accueil';
+
+  @override
+  String get reviewAspectSafety => 'Sécurité';
+
+  @override
+  String get reviewAspectValueForMoney => 'Rapport qualité-prix';
+
+  @override
+  String reviewAspectsSummaryPrefix(String aspects) {
+    return 'Points forts : $aspects';
+  }
+
+  @override
   String get reviewCommentLabel => 'Votre commentaire';
 
   @override
   String get reviewCommentHint =>
-      'Partagez votre expérience : ponctualité, confort, accueil…';
+      'Partagez votre expérience : ponctualité, confort, accueil du personnel, propreté…';
 
   @override
   String get reviewFooter =>
@@ -1772,13 +2461,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get newClaimTitle => 'Nouvelle réclamation';
 
   @override
+  String get newClaimBreadcrumb => 'Réclamations';
+
+  @override
   String get newClaimSubmit => 'Envoyer la réclamation';
 
   @override
-  String get newClaimTypeLabel => 'Type de problème';
+  String get newClaimSubmitted => 'Réclamation envoyée';
 
   @override
-  String get newClaimBookingLabel => 'Réservation concernée';
+  String get newClaimTypeLabel => 'Type de problème';
 
   @override
   String get newClaimSubjectLabel => 'Objet';
@@ -1792,14 +2484,22 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get newClaimDescriptionHint =>
-      'Décrivez ce qui s\'est passé : circonstances, heure, conséquences…';
+      'Décrivez ce qui s\'est passé : circonstances, heure, agents concernés, conséquences…';
 
   @override
-  String get newClaimDescriptionHelper => '10 caractères minimum.';
+  String newClaimDescriptionCounter(int count) {
+    return '$count / 600 caractères';
+  }
+
+  @override
+  String get newClaimTicketLabel => 'Numéro de billet';
+
+  @override
+  String get newClaimDateLabel => 'Date du voyage';
 
   @override
   String get newClaimFooter =>
-      'Vous recevrez un suivi par SMS. Délai de traitement : 48–72 h.';
+      'Vous recevrez un numéro de suivi par SMS. Délai de traitement : 48–72 h.';
 
   @override
   String get newClaimBookingsError =>
@@ -1813,27 +2513,22 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une réclamation se rattache à un voyage. Réservez d\'abord un trajet.';
 
   @override
-  String get newClaimThanksTitle => 'Réclamation envoyée';
+  String get newClaimAttachmentLabel => 'Pièce jointe';
 
   @override
-  String get newClaimThanksMessage =>
-      'Un conseiller instruira votre dossier et vous répondra sous 48–72 h.';
+  String get newClaimAttachmentOptional => '(photo, reçu, PDF — facultatif)';
 
   @override
-  String get newClaimBackToClaims => 'Voir mes réclamations';
+  String get newClaimAttachmentDropzone => 'Cliquez pour ajouter un fichier';
 
   @override
-  String get newClaimAttachmentLabel => 'Pièce jointe (facultatif)';
+  String get newClaimAttachmentDropzoneMobile => 'Ajouter un fichier';
 
   @override
-  String get newClaimAttachmentHint =>
-      'PDF ou photo à l\'appui de votre réclamation, 10 Mo maximum.';
+  String get newClaimAttachmentHint => 'JPG, PNG ou PDF · 10 Mo max';
 
   @override
-  String get newClaimAttachmentAdd => 'Ajouter un fichier';
-
-  @override
-  String get newClaimAttachmentChange => 'Changer de fichier';
+  String get newClaimAttachmentAdded => 'ajouté';
 
   @override
   String get newClaimAttachmentRemove => 'Retirer la pièce jointe';
@@ -1845,6 +2540,39 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get newClaimAttachmentUnreadable =>
       'Impossible de lire ce fichier. Réessayez avec un autre.';
+
+  @override
+  String get newClaimTrackerTitle => 'Suivi de la réclamation';
+
+  @override
+  String get newClaimTrackerCurrentBadge => 'ACTUEL';
+
+  @override
+  String get newClaimTrackerSentLabel => 'Envoyée';
+
+  @override
+  String get newClaimTrackerSentDesc => 'Réclamation reçue et enregistrée.';
+
+  @override
+  String get newClaimTrackerProgressLabel => 'En cours';
+
+  @override
+  String get newClaimTrackerProgressDesc =>
+      'Un conseiller instruit votre dossier.';
+
+  @override
+  String get newClaimTrackerResolvedLabel => 'Résolue';
+
+  @override
+  String get newClaimTrackerResolvedDesc => 'Réponse et suite données.';
+
+  @override
+  String get newClaimSuccessMessage => 'Un conseiller vous contactera.';
+
+  @override
+  String newClaimSuccessToast(String ref) {
+    return 'Réclamation $ref envoyée';
+  }
 
   @override
   String fileSizeKilobytes(String size) {
@@ -1955,6 +2683,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get profilePasswordSubmit => 'Mettre à jour le mot de passe';
 
   @override
+  String get profileLogoutTitle => 'Se déconnecter ?';
+
+  @override
+  String get profileLogoutMessage =>
+      'Vous devrez saisir votre téléphone et votre mot de passe pour vous reconnecter.';
+
+  @override
   String get profileTabInfo => 'Informations';
 
   @override
@@ -1985,6 +2720,21 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get profilePaymentsEmptyMessage =>
       'Vos paiements apparaîtront ici après votre première réservation.';
+
+  @override
+  String profileHeaderTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Voyageur fidèle · $count voyages',
+      one: 'Voyageur fidèle · 1 voyage',
+      zero: 'Voyageur fidèle',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileTripAmountPaid => 'Montant payé';
 
   @override
   String baggageCount(int count) {

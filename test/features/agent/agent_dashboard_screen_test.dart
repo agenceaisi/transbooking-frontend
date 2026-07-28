@@ -15,6 +15,8 @@ import 'package:transbooking_bf/core/utils/clock_provider.dart';
 import 'package:transbooking_bf/core/widgets/status_badge.dart';
 import 'package:transbooking_bf/features/agent/domain/agent_dashboard.dart';
 import 'package:transbooking_bf/features/agent/domain/agent_dashboard_repository.dart';
+import 'package:transbooking_bf/features/agent/domain/agent_schedule_repository.dart';
+import 'package:transbooking_bf/features/agent/domain/agent_sync_repository.dart';
 import 'package:transbooking_bf/features/agent/presentation/agent_providers.dart';
 import 'package:transbooking_bf/features/agent/presentation/screens/agent_dashboard_screen.dart';
 import 'package:transbooking_bf/features/auth/domain/auth_state.dart';
@@ -25,6 +27,10 @@ import 'package:transbooking_bf/l10n/app_localizations.dart';
 import '../../test_harness.dart';
 
 class _MockRepository extends Mock implements AgentDashboardRepository {}
+
+class _MockSyncRepository extends Mock implements AgentSyncRepository {}
+
+class _MockScheduleRepository extends Mock implements AgentScheduleRepository {}
 
 class _MockConnectivity extends Mock implements Connectivity {}
 
@@ -41,6 +47,8 @@ class _StubSessionController extends SessionController {
 
 void main() {
   late _MockRepository repository;
+  late _MockSyncRepository syncRepository;
+  late _MockScheduleRepository scheduleRepository;
   late _MockConnectivity connectivity;
   late AppLocalizations l10n;
 
@@ -78,6 +86,8 @@ void main() {
 
   setUp(() async {
     repository = _MockRepository();
+    syncRepository = _MockSyncRepository();
+    scheduleRepository = _MockScheduleRepository();
     connectivity = _MockConnectivity();
     l10n = await loadFrenchL10n();
 
@@ -86,6 +96,16 @@ void main() {
     when(
       () => connectivity.onConnectivityChanged,
     ).thenAnswer((_) => Stream.value(results));
+
+    // Le socle de synchronisation (phase 5A) tourne dès que l'écran agent est
+    // monté : sans ces stubs, le moteur réel tenterait un vrai appel dio.
+    when(syncRepository.downloadOfflineData).thenAnswer((_) async {});
+    when(syncRepository.runSync).thenAnswer((_) async {});
+    when(syncRepository.retryFailed).thenAnswer((_) async {});
+
+    // Recherche rapide (phase 5D) : le tableau de bord relit le programme du
+    // jour en cache — vide par défaut, sans base locale à monter ici.
+    when(scheduleRepository.passengersToday).thenAnswer((_) async => []);
   });
 
   /// Monte l'écran seul, sur un gabarit mobile (usage terrain prioritaire).
@@ -112,6 +132,10 @@ void main() {
       ProviderScope(
         overrides: [
           agentDashboardRepositoryProvider.overrideWithValue(repository),
+          agentSyncRepositoryProvider.overrideWithValue(syncRepository),
+          agentScheduleRepositoryProvider.overrideWithValue(
+            scheduleRepository,
+          ),
           connectivityProvider.overrideWithValue(connectivity),
           // Horloge figée : la pendule de l'en-tête ne laisse aucun minuteur
           // en suspens, et l'affichage reste comparable d'un test à l'autre.
@@ -172,16 +196,24 @@ void main() {
 
     await pumpDashboard(tester);
 
-    expect(find.text(l10n.agentNextDeparturesTitle), findsOneWidget);
-    expect(find.text('Bobo-Dioulasso'), findsOneWidget);
-    expect(find.text('08:30'), findsOneWidget);
+    expect(
+      find.text(l10n.agentNextDeparturesTitle, skipOffstage: false),
+      findsOneWidget,
+    );
+    // `findsWidgets` (au moins un) plutôt que `findsOneWidget` : le filtre
+    // destination/véhicule (nouveau bloc) porte les mêmes valeurs comme
+    // options de liste déroulante — `DropdownButtonFormField` maintient une
+    // copie masquée de chaque option pour calculer sa largeur, que les
+    // finders Flutter voient même hors écran.
+    expect(find.text('Bobo-Dioulasso', skipOffstage: false), findsWidgets);
+    expect(find.text('08:30', skipOffstage: false), findsOneWidget);
     expect(
       find.text(l10n.agentSeatsAvailable(12), skipOffstage: false),
       findsOneWidget,
     );
     expect(
       find.textContaining('BF-1234-A', skipOffstage: false),
-      findsOneWidget,
+      findsWidgets,
     );
   });
 
@@ -197,7 +229,11 @@ void main() {
 
     expect(find.text(l10n.agentSeatsFull, skipOffstage: false), findsOneWidget);
     final addButton = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, l10n.agentAddPassenger),
+      find.widgetWithText(
+        FilledButton,
+        l10n.agentAddPassenger,
+        skipOffstage: false,
+      ),
     );
     expect(addButton.onPressed, isNull);
   });
@@ -239,11 +275,17 @@ void main() {
       findsOneWidget,
     );
     final addButton = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, l10n.agentAddPassenger),
+      find.widgetWithText(
+        FilledButton,
+        l10n.agentAddPassenger,
+        skipOffstage: false,
+      ),
     );
     expect(addButton.onPressed, isNull);
     // La pastille de places est grise, pas verte : elle n'appelle pas à agir.
-    final badge = tester.widget<StatusBadge>(find.byType(StatusBadge));
+    final badge = tester.widget<StatusBadge>(
+      find.byType(StatusBadge, skipOffstage: false),
+    );
     expect(badge.type, StatusType.neutral);
   });
 
@@ -256,8 +298,14 @@ void main() {
 
     await pumpDashboard(tester);
 
-    expect(find.text(l10n.agentNoDeparturesTitle), findsOneWidget);
-    expect(find.text(l10n.agentNoDeparturesMessage), findsOneWidget);
+    expect(
+      find.text(l10n.agentNoDeparturesTitle, skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.text(l10n.agentNoDeparturesMessage, skipOffstage: false),
+      findsOneWidget,
+    );
   });
 
   testWidgets('signale l\'heure du cache quand les données sont d\'archive', (
@@ -269,7 +317,10 @@ void main() {
 
     await pumpDashboard(tester);
 
-    expect(find.textContaining('Dernière mise à jour'), findsOneWidget);
+    expect(
+      find.textContaining('Dernière mise à jour', skipOffstage: false),
+      findsOneWidget,
+    );
   });
 
   testWidgets('le contrôleur voit l\'embarquement, pas le guichet', (
@@ -280,8 +331,14 @@ void main() {
     await pumpDashboard(tester, role: UserRole.controleur);
 
     expect(find.text(l10n.agentRoleControleur), findsOneWidget);
-    expect(find.text(l10n.agentNextBoardingTitle), findsOneWidget);
-    expect(find.text(l10n.agentScanNextTicket), findsOneWidget);
+    expect(
+      find.text(l10n.agentNextBoardingTitle, skipOffstage: false),
+      findsOneWidget,
+    );
+    expect(
+      find.text(l10n.agentScanNextTicket, skipOffstage: false),
+      findsOneWidget,
+    );
     // Actions réduites : pas d'enregistrement de passager ni de colis.
     expect(find.text(l10n.agentActionRegisterPassenger), findsNothing);
     expect(find.text(l10n.agentActionRegisterParcel), findsNothing);

@@ -25,8 +25,11 @@ dart run build_runner build              # freezed, json_serializable, riverpod,
 flutter run --dart-define=ENV=dev        # mobile / émulateur
 flutter run -d chrome --dart-define=ENV=dev
 
+flutter run -d chrome --web-port=3000 --dart-define=ENV=dev # ou port=8000
+
+
 # Sur téléphone physique
-flutter run --dart-define=ENV=dev --dart-define=API_BASE_URL=http://192.168.1.75:8000
+flutter run --dart-define=ENV=dev --dart-define=API_BASE_URL=http://192.168.1.68:8000
 
 ```
 

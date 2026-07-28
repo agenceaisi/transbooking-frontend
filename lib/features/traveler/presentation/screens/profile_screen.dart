@@ -15,12 +15,13 @@ import '../../../../core/widgets/inline_alert.dart';
 import '../../../../core/widgets/loading_skeleton.dart';
 import '../../../../core/widgets/phone_field.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/secondary_button.dart';
 import '../../../../core/widgets/status_badge.dart';
 import '../../../auth/domain/account_profile.dart';
 import '../../../auth/presentation/password_change_controller.dart';
+import '../../../auth/presentation/session_controller.dart';
 import '../../../auth/presentation/widgets/auth_error_text.dart';
 import '../../domain/created_booking.dart';
-import '../../domain/payment_snapshot.dart';
 import '../../domain/traveler_booking.dart';
 import '../../domain/traveler_payment.dart';
 import '../profile_edit_controller.dart';
@@ -135,6 +136,52 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
   }
 
+  Widget _logoutButton() {
+    return SecondaryButton(
+      label: context.l10n.actionSignOut,
+      icon: Icons.logout,
+      isDestructive: true,
+      onPressed: _confirmLogout,
+    );
+  }
+
+  /// Confirmation avant déconnexion : la reconnexion exige les identifiants,
+  /// on ne déconnecte donc jamais sur un simple appui accidentel.
+  Future<void> _confirmLogout() async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierColor: AppColors.scrim,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.profileLogoutTitle, style: AppTextStyles.dialogTitle),
+        content: Text(
+          l10n.profileLogoutMessage,
+          style: AppTypography.sans(
+            size: 14,
+            height: 1.55,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.actionCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppStatusColors.danger.foreground,
+            ),
+            child: Text(l10n.actionSignOut),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    await ref.read(sessionControllerProvider.notifier).signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = ref.watch(travelerProfileProvider);
@@ -157,22 +204,44 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _content(AccountProfile profile) {
     final l10n = context.l10n;
+    // Le nombre de voyages alimente le sous-titre de l'en-tête ; `null` tant
+    // que la liste n'est pas chargée (on n'invente aucun compteur).
+    final tripCount = ref.watch(myBookingsProvider).value?.length;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: EdgeInsets.zero,
       children: [
-        _ProfileHeader(profile: profile),
-        const SizedBox(height: AppSpacing.lg),
-        _TabBar(current: _tab, onSelect: (tab) => setState(() => _tab = tab)),
-        const SizedBox(height: AppSpacing.lg),
-        if (_tab == _Tab.info) ...[
-          _infoCard(profile),
-          const SizedBox(height: AppSpacing.lg),
-          _passwordCard(),
-        ] else
-          _historyList(),
-        const SizedBox(height: AppSpacing.md),
-        if (_tab == _Tab.info)
-          Text(l10n.profileFieldNoteName, style: AppTextStyles.caption),
+        _ProfileHeader(profile: profile, tripCount: tripCount),
+        // Bandeau blanc des onglets principaux, flush sous l'en-tête indigo.
+        Container(
+          color: AppColors.surface,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.sm - 2,
+          ),
+          child: _TabBar(
+            current: _tab,
+            onSelect: (tab) => setState(() => _tab = tab),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_tab == _Tab.info) ...[
+                _infoCard(profile),
+                const SizedBox(height: AppSpacing.lg),
+                _passwordCard(),
+                const SizedBox(height: AppSpacing.lg),
+                _logoutButton(),
+              ] else
+                _historyList(),
+              const SizedBox(height: AppSpacing.md),
+              if (_tab == _Tab.info)
+                Text(l10n.profileFieldNoteName, style: AppTextStyles.caption),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -283,16 +352,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       children: [
         Row(
           children: [
-            _SubTab(
-              label: l10n.profileHistoryTrips,
-              selected: _historyTab == _HistoryTab.trips,
-              onTap: () => setState(() => _historyTab = _HistoryTab.trips),
+            Expanded(
+              child: _SubTab(
+                label: l10n.profileHistoryTrips,
+                selected: _historyTab == _HistoryTab.trips,
+                onTap: () => setState(() => _historyTab = _HistoryTab.trips),
+              ),
             ),
             const SizedBox(width: AppSpacing.xs),
-            _SubTab(
-              label: l10n.profileHistoryPayments,
-              selected: _historyTab == _HistoryTab.payments,
-              onTap: () => setState(() => _historyTab = _HistoryTab.payments),
+            Expanded(
+              child: _SubTab(
+                label: l10n.profileHistoryPayments,
+                selected: _historyTab == _HistoryTab.payments,
+                onTap: () => setState(() => _historyTab = _HistoryTab.payments),
+              ),
             ),
           ],
         ),
@@ -309,7 +382,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final l10n = context.l10n;
     final bookings = ref.watch(myBookingsProvider);
     return bookings.when(
-      loading: () => const _ProfileSkeleton(),
+      loading: () => const _HistorySkeleton(),
       error: (error, _) => ErrorState(
         failure: error is Failure ? error : null,
         onRetry: () => ref.invalidate(myBookingsProvider),
@@ -340,7 +413,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final l10n = context.l10n;
     final payments = ref.watch(travelerPaymentsProvider);
     return payments.when(
-      loading: () => const _ProfileSkeleton(),
+      loading: () => const _HistorySkeleton(),
       error: (error, _) => ErrorState(
         failure: error is Failure ? error : null,
         onRetry: () => ref.invalidate(travelerPaymentsProvider),
@@ -381,28 +454,20 @@ class _SubTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppColors.primary50 : AppColors.surface,
+      color: selected ? AppColors.primary : AppColors.surfaceSubtle,
       borderRadius: AppRadii.brMd,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadii.brMd,
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xs + 1,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: AppRadii.brMd,
-            border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
-            ),
-          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs + 1),
           child: Text(
             label,
             style: AppTypography.sans(
               size: 13,
               weight: FontWeight.w600,
-              color: selected ? AppColors.primary900 : AppColors.textSecondary,
+              color: selected ? AppColors.onPrimary : AppColors.textSecondary,
             ),
           ),
         ),
@@ -420,103 +485,161 @@ class _PaymentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md - 2,
+        vertical: AppSpacing.sm + 1,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: AppRadii.brCard,
+        borderRadius: AppRadii.brLg,
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
+          Container(
+            width: 34,
+            height: 34,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: _methodColor(payment.methodWire),
+              borderRadius: AppRadii.brMd,
+            ),
+            child: Text(
+              _methodAbbr(payment.methodDisplay),
+              style: AppTypography.sans(
+                size: 11,
+                weight: FontWeight.w800,
+                color: AppColors.white,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm - 1),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(payment.ticketNumber, style: AppTextStyles.referenceSmall),
-                const SizedBox(height: 2),
+                Text(
+                  payment.ticketNumber,
+                  style: AppTypography.mono(
+                    size: 12.5,
+                    weight: FontWeight.w700,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 1),
                 Text(
                   '${payment.methodDisplay} · '
                   '${AppTimeFormat.mediumDate(context, payment.date)}',
-                  style: AppTextStyles.caption,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.sans(
+                    size: 11,
+                    color: AppColors.textTertiary,
+                  ),
                 ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '${Fcfa.format(payment.amount)} ${l10n.currencySuffix}',
-                style: AppTextStyles.amount,
-              ),
-              const SizedBox(height: 2),
-              StatusBadge(
-                label: payment.statusDisplay,
-                type: _statusType(payment.status),
-                showDot: false,
-              ),
-            ],
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            '${Fcfa.format(payment.amount)} ${l10n.currencySuffix}',
+            style: AppTypography.sans(
+              size: 13,
+              weight: FontWeight.w700,
+              tabular: true,
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  StatusType _statusType(PaymentStatus? status) => switch (status) {
-    PaymentStatus.paid => StatusType.success,
-    PaymentStatus.pending || PaymentStatus.otpRequired => StatusType.warning,
-    PaymentStatus.failed => StatusType.danger,
-    PaymentStatus.refunded => StatusType.neutral,
-    null => StatusType.neutral,
-  };
+/// Couleurs de marque des opérateurs Mobile Money (identité externe des
+/// prestataires, hors jetons du design system) ; repli sur l'indigo pour les
+/// autres moyens (espèces, opérateur inconnu).
+Color _methodColor(String methodWire) => switch (methodWire) {
+  'orange_money' => const Color(0xFFFF6600),
+  'moov_money' => const Color(0xFF0A66C2),
+  'coris_money' => const Color(0xFFC8102E),
+  _ => AppColors.primary,
+};
+
+/// Abréviation deux lettres tirée du libellé : « Orange Money » → « OM ».
+String _methodAbbr(String display) {
+  final words = display.trim().split(RegExp(r'\s+'))
+    ..removeWhere((word) => word.isEmpty);
+  if (words.isEmpty) return '—';
+  if (words.length == 1) {
+    final word = words.first;
+    return (word.length >= 2 ? word.substring(0, 2) : word).toUpperCase();
+  }
+  return words.take(2).map((word) => word[0]).join().toUpperCase();
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.profile});
+  const _ProfileHeader({required this.profile, this.tripCount});
 
   final AccountProfile profile;
 
+  /// Nombre de voyages ; `null` tant que la liste n'est pas chargée.
+  final int? tripCount;
+
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final name = _profileDisplayName(profile) ?? profile.phone;
+    // En-tête indigo pleine largeur, flush sous la barre système.
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadii.brCard,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColors.primary,
-            child: Text(
-              travelerInitials(name),
-              style: AppTypography.sans(
-                size: 22,
-                weight: FontWeight.w700,
-                color: AppColors.onPrimary,
-              ),
-            ),
+      width: double.infinity,
+      color: AppColors.primary,
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.md + 2,
           ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: AppTextStyles.sectionTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: AppColors.primary50,
+                child: Text(
+                  travelerInitials(name),
+                  style: AppTypography.sans(
+                    size: 22,
+                    weight: FontWeight.w700,
+                    color: AppColors.primary900,
+                  ),
                 ),
-                const SizedBox(height: 2),
-                Text(profile.phone, style: AppTextStyles.referenceSmall),
-              ],
-            ),
+              ),
+              const SizedBox(height: AppSpacing.sm - 2),
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.sans(
+                  size: 18,
+                  weight: FontWeight.w800,
+                  color: AppColors.white,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                l10n.profileHeaderTrips(tripCount ?? 0),
+                textAlign: TextAlign.center,
+                style: AppTypography.sans(
+                  size: 12,
+                  color: AppColors.onPrimaryMuted,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -533,16 +656,20 @@ class _TabBar extends StatelessWidget {
     final l10n = context.l10n;
     return Row(
       children: [
-        _TabButton(
-          label: l10n.profileTabInfo,
-          selected: current == _Tab.info,
-          onTap: () => onSelect(_Tab.info),
+        Expanded(
+          child: _TabButton(
+            label: l10n.profileTabInfo,
+            selected: current == _Tab.info,
+            onTap: () => onSelect(_Tab.info),
+          ),
         ),
         const SizedBox(width: AppSpacing.xs),
-        _TabButton(
-          label: l10n.profileTabHistory,
-          selected: current == _Tab.history,
-          onTap: () => onSelect(_Tab.history),
+        Expanded(
+          child: _TabButton(
+            label: l10n.profileTabHistory,
+            selected: current == _Tab.history,
+            onTap: () => onSelect(_Tab.history),
+          ),
         ),
       ],
     );
@@ -563,28 +690,20 @@ class _TabButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? AppColors.primary : AppColors.surface,
+      color: selected ? AppColors.primary : AppColors.surfaceSubtle,
       borderRadius: AppRadii.brMd,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadii.brMd,
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          decoration: BoxDecoration(
-            borderRadius: AppRadii.brMd,
-            border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
-            ),
-          ),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm - 1),
           child: Text(
             label,
             style: AppTypography.sans(
               size: 14,
               weight: FontWeight.w600,
-              color: selected ? AppColors.onPrimary : AppColors.textStrong,
+              color: selected ? AppColors.onPrimary : AppColors.textSecondary,
             ),
           ),
         ),
@@ -675,61 +794,110 @@ class _HistoryRow extends StatelessWidget {
         booking.status == BookingStatus.cancelled ||
         booking.status == BookingStatus.refunded;
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md - 2,
+        vertical: AppSpacing.sm + 1,
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: AppRadii.brCard,
+        borderRadius: AppRadii.brLg,
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppColors.primary50,
-              borderRadius: AppRadii.brMd,
-            ),
-            child: const Icon(
-              Icons.directions_bus_outlined,
-              size: 18,
-              color: AppColors.primary900,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${booking.originCity} → ${booking.destinationCity}',
-                  style: AppTypography.sans(
-                    size: 13.5,
-                    weight: FontWeight.w700,
-                  ),
-                ),
-                Text(
-                  AppTimeFormat.mediumDate(context, booking.departureTime),
-                  style: AppTextStyles.caption,
-                ),
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Row(
             children: [
+              Container(
+                width: 32,
+                height: 32,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: AppColors.primary50,
+                  borderRadius: AppRadii.brMd,
+                ),
+                child: const Icon(
+                  Icons.directions_bus_outlined,
+                  size: 18,
+                  color: AppColors.primary900,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm - 2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          booking.originCity,
+                          style: AppTypography.sans(
+                            size: 13,
+                            weight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xxs + 2),
+                        const Icon(
+                          Icons.arrow_forward,
+                          size: 14,
+                          color: AppColors.textTertiary,
+                        ),
+                        const SizedBox(width: AppSpacing.xxs + 2),
+                        Flexible(
+                          child: Text(
+                            booking.destinationCity,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.sans(
+                              size: 13,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      '${AppTimeFormat.mediumDate(context, booking.departureTime)}'
+                      ' · ${booking.companyName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.sans(
+                        size: 11,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.xs),
               StatusBadge(
                 label: cancelled
                     ? l10n.profileTripCancelled
                     : l10n.profileTripCompleted,
                 type: cancelled ? StatusType.danger : StatusType.success,
-                showDot: false,
               ),
-              const SizedBox(height: AppSpacing.xxs),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs + 2),
+          const Divider(height: 1, thickness: 1, color: AppColors.borderSoft),
+          const SizedBox(height: AppSpacing.xs + 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.profileTripAmountPaid,
+                style: AppTypography.sans(
+                  size: 11.5,
+                  color: AppColors.textTertiary,
+                ),
+              ),
               Text(
                 '${Fcfa.format(booking.amount)} ${l10n.currencySuffix}',
-                style: AppTextStyles.amount,
+                style: AppTypography.sans(
+                  size: 13,
+                  weight: FontWeight.w700,
+                  tabular: true,
+                ),
               ),
             ],
           ),
@@ -750,6 +918,25 @@ class _ProfileSkeleton extends StatelessWidget {
         LoadingSkeleton(height: 84, borderRadius: AppRadii.brCard),
         SizedBox(height: AppSpacing.lg),
         LoadingSkeleton(height: 260, borderRadius: AppRadii.brCard),
+      ],
+    );
+  }
+}
+
+/// Squelette non défilant des sous-onglets d'historique : il vit **à
+/// l'intérieur** du `ListView` de `_content`, donc jamais de viewport imbriqué.
+class _HistorySkeleton extends StatelessWidget {
+  const _HistorySkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        LoadingSkeleton(height: 72, borderRadius: AppRadii.brCard),
+        SizedBox(height: AppSpacing.sm),
+        LoadingSkeleton(height: 72, borderRadius: AppRadii.brCard),
+        SizedBox(height: AppSpacing.sm),
+        LoadingSkeleton(height: 72, borderRadius: AppRadii.brCard),
       ],
     );
   }

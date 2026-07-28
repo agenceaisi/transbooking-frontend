@@ -68,12 +68,16 @@ class CompanyCard extends StatelessWidget {
                             children: [
                               StarRating(rating: company.rating, size: 13),
                               const SizedBox(width: AppSpacing.xxs),
-                              Text(
-                                _formatRating(company.rating!),
-                                style: AppTypography.sans(
-                                  size: 11.5,
-                                  weight: FontWeight.w600,
-                                  color: AppColors.accent,
+                              Flexible(
+                                child: Text(
+                                  _formatRating(company.rating!),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTypography.sans(
+                                    size: 11.5,
+                                    weight: FontWeight.w600,
+                                    color: AppColors.accent,
+                                  ),
                                 ),
                               ),
                             ],

@@ -81,9 +81,19 @@ class TripResultCard extends StatelessWidget {
         const Divider(height: 1, color: AppColors.borderSoft),
         const SizedBox(height: AppSpacing.sm),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _SeatsBadge(trip: trip, context: context),
-            const Spacer(),
+            // Le libellé des places peut être long (« N places disponibles »).
+            // On l'autorise à se réduire très légèrement (FittedBox) plutôt que
+            // déborder à côté du bouton, dont le CTA garde sa taille. Pas de
+            // coupe de texte, et StatusBadge (widget partagé) reste intact.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: _SeatsBadge(trip: trip, context: context),
+              ),
+            ),
             _BookButton(trip: trip, onBook: onBook, compact: true),
           ],
         ),

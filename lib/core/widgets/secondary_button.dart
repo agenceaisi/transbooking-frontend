@@ -46,7 +46,11 @@ class SecondaryButton extends StatelessWidget {
         foregroundColor: color,
         disabledForegroundColor: AppColors.textTertiary,
         backgroundColor: AppColors.surface,
-        minimumSize: const Size.fromHeight(AppSizes.control),
+        // Largeur minimale infinie (pleine largeur) uniquement en mode `expand`
+        // ; sinon nulle, pour un placement en largeur non bornée (Row).
+        minimumSize: expand
+            ? const Size.fromHeight(AppSizes.control)
+            : const Size(0, AppSizes.control),
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
         side: BorderSide(color: isEnabled ? color : AppColors.border),
         shape: const RoundedRectangleBorder(borderRadius: AppRadii.brMd),
@@ -56,6 +60,7 @@ class SecondaryButton extends StatelessWidget {
         label: label,
         icon: icon,
         isLoading: isLoading,
+        expand: expand,
         color: color,
       ),
     );

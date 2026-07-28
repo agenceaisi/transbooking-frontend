@@ -15,8 +15,10 @@ import 'package:drift/drift.dart';
 
 /// Entité concernée par une opération en attente.
 ///
-/// Aligné sur `EntityEnum` du schéma OpenAPI.
-enum OutboxEntity { booking, parcel, validation }
+/// Aligné sur `EntityEnum` du schéma OpenAPI, complété par
+/// `parcelNotification` (« marquer prévenu » hors ligne, guide §6.9 —
+/// n'existe que côté appel manuel, jamais SMS).
+enum OutboxEntity { booking, parcel, validation, parcelNotification }
 
 /// Cycle de vie d'une opération dans la file.
 enum OutboxStatus {
@@ -55,6 +57,11 @@ class OfflineBookings extends Table {
   /// Valeur technique de `Method80cEnum` (cash, orange_money, …).
   TextColumn get paymentMethod => text().withLength(max: 20).nullable()();
 
+  /// Référence de transaction Mobile Money, saisie par l'agent (donnée par le
+  /// client après un paiement fait hors app — pas un flux OTP à cet écran).
+  /// Requis côté serveur pour tout moyen ≠ `cash` (guide §6.7).
+  TextColumn get transactionRef => text().withLength(max: 100).nullable()();
+
   /// Instant de la saisie sur le terrain, transmis tel quel au serveur.
   DateTimeColumn get offlineCreatedAt => dateTime()();
 
@@ -87,6 +94,21 @@ class OfflineParcels extends Table {
 
   /// Poids décimal, conservé en texte pour les mêmes raisons que le montant.
   TextColumn get weightKg => text()();
+
+  DateTimeColumn get offlineCreatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {trackingNumber};
+}
+
+/// « Marquer prévenu » d'un colis, saisi hors ligne au guichet.
+///
+/// Seul l'appel manuel se met en file : un SMS ne peut pas partir hors ligne,
+/// l'app ne doit jamais laisser croire qu'il est parti (guide §6.9).
+class OfflineParcelNotifications extends Table {
+  /// Code de suivi du colis concerné — clé d'idempotence avec
+  /// [offlineCreatedAt].
+  TextColumn get trackingNumber => text().withLength(max: 20)();
 
   DateTimeColumn get offlineCreatedAt => dateTime()();
 

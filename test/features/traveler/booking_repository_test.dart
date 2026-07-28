@@ -40,7 +40,7 @@ void main() {
     phone: '+22670000000',
     seatNumber: '12',
     amount: '6000.00',
-    status: dto.BookingReadStatusEnum.pending,
+    status: dto.StatusEe3Enum.pending,
     statusDisplay: 'En attente',
     isBoarded: false,
     baggage: const [],
@@ -165,7 +165,7 @@ void main() {
     ).thenAnswer((invocation) async {
       capturedReason = invocation.namedArguments[#reason] as String;
       return bookingRead().copyWith(
-        status: dto.BookingReadStatusEnum.cancelled,
+        status: dto.StatusEe3Enum.cancelled,
         statusDisplay: 'Annulé',
       );
     });

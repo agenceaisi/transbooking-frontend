@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/agent/domain/agent_trip.dart';
+import '../../features/agent/presentation/screens/agent_boarding_list_screen.dart';
 import '../../features/agent/presentation/screens/agent_dashboard_screen.dart';
+import '../../features/agent/presentation/screens/agent_parcel_arrivals_screen.dart';
+import '../../features/agent/presentation/screens/agent_parcel_registration_screen.dart';
+import '../../features/agent/presentation/screens/agent_passenger_registration_screen.dart';
+import '../../features/agent/presentation/screens/agent_scanner_screen.dart';
+import '../../features/agent/presentation/screens/agent_schedule_screen.dart';
+import '../../features/agent/presentation/screens/agent_sync_logs_screen.dart';
 import '../../features/auth/domain/auth_state.dart';
 import '../../features/auth/presentation/screens/account_suspended_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
@@ -14,6 +22,7 @@ import '../../features/public/presentation/screens/home_screen.dart';
 import '../../features/public/presentation/screens/parcel_tracking_screen.dart';
 import '../../features/public/presentation/screens/search_results_screen.dart';
 import '../../features/traveler/domain/payment_snapshot.dart';
+import '../../features/traveler/domain/traveler_booking.dart';
 import '../../features/traveler/presentation/screens/baggage_screen.dart';
 import '../../features/traveler/presentation/screens/booking_screen.dart';
 import '../../features/traveler/presentation/screens/claims_screen.dart';
@@ -136,8 +145,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.travelerReviewName,
         builder: (context, state) {
           final tripId = int.tryParse(state.pathParameters['tripId'] ?? '');
-          final label = state.extra is String ? state.extra as String : null;
-          return ReviewScreen(tripId: tripId, routeLabel: label);
+          final booking = state.extra is TravelerBooking
+              ? state.extra as TravelerBooking
+              : null;
+          return ReviewScreen(tripId: tripId, booking: booking);
         },
       ),
       GoRoute(
@@ -194,6 +205,48 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRoutes.agentName,
         // Guichet et contrôle partagent l'écran : il s'adapte au rôle.
         builder: (context, state) => const AgentDashboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.agentSchedule,
+        name: AppRoutes.agentScheduleName,
+        builder: (context, state) => const AgentScheduleScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.agentNewPassenger,
+        name: AppRoutes.agentNewPassengerName,
+        builder: (context, state) => AgentPassengerRegistrationScreen(
+          initialTrip: state.extra is AgentTrip
+              ? state.extra as AgentTrip
+              : null,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.agentNewParcel,
+        name: AppRoutes.agentNewParcelName,
+        builder: (context, state) => const AgentParcelRegistrationScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.agentParcelArrivals,
+        name: AppRoutes.agentParcelArrivalsName,
+        builder: (context, state) => const AgentParcelArrivalsScreen(),
+      ),
+      GoRoute(
+        path: '${AppRoutes.agentBoardingList}/:tripId',
+        name: AppRoutes.agentBoardingListName,
+        builder: (context, state) {
+          final tripId = int.tryParse(state.pathParameters['tripId'] ?? '') ?? 0;
+          return AgentBoardingListScreen(tripId: tripId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.agentScanQr,
+        name: AppRoutes.agentScanQrName,
+        builder: (context, state) => const AgentScannerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.agentSyncHistory,
+        name: AppRoutes.agentSyncHistoryName,
+        builder: (context, state) => const AgentSyncLogsScreen(),
       ),
       GoRoute(
         path: AppRoutes.companyAdmin,

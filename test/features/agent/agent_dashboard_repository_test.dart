@@ -68,7 +68,7 @@ void main() {
   dto.Notification buildNotification() {
     return dto.Notification(
       id: 7,
-      type: dto.TypeEnum.parcel,
+      type: dto.Type6f3Enum.parcel,
       typeDisplay: 'Colis',
       title: 'Colis arrivé — à notifier',
       body: 'COL2026000123 est arrivé à Bobo.',

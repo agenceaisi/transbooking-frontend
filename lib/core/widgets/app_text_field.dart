@@ -29,6 +29,8 @@ class AppTextField extends StatefulWidget {
     this.autofillHints,
     this.inputFormatters,
     this.maxLength,
+    this.maxLines = 1,
+    this.minLines,
     this.onChanged,
     this.onSubmitted,
     super.key,
@@ -71,6 +73,13 @@ class AppTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   final int? maxLength;
+
+  /// Nombre maximal de lignes ; `null` laisse le champ grandir librement (zone
+  /// de texte multiligne). `1` par défaut, comme un `TextField` standard.
+  final int? maxLines;
+
+  /// Nombre minimal de lignes visibles (zone de texte multiligne).
+  final int? minLines;
 
   final ValueChanged<String>? onChanged;
 
@@ -117,6 +126,8 @@ class _AppTextFieldState extends State<AppTextField> {
           autofillHints: widget.autofillHints,
           inputFormatters: widget.inputFormatters,
           maxLength: widget.maxLength,
+          maxLines: widget.maxLines,
+          minLines: widget.minLines,
           onChanged: widget.onChanged,
           onSubmitted: widget.onSubmitted,
           style: AppTextStyles.body,

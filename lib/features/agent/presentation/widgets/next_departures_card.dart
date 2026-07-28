@@ -6,13 +6,21 @@ import '../../../../core/utils/app_time_format.dart';
 import '../../../../core/widgets/empty_state.dart';
 import '../../../../core/widgets/status_badge.dart';
 import '../../domain/agent_dashboard.dart';
+import 'agent_filter_dropdown.dart';
 import 'section_card.dart';
 
 /// Bloc « Prochains départs » du guichet.
 ///
-/// Une ligne par départ : heure, destination, véhicule, places restantes et
-/// les deux actions du guichetier.
-class NextDeparturesCard extends StatelessWidget {
+/// Tous les départs restants de la journée (l'API ne renvoie que le programme
+/// à venir, guide §6.6), filtrables par destination et par véhicule — ce
+/// bloc sert à retrouver rapidement quel voyage un passager souhaite
+/// prendre. Une ligne par départ : heure, destination, véhicule, places
+/// restantes et les deux actions du guichetier.
+///
+/// Le filtre « véhicule » porte sur l'**immatriculation** : le type
+/// (Standard/VIP/VVIP) n'est exposé par aucun endpoint agent (cf.
+/// `api/backend_completion_requests_agent_dashboard.md`).
+class NextDeparturesCard extends StatefulWidget {
   const NextDeparturesCard({
     required this.departures,
     required this.onOpenSchedule,
@@ -38,14 +46,43 @@ class NextDeparturesCard extends StatelessWidget {
   final bool isCompact;
 
   @override
+  State<NextDeparturesCard> createState() => _NextDeparturesCardState();
+}
+
+class _NextDeparturesCardState extends State<NextDeparturesCard> {
+  String? _destination;
+  String? _vehicle;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final departures = widget.departures;
+
+    final destinations = {for (final d in departures) d.destination}
+        .toList(growable: false)
+      ..sort();
+    final vehicles =
+        {
+              for (final d in departures)
+                if (d.vehicleRegistration != null) d.vehicleRegistration!,
+            }.toList(growable: false)
+          ..sort();
+
+    final filtered = departures.where((departure) {
+      if (_destination != null && departure.destination != _destination) {
+        return false;
+      }
+      if (_vehicle != null && departure.vehicleRegistration != _vehicle) {
+        return false;
+      }
+      return true;
+    }).toList(growable: false);
 
     return SectionCard(
       title: l10n.agentNextDeparturesTitle,
-      subtitle: lastUpdatedLabel,
+      subtitle: widget.lastUpdatedLabel,
       trailing: TextButton(
-        onPressed: onOpenSchedule,
+        onPressed: widget.onOpenSchedule,
         child: Text(l10n.agentFullSchedule),
       ),
       child: departures.isEmpty
@@ -54,18 +91,67 @@ class NextDeparturesCard extends StatelessWidget {
               title: l10n.agentNoDeparturesTitle,
               message: l10n.agentNoDeparturesMessage,
               actionLabel: l10n.agentFullSchedule,
-              onAction: onOpenSchedule,
+              onAction: widget.onOpenSchedule,
             )
-          : Column(
-              children: [
-                for (final departure in departures)
-                  _DepartureRow(
-                    departure: departure,
-                    isCompact: isCompact,
-                    onViewPassengers: () => onViewPassengers(departure),
-                    onAddPassenger: () => onAddPassenger(departure),
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                0,
+                AppSpacing.md,
+                AppSpacing.sm,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AgentFilterDropdown(
+                          hint: l10n.agentScheduleFilterDestination,
+                          value: _destination,
+                          options: destinations,
+                          onChanged: (value) =>
+                              setState(() => _destination = value),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: AgentFilterDropdown(
+                          hint: l10n.agentScheduleFilterVehicle,
+                          value: _vehicle,
+                          options: vehicles,
+                          onChanged: (value) =>
+                              setState(() => _vehicle = value),
+                        ),
+                      ),
+                    ],
                   ),
-              ],
+                  if (filtered.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.md,
+                      ),
+                      child: Text(
+                        l10n.agentNextDeparturesFilterEmpty,
+                        style: AppTextStyles.caption,
+                      ),
+                    )
+                  else
+                    Column(
+                      children: [
+                        for (final departure in filtered)
+                          _DepartureRow(
+                            departure: departure,
+                            isCompact: widget.isCompact,
+                            onViewPassengers: () =>
+                                widget.onViewPassengers(departure),
+                            onAddPassenger: () =>
+                                widget.onAddPassenger(departure),
+                          ),
+                      ],
+                    ),
+                ],
+              ),
             ),
     );
   }
@@ -105,14 +191,16 @@ class _DepartureRow extends StatelessWidget {
                   weight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xxs / 2),
-              Text(
-                _vehicleLine(context),
-                style: AppTextStyles.referenceSmall.copyWith(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
+              if (departure.vehicleRegistration != null) ...[
+                const SizedBox(height: AppSpacing.xxs / 2),
+                Text(
+                  departure.vehicleRegistration!,
+                  style: AppTextStyles.referenceSmall.copyWith(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -157,18 +245,6 @@ class _DepartureRow extends StatelessWidget {
               ],
             ),
     );
-  }
-
-  /// Immatriculation et nombre de passagers déjà enregistrés.
-  ///
-  /// L'immatriculation vient de `agent/trips/today/` : si cet appel a échoué,
-  /// la ligne se réduit au nombre de passagers plutôt que d'afficher un vide.
-  String _vehicleLine(BuildContext context) {
-    final passengers = context.l10n.agentPassengersRegistered(
-      departure.passengerCount,
-    );
-    final vehicle = departure.vehicleRegistration;
-    return vehicle == null ? passengers : '$vehicle · $passengers';
   }
 }
 

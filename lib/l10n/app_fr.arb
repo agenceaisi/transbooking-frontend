@@ -336,9 +336,21 @@
   "agentActionDaySchedule": "Programme du jour",
   "agentActionScanQr": "Scanner un QR code",
   "agentActionPassengerList": "Liste des passagers · embarquement",
+  "agentActionSyncHistory": "Historique de synchro",
+  "agentActionDayStats": "Statistiques du jour",
+
+  "agentQuickSearchTitle": "Recherche rapide",
+  "agentQuickSearchHint": "Nom ou numéro de billet",
+  "agentQuickSearchEmpty": "Aucun passager ne correspond à cette recherche.",
+  "agentQuickSearchError": "Recherche indisponible pour l'instant.",
+  "agentQuickSearchMore": "{count, plural, =1{+ 1 autre résultat — affinez la recherche} other{+ {count} autres résultats — affinez la recherche}}",
+  "@agentQuickSearchMore": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "agentNextDeparturesTitle": "Prochains départs",
   "agentFullSchedule": "Programme complet",
+  "agentNextDeparturesFilterEmpty": "Aucun départ ne correspond à ces filtres.",
   "agentSeatsAvailable": "{count, plural, =1{1 place} other{{count} places}}",
   "@agentSeatsAvailable": {
     "description": "Pastille de places restantes sur un départ",
@@ -356,16 +368,8 @@
   },
 
   "agentDepartureCancelled": "Annulé",
-  "agentPassengersRegistered": "{count, plural, =0{aucun passager} =1{1 passager} other{{count} passagers}}",
-  "@agentPassengersRegistered": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
 
-  "agentViewPassengerList": "Voir la liste des passagers",
+  "agentViewPassengerList": "Liste des passagers",
   "agentViewPassengerListShort": "Liste passagers",
   "agentAddPassenger": "Ajouter",
   "agentNoDeparturesTitle": "Plus aucun départ aujourd'hui",
@@ -410,19 +414,286 @@
   "agentPendingBooking": "Passager",
   "agentPendingParcel": "Colis",
   "agentPendingValidation": "Embarquement",
+  "agentPendingParcelNotification": "Colis prévenu",
   "agentPendingStatusPending": "En attente",
   "agentPendingStatusSyncing": "Envoi…",
   "agentPendingStatusFailed": "Échec",
-  "agentSyncEngineNotice": "L'envoi automatique arrive avec le module hors-ligne. Vos saisies restent conservées sur l'appareil.",
+  "agentSyncEngineNotice": "L'envoi se fait automatiquement dès que la connexion est disponible. Vos saisies restent conservées sur l'appareil en attendant.",
   "@agentSyncEngineNotice": {
-    "description": "Le moteur de synchronisation est construit en phase 5A — le bandeau ne doit pas laisser croire qu'il tourne déjà"
+    "description": "Rappel affiché sous la liste d'attente quand des écritures restent à envoyer, hors échec"
   },
+  "agentSyncRetryButton": "Réessayer l'envoi",
+  "agentSyncRetrying": "Nouvel envoi…",
+
+  "actionRefresh": "Actualiser",
+
+  "agentTripStatusScheduled": "Programmé",
+  "agentTripStatusInProgress": "En cours",
+  "agentTripStatusCompleted": "Terminé",
+
+  "agentAmountPendingSync": "Calculé à la synchronisation",
+
+  "agentScheduleTitle": "Programme du jour",
+  "agentScheduleFilterDestination": "Destination",
+  "agentScheduleFilterVehicle": "Véhicule",
+  "agentScheduleEmptyTitle": "Aucun voyage programmé",
+  "agentScheduleEmptyMessage": "Le programme du jour n'a pas encore été publié, ou aucun voyage ne correspond aux filtres.",
+  "agentSchedulePassengerList": "Liste passagers",
+  "agentScheduleAddPassenger": "+ Ajouter",
+
+  "agentPassengerTitle": "Enregistrer un passager",
+  "agentPassengerConfirmedTitle": "Passager enregistré",
+  "agentPassengerQueuedTitle": "Passager mis en attente",
+  "agentPassengerQueuedNotice": "L'enregistrement sera envoyé au serveur dès le retour du réseau. Le siège et le billet définitifs arriveront à ce moment-là.",
+  "agentPassengerOfflineNotice": "Hors ligne : l'enregistrement sera mis en attente et envoyé au retour du réseau.",
+  "agentPassengerStepTrip": "1 · Choix du voyage",
+  "agentPassengerStepInfo": "2 · Informations du passager",
+  "agentPassengerStepSeat": "3 · Siège",
+  "agentPassengerStepPayment": "4 · Paiement",
+  "agentPassengerFirstName": "Prénom",
+  "agentPassengerFirstNameRequired": "Le prénom est obligatoire.",
+  "agentPassengerLastName": "Nom",
+  "agentPassengerLastNameRequired": "Le nom est obligatoire.",
+  "agentPassengerPhoneInvalid": "Entrez un numéro valide à 8 chiffres.",
+  "agentPassengerTripRequired": "Choisissez un voyage.",
+  "agentPassengerSeatAuto": "Attribution automatique par le serveur · non modifiable",
+  "agentPassengerTransactionRef": "Numéro de transaction",
+  "agentPassengerTransactionRefHint": "Ex. MP240912.1834.A45678",
+  "agentPassengerTransactionRefRequired": "Le numéro de transaction est requis.",
+  "agentPassengerAmountLabel": "Montant à payer",
+  "agentPassengerSubmit": "Valider et imprimer le billet",
+  "agentPassengerTicketLabel": "Passager",
+  "agentPassengerTripLabel": "Trajet",
+  "agentPassengerSeatLabel": "Siège",
+  "agentPassengerPrint": "Imprimer le billet",
+  "agentPassengerNewOne": "+ Enregistrer un autre passager",
+
+  "agentPaymentCash": "Espèces",
+
+  "agentSeatCorrectedBadge": "Conflit de siège · Hors-ligne",
+  "agentSeatCorrectedTitle": "Un autre siège vous a été attribué",
+  "agentSeatCorrectedBody": "À la synchronisation, le siège réservé hors ligne pour {passenger} était déjà occupé. Le siège {seat} lui a été attribué automatiquement.",
+  "@agentSeatCorrectedBody": {
+    "placeholders": {
+      "passenger": { "type": "String" },
+      "seat": { "type": "String" }
+    }
+  },
+  "agentSeatCorrectedBodyWithOriginal": "À la reconnexion, le siège {originalSeat} réservé hors ligne était déjà occupé par un autre passager. Le siège {newSeat} a été attribué automatiquement à {passenger}.",
+  "@agentSeatCorrectedBodyWithOriginal": {
+    "placeholders": {
+      "passenger": { "type": "String" },
+      "originalSeat": { "type": "String" },
+      "newSeat": { "type": "String" }
+    }
+  },
+  "agentSeatCorrectedNewSeatLabel": "Nouveau siège",
+
+  "agentParcelTitle": "Enregistrer un colis",
+  "agentParcelConfirmedTitle": "Colis enregistré",
+  "agentParcelQueuedTitle": "Colis mis en attente",
+  "agentParcelQueuedNotice": "L'enregistrement sera envoyé au serveur dès le retour du réseau. Le tarif définitif et le QR arriveront à ce moment-là.",
+  "agentParcelOriginUnknownTitle": "Gare de départ inconnue",
+  "agentParcelOriginUnknownMessage": "Le programme du jour doit être chargé au moins une fois pour connaître votre gare de départ. Ouvrez d'abord « Programme du jour ».",
+  "agentParcelStepSender": "1 · Expéditeur",
+  "agentParcelStepRecipient": "2 · Destinataire",
+  "agentParcelStepParcel": "3 · Colis",
+  "agentParcelFullName": "Nom complet",
+  "agentParcelNameRequired": "Le nom complet est obligatoire.",
+  "agentParcelPhoneInvalid": "Entrez un numéro valide à 8 chiffres.",
+  "agentParcelOriginCity": "Ville de départ",
+  "agentParcelDestCity": "Ville de destination",
+  "agentParcelCityRequired": "Choisissez une ville de destination.",
+  "agentParcelNature": "Nature du colis",
+  "agentParcelNatureRequired": "Précisez la nature du colis.",
+  "agentParcelWeight": "Poids (kg)",
+  "agentParcelWeightRequired": "Indiquez un poids valide.",
+  "agentParcelSubmit": "Valider",
+  "agentParcelSenderLabel": "Expéditeur",
+  "agentParcelRecipientLabel": "Destinataire",
+  "agentParcelTripLabel": "Trajet",
+  "agentParcelWeightLabel": "Poids",
+  "agentParcelTariffLabel": "Tarif payé",
+  "agentParcelNewOne": "+ Enregistrer un autre colis",
+
+  "agentParcelArrivalsTitle": "Colis arrivés",
+  "agentParcelArrivalsOfflineNotice": "Hors ligne : le SMS nécessite le réseau. « Marquer prévenu » reste possible, mis en attente jusqu'au retour du réseau.",
+  "agentParcelArrivalsEmptyTitle": "Tous les destinataires ont été prévenus",
+  "agentParcelArrivalsEmptyMessage": "Les colis arrivés en attente de notification s'afficheront ici.",
+  "agentParcelArrivedBadge": "Arrivé",
+
+  "agentSyncLogsTitle": "Historique de synchronisation",
+  "agentSyncLogsEmptyTitle": "Aucune synchronisation pour l'instant",
+  "agentSyncLogsEmptyMessage": "L'historique de vos synchronisations s'affichera ici.",
+  "agentSyncLogsBadgeOk": "Synchronisé",
+  "agentSyncLogsBadgeConflicts": "{count, plural, =1{1 conflit résolu} other{{count} conflits résolus}}",
+  "@agentSyncLogsBadgeConflicts": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "agentSyncLogsBadgeErrors": "{count, plural, =1{1 erreur} other{{count} erreurs}}",
+  "@agentSyncLogsBadgeErrors": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "agentSyncLogsNoWrites": "Aucune écriture envoyée",
+  "agentSyncLogsBookingsCount": "{count, plural, =1{1 billet} other{{count} billets}}",
+  "@agentSyncLogsBookingsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "agentSyncLogsParcelsCount": "{count, plural, =1{1 colis} other{{count} colis}}",
+  "@agentSyncLogsParcelsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "agentSyncLogsValidationsCount": "{count, plural, =1{1 embarquement} other{{count} embarquements}}",
+  "@agentSyncLogsValidationsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "agentSyncLogsNotificationsCount": "{count, plural, =1{1 notification colis} other{{count} notifications colis}}",
+  "@agentSyncLogsNotificationsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "agentParcelSendSms": "Envoyer un SMS",
+  "agentParcelSmsSent": "SMS déjà envoyé",
+  "agentParcelSmsUnavailable": "SMS indisponible hors ligne",
+  "agentParcelCall": "Appeler",
+  "agentParcelMarkNotified": "Marquer prévenu",
+  "agentParcelMarkNotifiedQueued": "Marquer prévenu (mise en attente)",
 
   "agentNavHome": "Accueil",
   "agentNavPassengers": "Passagers",
   "agentNavParcels": "Colis",
   "agentNavScan": "Scanner",
   "agentNavProfile": "Profil",
+
+  "actionConfirm": "Confirmer",
+
+  "agentBoardingTitle": "Liste des passagers",
+  "agentBoardingOfflineNotice": "Scans et coches enregistrés localement, synchronisation automatique au retour du réseau.",
+  "agentBoardingPassengersTitle": "Passagers ({count})",
+  "@agentBoardingPassengersTitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agentBoardingEmpty": "Aucun passager inscrit sur ce voyage pour l'instant.",
+  "agentBoardingSeat": "Siège {seat}",
+  "@agentBoardingSeat": {
+    "placeholders": {
+      "seat": { "type": "String" }
+    }
+  },
+  "agentBoardingPaid": "Payé",
+  "agentBoardingUnpaid": "Non payé",
+  "agentBoardingUnpaidCannotBoard": "Ce billet n'est pas payé : il ne peut pas embarquer.",
+
+  "agentBoardingProgressLabel": "Embarquement",
+  "agentBoardingProgressOfRegistered": "{boarded} / {registered} inscrits",
+  "@agentBoardingProgressOfRegistered": {
+    "description": "Dénominateur de repli quand la capacité du véhicule n'est pas connue (voyage depuis le cache)",
+    "placeholders": {
+      "boarded": { "type": "int" },
+      "registered": { "type": "int" }
+    }
+  },
+
+  "agentBoardingStatRegistered": "Inscrits",
+  "agentBoardingStatPaid": "Payés",
+  "agentBoardingStatUnpaid": "Non payés",
+  "agentBoardingStatBoarded": "Embarqués",
+  "agentBoardingStatAbsent": "Absents",
+  "agentBoardingStatRemaining": "Places restantes",
+
+  "agentBoardingScanAction": "Scanner un QR code",
+  "agentBoardingAllAction": "Tout embarquer",
+  "agentBoardingLastMinuteAction": "+ Dernière minute",
+  "agentBoardingDownloadList": "Télécharger / imprimer la liste",
+
+  "agentBoardingValidatedBanner": "Embarquement validé · {boarded} embarqués, {absent} absents.",
+  "@agentBoardingValidatedBanner": {
+    "placeholders": {
+      "boarded": { "type": "int" },
+      "absent": { "type": "int" }
+    }
+  },
+  "agentBoardingValidatedBannerAt": "Embarquement validé à {time} · {boarded} embarqués, {absent} absents.",
+  "@agentBoardingValidatedBannerAt": {
+    "placeholders": {
+      "time": { "type": "String" },
+      "boarded": { "type": "int" },
+      "absent": { "type": "int" }
+    }
+  },
+
+  "agentBoardingValidateAction": "Valider l'embarquement",
+  "agentBoardingValidateRequiresOnline": "Nécessite une connexion : verrouille l'embarquement côté serveur.",
+  "@agentBoardingValidateRequiresOnline": {
+    "description": "boarding/validate n'a pas de repli hors ligne, SyncPayload ne porte aucune liste pour cette action"
+  },
+  "agentBoardingValidateTitle": "Valider l'embarquement ?",
+  "agentBoardingValidateMessage": "Cette action est définitive. La liste sera verrouillée avec {boarded} passagers embarqués et {absent} absents. Aucune modification ne sera possible après validation.",
+  "@agentBoardingValidateMessage": {
+    "placeholders": {
+      "boarded": { "type": "int" },
+      "absent": { "type": "int" }
+    }
+  },
+  "agentBoardingValidateConfirm": "Oui, valider",
+  "agentBoardingValidatedToast": "Embarquement validé et verrouillé.",
+
+  "agentBoardingAllTitle": "Embarquer tous les passagers ?",
+  "agentBoardingAllMessage": "{count, plural, =1{Le passager restant sera marqué comme embarqué.} other{Les {count} passagers restants seront marqués comme embarqués.}}",
+  "@agentBoardingAllMessage": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "agentBoardingAllBoarded": "{count, plural, =0{Aucun passager restant à embarquer.} =1{1 passager embarqué.} other{{count} passagers embarqués.}}",
+  "@agentBoardingAllBoarded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "agentBoardingLastMinuteTitle": "Passager de dernière minute",
+  "agentBoardingLastMinuteConfirm": "Ajouter",
+  "agentBoardingLastMinuteAdded": "Passager ajouté à la liste d'embarquement.",
+
+  "agentScanTitle": "Scanner un billet",
+  "agentScanHistory": "Historique",
+  "agentScanAlignHint": "Alignez le QR code du billet dans le cadre",
+  "agentScanKeepCameraOn": "La caméra reste active — enchaînez les scans sans fermer l'appareil.",
+  "agentScanCameraError": "Caméra indisponible. Vérifiez l'autorisation d'accès dans les réglages.",
+  "agentScanOnlineNote": "En ligne · vérification en temps réel",
+  "agentScanOfflineNote": "Hors ligne · vérification via la liste téléchargée le matin",
+  "agentScanFieldPassenger": "Passager",
+  "agentScanFieldTrip": "Trajet",
+  "agentScanFieldSeat": "Siège",
+  "agentScanMarkBoarded": "Marquer embarqué",
+  "agentScanContinue": "Continuer le scan",
+
+  "agentScanResultValidTitle": "Billet valide",
+  "agentScanResultValidMessage": "Ce billet est valide et peut embarquer.",
+  "agentScanResultUnpaidTitle": "Paiement non confirmé",
+  "agentScanResultUnpaidMessage": "Ce billet n'est pas encore payé. Le passager ne peut pas embarquer avec ce billet.",
+  "agentScanResultCancelledTitle": "Réservation annulée",
+  "agentScanResultCancelledMessage": "Cette réservation a été annulée. Le passager ne peut pas embarquer avec ce billet.",
+  "agentScanResultRefundedTitle": "Réservation remboursée",
+  "agentScanResultRefundedMessage": "Cette réservation a été remboursée. Le passager ne peut pas embarquer avec ce billet.",
+  "agentScanResultUsedTitle": "Billet déjà utilisé",
+  "agentScanResultUsedMessage": "Ce passager a déjà embarqué. Aucune action supplémentaire n'est nécessaire.",
+  "agentScanResultInvalidTitle": "Billet invalide",
+  "agentScanResultInvalidMessage": "Ce billet n'est pas valide pour l'embarquement d'aujourd'hui.",
+  "agentScanResultNotFoundTitle": "Code non reconnu",
+  "agentScanResultNotFoundMessage": "Ce QR code ne correspond à aucun billet connu de votre compagnie. Vérifiez qu'il s'agit bien d'un billet TransBooking BF.",
+
+  "agentScanHistoryTitle": "Historique des scans",
+  "agentScanHistoryEmpty": "Aucun billet scanné pour l'instant.",
+  "agentScanHistoryCount": "{count, plural, =0{Aucun billet scanné} =1{1 billet scanné · 50 derniers conservés} other{{count} billets scannés · 50 derniers conservés}}",
+  "@agentScanHistoryCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
 
   "publicNavHome": "Accueil",
   "publicNavSearch": "Rechercher un trajet",
@@ -761,6 +1032,12 @@
   "dashActiveBookings": "Réservations actives",
   "dashPending": "En attente de paiement",
   "dashUpcoming": "Voyages à venir",
+  "dashScheduledTrips": "Voyages programmés",
+  "dashTicketStatus": "Statut des billets",
+  "dashStatusPaid": "Payé",
+  "dashStatusPending": "En attente",
+  "dashStatusCancelled": "Annulé",
+  "dashSeeAll": "Tout voir",
   "dashActionSearch": "Rechercher un trajet",
   "dashActionBookings": "Mes réservations",
   "dashActionParcels": "Suivre un colis",
@@ -780,11 +1057,12 @@
   "bookingsFilterUnpaid": "Non payé",
   "bookingsFilterCancelled": "Annulé",
   "bookingsSeat": "Siège",
-  "bookingsDate": "Date & heure",
+  "bookingsDate": "Date",
   "bookingsTicketNo": "N° billet",
   "bookingsView": "Voir",
   "bookingsDownload": "PDF",
   "bookingsCancel": "Annuler",
+  "bookingsReview": "Noter",
   "bookingsDownloadUnavailable": "Le téléchargement du billet PDF arrive bientôt.",
   "bookingsEmptyTitle": "Aucune réservation",
   "bookingsEmptyMessage": "Réservez votre première place pour la retrouver ici.",
@@ -850,16 +1128,41 @@
   "reviewMissingTripMessage": "Ouvrez un voyage terminé depuis vos réservations pour laisser un avis.",
   "reviewTripDone": "Voyage terminé",
   "reviewTripFallback": "Votre dernier voyage",
+  "reviewTripMeta": "{date} · {time} · {company} · Billet {ticket}",
+  "@reviewTripMeta": {
+    "description": "Ligne de détail du voyage sur le rappel de dépôt d'avis",
+    "placeholders": {
+      "date": { "type": "String" },
+      "time": { "type": "String" },
+      "company": { "type": "String" },
+      "ticket": { "type": "String" }
+    }
+  },
   "reviewQuestion": "Comment s'est passé votre voyage ?",
   "reviewQuestionHint": "Attribuez une note de 1 à 5 étoiles.",
+  "reviewQuestionCompact": "Votre note",
   "reviewRatingPrompt": "Touchez une étoile",
   "reviewRating1": "Très insatisfait",
   "reviewRating2": "Insatisfait",
   "reviewRating3": "Correct",
   "reviewRating4": "Satisfait",
   "reviewRating5": "Excellent !",
+  "reviewAspectsTitle": "Qu'avez-vous apprécié ?",
+  "reviewAspectsTitleCompact": "Points forts",
+  "reviewAspectsOptional": "(facultatif)",
+  "reviewAspectPunctuality": "Ponctualité",
+  "reviewAspectComfort": "Confort",
+  "reviewAspectCleanliness": "Propreté",
+  "reviewAspectWelcome": "Accueil",
+  "reviewAspectSafety": "Sécurité",
+  "reviewAspectValueForMoney": "Rapport qualité-prix",
+  "reviewAspectsSummaryPrefix": "Points forts : {aspects}",
+  "@reviewAspectsSummaryPrefix": {
+    "description": "Préfixe ajouté au commentaire libre reprenant les points forts cochés (l'API n'a pas de champ dédié aux points forts)",
+    "placeholders": { "aspects": { "type": "String" } }
+  },
   "reviewCommentLabel": "Votre commentaire",
-  "reviewCommentHint": "Partagez votre expérience : ponctualité, confort, accueil…",
+  "reviewCommentHint": "Partagez votre expérience : ponctualité, confort, accueil du personnel, propreté…",
   "reviewFooter": "Votre avis aide les autres voyageurs et améliore nos services.",
   "reviewThanksTitle": "Merci pour votre avis !",
   "reviewThanksMessage": "Votre note de {rating}/5 a bien été enregistrée. Elle sera visible après modération.",
@@ -884,28 +1187,48 @@
   "claimTypeOther": "Autre",
 
   "newClaimTitle": "Nouvelle réclamation",
+  "newClaimBreadcrumb": "Réclamations",
   "newClaimSubmit": "Envoyer la réclamation",
+  "newClaimSubmitted": "Réclamation envoyée",
   "newClaimTypeLabel": "Type de problème",
-  "newClaimBookingLabel": "Réservation concernée",
   "newClaimSubjectLabel": "Objet",
   "newClaimSubjectHint": "Résumez votre réclamation en quelques mots",
   "newClaimDescriptionLabel": "Description détaillée",
-  "newClaimDescriptionHint": "Décrivez ce qui s'est passé : circonstances, heure, conséquences…",
-  "newClaimDescriptionHelper": "10 caractères minimum.",
-  "newClaimFooter": "Vous recevrez un suivi par SMS. Délai de traitement : 48–72 h.",
+  "newClaimDescriptionHint": "Décrivez ce qui s'est passé : circonstances, heure, agents concernés, conséquences…",
+  "newClaimDescriptionCounter": "{count} / 600 caractères",
+  "@newClaimDescriptionCounter": {
+    "description": "Compteur de caractères sous la description de la réclamation",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "newClaimTicketLabel": "Numéro de billet",
+  "newClaimDateLabel": "Date du voyage",
+  "newClaimFooter": "Vous recevrez un numéro de suivi par SMS. Délai de traitement : 48–72 h.",
   "newClaimBookingsError": "Impossible de charger vos réservations. Réessayez.",
   "newClaimNoBookingsTitle": "Aucune réservation",
   "newClaimNoBookingsMessage": "Une réclamation se rattache à un voyage. Réservez d'abord un trajet.",
-  "newClaimThanksTitle": "Réclamation envoyée",
-  "newClaimThanksMessage": "Un conseiller instruira votre dossier et vous répondra sous 48–72 h.",
-  "newClaimBackToClaims": "Voir mes réclamations",
-  "newClaimAttachmentLabel": "Pièce jointe (facultatif)",
-  "newClaimAttachmentHint": "PDF ou photo à l'appui de votre réclamation, 10 Mo maximum.",
-  "newClaimAttachmentAdd": "Ajouter un fichier",
-  "newClaimAttachmentChange": "Changer de fichier",
+  "newClaimAttachmentLabel": "Pièce jointe",
+  "newClaimAttachmentOptional": "(photo, reçu, PDF — facultatif)",
+  "newClaimAttachmentDropzone": "Cliquez pour ajouter un fichier",
+  "newClaimAttachmentDropzoneMobile": "Ajouter un fichier",
+  "newClaimAttachmentHint": "JPG, PNG ou PDF · 10 Mo max",
+  "newClaimAttachmentAdded": "ajouté",
   "newClaimAttachmentRemove": "Retirer la pièce jointe",
   "newClaimAttachmentTooLarge": "Fichier trop volumineux. Choisissez un fichier de 10 Mo maximum.",
   "newClaimAttachmentUnreadable": "Impossible de lire ce fichier. Réessayez avec un autre.",
+  "newClaimTrackerTitle": "Suivi de la réclamation",
+  "newClaimTrackerCurrentBadge": "ACTUEL",
+  "newClaimTrackerSentLabel": "Envoyée",
+  "newClaimTrackerSentDesc": "Réclamation reçue et enregistrée.",
+  "newClaimTrackerProgressLabel": "En cours",
+  "newClaimTrackerProgressDesc": "Un conseiller instruit votre dossier.",
+  "newClaimTrackerResolvedLabel": "Résolue",
+  "newClaimTrackerResolvedDesc": "Réponse et suite données.",
+  "newClaimSuccessMessage": "Un conseiller vous contactera.",
+  "newClaimSuccessToast": "Réclamation {ref} envoyée",
+  "@newClaimSuccessToast": {
+    "description": "Toast affiché après le dépôt réussi d'une réclamation",
+    "placeholders": { "ref": { "type": "String" } }
+  },
   "fileSizeKilobytes": "{size} Ko",
   "@fileSizeKilobytes": {
     "description": "Taille de fichier en kilo-octets",
@@ -949,6 +1272,8 @@
   "profilePasswordTitle": "Changer le mot de passe",
   "profilePasswordSubtitle": "Utilisez au moins 8 caractères avec chiffres et lettres.",
   "profilePasswordSubmit": "Mettre à jour le mot de passe",
+  "profileLogoutTitle": "Se déconnecter ?",
+  "profileLogoutMessage": "Vous devrez saisir votre téléphone et votre mot de passe pour vous reconnecter.",
   "profileTabInfo": "Informations",
   "profileTabHistory": "Historique",
   "profileHistoryEmptyTitle": "Aucun voyage passé",
@@ -959,6 +1284,12 @@
   "profileHistoryPayments": "Paiements",
   "profilePaymentsEmptyTitle": "Aucun paiement",
   "profilePaymentsEmptyMessage": "Vos paiements apparaîtront ici après votre première réservation.",
+  "profileHeaderTrips": "{count, plural, =0{Voyageur fidèle} =1{Voyageur fidèle · 1 voyage} other{Voyageur fidèle · {count} voyages}}",
+  "@profileHeaderTrips": {
+    "description": "Sous-titre de l'en-tête du profil : statut de fidélité et nombre de voyages",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "profileTripAmountPaid": "Montant payé",
 
   "baggageCount": "{count, plural, =0{Aucun bagage} =1{1 bagage enregistré} other{{count} bagages enregistrés}}",
   "@baggageCount": {

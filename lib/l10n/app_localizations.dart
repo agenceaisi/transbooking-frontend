@@ -862,6 +862,48 @@ abstract class AppLocalizations {
   /// **'Liste des passagers · embarquement'**
   String get agentActionPassengerList;
 
+  /// No description provided for @agentActionSyncHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique de synchro'**
+  String get agentActionSyncHistory;
+
+  /// No description provided for @agentActionDayStats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statistiques du jour'**
+  String get agentActionDayStats;
+
+  /// No description provided for @agentQuickSearchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche rapide'**
+  String get agentQuickSearchTitle;
+
+  /// No description provided for @agentQuickSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom ou numéro de billet'**
+  String get agentQuickSearchHint;
+
+  /// No description provided for @agentQuickSearchEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun passager ne correspond à cette recherche.'**
+  String get agentQuickSearchEmpty;
+
+  /// No description provided for @agentQuickSearchError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche indisponible pour l\'instant.'**
+  String get agentQuickSearchError;
+
+  /// No description provided for @agentQuickSearchMore.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{+ 1 autre résultat — affinez la recherche} other{+ {count} autres résultats — affinez la recherche}}'**
+  String agentQuickSearchMore(int count);
+
   /// No description provided for @agentNextDeparturesTitle.
   ///
   /// In fr, this message translates to:
@@ -873,6 +915,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Programme complet'**
   String get agentFullSchedule;
+
+  /// No description provided for @agentNextDeparturesFilterEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun départ ne correspond à ces filtres.'**
+  String get agentNextDeparturesFilterEmpty;
 
   /// Pastille de places restantes sur un départ
   ///
@@ -898,16 +946,10 @@ abstract class AppLocalizations {
   /// **'Annulé'**
   String get agentDepartureCancelled;
 
-  /// No description provided for @agentPassengersRegistered.
-  ///
-  /// In fr, this message translates to:
-  /// **'{count, plural, =0{aucun passager} =1{1 passager} other{{count} passagers}}'**
-  String agentPassengersRegistered(int count);
-
   /// No description provided for @agentViewPassengerList.
   ///
   /// In fr, this message translates to:
-  /// **'Voir la liste des passagers'**
+  /// **'Liste des passagers'**
   String get agentViewPassengerList;
 
   /// No description provided for @agentViewPassengerListShort.
@@ -1036,6 +1078,12 @@ abstract class AppLocalizations {
   /// **'Embarquement'**
   String get agentPendingValidation;
 
+  /// No description provided for @agentPendingParcelNotification.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colis prévenu'**
+  String get agentPendingParcelNotification;
+
   /// No description provided for @agentPendingStatusPending.
   ///
   /// In fr, this message translates to:
@@ -1054,11 +1102,579 @@ abstract class AppLocalizations {
   /// **'Échec'**
   String get agentPendingStatusFailed;
 
-  /// Le moteur de synchronisation est construit en phase 5A — le bandeau ne doit pas laisser croire qu'il tourne déjà
+  /// Rappel affiché sous la liste d'attente quand des écritures restent à envoyer, hors échec
   ///
   /// In fr, this message translates to:
-  /// **'L\'envoi automatique arrive avec le module hors-ligne. Vos saisies restent conservées sur l\'appareil.'**
+  /// **'L\'envoi se fait automatiquement dès que la connexion est disponible. Vos saisies restent conservées sur l\'appareil en attendant.'**
   String get agentSyncEngineNotice;
+
+  /// No description provided for @agentSyncRetryButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer l\'envoi'**
+  String get agentSyncRetryButton;
+
+  /// No description provided for @agentSyncRetrying.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel envoi…'**
+  String get agentSyncRetrying;
+
+  /// No description provided for @actionRefresh.
+  ///
+  /// In fr, this message translates to:
+  /// **'Actualiser'**
+  String get actionRefresh;
+
+  /// No description provided for @agentTripStatusScheduled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Programmé'**
+  String get agentTripStatusScheduled;
+
+  /// No description provided for @agentTripStatusInProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get agentTripStatusInProgress;
+
+  /// No description provided for @agentTripStatusCompleted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get agentTripStatusCompleted;
+
+  /// No description provided for @agentAmountPendingSync.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calculé à la synchronisation'**
+  String get agentAmountPendingSync;
+
+  /// No description provided for @agentScheduleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Programme du jour'**
+  String get agentScheduleTitle;
+
+  /// No description provided for @agentScheduleFilterDestination.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destination'**
+  String get agentScheduleFilterDestination;
+
+  /// No description provided for @agentScheduleFilterVehicle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Véhicule'**
+  String get agentScheduleFilterVehicle;
+
+  /// No description provided for @agentScheduleEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun voyage programmé'**
+  String get agentScheduleEmptyTitle;
+
+  /// No description provided for @agentScheduleEmptyMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le programme du jour n\'a pas encore été publié, ou aucun voyage ne correspond aux filtres.'**
+  String get agentScheduleEmptyMessage;
+
+  /// No description provided for @agentSchedulePassengerList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste passagers'**
+  String get agentSchedulePassengerList;
+
+  /// No description provided for @agentScheduleAddPassenger.
+  ///
+  /// In fr, this message translates to:
+  /// **'+ Ajouter'**
+  String get agentScheduleAddPassenger;
+
+  /// No description provided for @agentPassengerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer un passager'**
+  String get agentPassengerTitle;
+
+  /// No description provided for @agentPassengerConfirmedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager enregistré'**
+  String get agentPassengerConfirmedTitle;
+
+  /// No description provided for @agentPassengerQueuedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager mis en attente'**
+  String get agentPassengerQueuedTitle;
+
+  /// No description provided for @agentPassengerQueuedNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'enregistrement sera envoyé au serveur dès le retour du réseau. Le siège et le billet définitifs arriveront à ce moment-là.'**
+  String get agentPassengerQueuedNotice;
+
+  /// No description provided for @agentPassengerOfflineNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne : l\'enregistrement sera mis en attente et envoyé au retour du réseau.'**
+  String get agentPassengerOfflineNotice;
+
+  /// No description provided for @agentPassengerStepTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 · Choix du voyage'**
+  String get agentPassengerStepTrip;
+
+  /// No description provided for @agentPassengerStepInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'2 · Informations du passager'**
+  String get agentPassengerStepInfo;
+
+  /// No description provided for @agentPassengerStepSeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'3 · Siège'**
+  String get agentPassengerStepSeat;
+
+  /// No description provided for @agentPassengerStepPayment.
+  ///
+  /// In fr, this message translates to:
+  /// **'4 · Paiement'**
+  String get agentPassengerStepPayment;
+
+  /// No description provided for @agentPassengerFirstName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom'**
+  String get agentPassengerFirstName;
+
+  /// No description provided for @agentPassengerFirstNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le prénom est obligatoire.'**
+  String get agentPassengerFirstNameRequired;
+
+  /// No description provided for @agentPassengerLastName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get agentPassengerLastName;
+
+  /// No description provided for @agentPassengerLastNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est obligatoire.'**
+  String get agentPassengerLastNameRequired;
+
+  /// No description provided for @agentPassengerPhoneInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez un numéro valide à 8 chiffres.'**
+  String get agentPassengerPhoneInvalid;
+
+  /// No description provided for @agentPassengerTripRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez un voyage.'**
+  String get agentPassengerTripRequired;
+
+  /// No description provided for @agentPassengerSeatAuto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attribution automatique par le serveur · non modifiable'**
+  String get agentPassengerSeatAuto;
+
+  /// No description provided for @agentPassengerTransactionRef.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de transaction'**
+  String get agentPassengerTransactionRef;
+
+  /// No description provided for @agentPassengerTransactionRefHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. MP240912.1834.A45678'**
+  String get agentPassengerTransactionRefHint;
+
+  /// No description provided for @agentPassengerTransactionRefRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le numéro de transaction est requis.'**
+  String get agentPassengerTransactionRefRequired;
+
+  /// No description provided for @agentPassengerAmountLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant à payer'**
+  String get agentPassengerAmountLabel;
+
+  /// No description provided for @agentPassengerSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider et imprimer le billet'**
+  String get agentPassengerSubmit;
+
+  /// No description provided for @agentPassengerTicketLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager'**
+  String get agentPassengerTicketLabel;
+
+  /// No description provided for @agentPassengerTripLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet'**
+  String get agentPassengerTripLabel;
+
+  /// No description provided for @agentPassengerSeatLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Siège'**
+  String get agentPassengerSeatLabel;
+
+  /// No description provided for @agentPassengerPrint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Imprimer le billet'**
+  String get agentPassengerPrint;
+
+  /// No description provided for @agentPassengerNewOne.
+  ///
+  /// In fr, this message translates to:
+  /// **'+ Enregistrer un autre passager'**
+  String get agentPassengerNewOne;
+
+  /// No description provided for @agentPaymentCash.
+  ///
+  /// In fr, this message translates to:
+  /// **'Espèces'**
+  String get agentPaymentCash;
+
+  /// No description provided for @agentSeatCorrectedBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conflit de siège · Hors-ligne'**
+  String get agentSeatCorrectedBadge;
+
+  /// No description provided for @agentSeatCorrectedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un autre siège vous a été attribué'**
+  String get agentSeatCorrectedTitle;
+
+  /// No description provided for @agentSeatCorrectedBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'À la synchronisation, le siège réservé hors ligne pour {passenger} était déjà occupé. Le siège {seat} lui a été attribué automatiquement.'**
+  String agentSeatCorrectedBody(String passenger, String seat);
+
+  /// No description provided for @agentSeatCorrectedBodyWithOriginal.
+  ///
+  /// In fr, this message translates to:
+  /// **'À la reconnexion, le siège {originalSeat} réservé hors ligne était déjà occupé par un autre passager. Le siège {newSeat} a été attribué automatiquement à {passenger}.'**
+  String agentSeatCorrectedBodyWithOriginal(
+    String passenger,
+    String originalSeat,
+    String newSeat,
+  );
+
+  /// No description provided for @agentSeatCorrectedNewSeatLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau siège'**
+  String get agentSeatCorrectedNewSeatLabel;
+
+  /// No description provided for @agentParcelTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer un colis'**
+  String get agentParcelTitle;
+
+  /// No description provided for @agentParcelConfirmedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colis enregistré'**
+  String get agentParcelConfirmedTitle;
+
+  /// No description provided for @agentParcelQueuedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colis mis en attente'**
+  String get agentParcelQueuedTitle;
+
+  /// No description provided for @agentParcelQueuedNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'enregistrement sera envoyé au serveur dès le retour du réseau. Le tarif définitif et le QR arriveront à ce moment-là.'**
+  String get agentParcelQueuedNotice;
+
+  /// No description provided for @agentParcelOriginUnknownTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gare de départ inconnue'**
+  String get agentParcelOriginUnknownTitle;
+
+  /// No description provided for @agentParcelOriginUnknownMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le programme du jour doit être chargé au moins une fois pour connaître votre gare de départ. Ouvrez d\'abord « Programme du jour ».'**
+  String get agentParcelOriginUnknownMessage;
+
+  /// No description provided for @agentParcelStepSender.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 · Expéditeur'**
+  String get agentParcelStepSender;
+
+  /// No description provided for @agentParcelStepRecipient.
+  ///
+  /// In fr, this message translates to:
+  /// **'2 · Destinataire'**
+  String get agentParcelStepRecipient;
+
+  /// No description provided for @agentParcelStepParcel.
+  ///
+  /// In fr, this message translates to:
+  /// **'3 · Colis'**
+  String get agentParcelStepParcel;
+
+  /// No description provided for @agentParcelFullName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom complet'**
+  String get agentParcelFullName;
+
+  /// No description provided for @agentParcelNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom complet est obligatoire.'**
+  String get agentParcelNameRequired;
+
+  /// No description provided for @agentParcelPhoneInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entrez un numéro valide à 8 chiffres.'**
+  String get agentParcelPhoneInvalid;
+
+  /// No description provided for @agentParcelOriginCity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ville de départ'**
+  String get agentParcelOriginCity;
+
+  /// No description provided for @agentParcelDestCity.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ville de destination'**
+  String get agentParcelDestCity;
+
+  /// No description provided for @agentParcelCityRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisissez une ville de destination.'**
+  String get agentParcelCityRequired;
+
+  /// No description provided for @agentParcelNature.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nature du colis'**
+  String get agentParcelNature;
+
+  /// No description provided for @agentParcelNatureRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Précisez la nature du colis.'**
+  String get agentParcelNatureRequired;
+
+  /// No description provided for @agentParcelWeight.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids (kg)'**
+  String get agentParcelWeight;
+
+  /// No description provided for @agentParcelWeightRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez un poids valide.'**
+  String get agentParcelWeightRequired;
+
+  /// No description provided for @agentParcelSubmit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get agentParcelSubmit;
+
+  /// No description provided for @agentParcelSenderLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Expéditeur'**
+  String get agentParcelSenderLabel;
+
+  /// No description provided for @agentParcelRecipientLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Destinataire'**
+  String get agentParcelRecipientLabel;
+
+  /// No description provided for @agentParcelTripLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet'**
+  String get agentParcelTripLabel;
+
+  /// No description provided for @agentParcelWeightLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids'**
+  String get agentParcelWeightLabel;
+
+  /// No description provided for @agentParcelTariffLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tarif payé'**
+  String get agentParcelTariffLabel;
+
+  /// No description provided for @agentParcelNewOne.
+  ///
+  /// In fr, this message translates to:
+  /// **'+ Enregistrer un autre colis'**
+  String get agentParcelNewOne;
+
+  /// No description provided for @agentParcelArrivalsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colis arrivés'**
+  String get agentParcelArrivalsTitle;
+
+  /// No description provided for @agentParcelArrivalsOfflineNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne : le SMS nécessite le réseau. « Marquer prévenu » reste possible, mis en attente jusqu\'au retour du réseau.'**
+  String get agentParcelArrivalsOfflineNotice;
+
+  /// No description provided for @agentParcelArrivalsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tous les destinataires ont été prévenus'**
+  String get agentParcelArrivalsEmptyTitle;
+
+  /// No description provided for @agentParcelArrivalsEmptyMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les colis arrivés en attente de notification s\'afficheront ici.'**
+  String get agentParcelArrivalsEmptyMessage;
+
+  /// No description provided for @agentParcelArrivedBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Arrivé'**
+  String get agentParcelArrivedBadge;
+
+  /// No description provided for @agentSyncLogsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique de synchronisation'**
+  String get agentSyncLogsTitle;
+
+  /// No description provided for @agentSyncLogsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune synchronisation pour l\'instant'**
+  String get agentSyncLogsEmptyTitle;
+
+  /// No description provided for @agentSyncLogsEmptyMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'historique de vos synchronisations s\'affichera ici.'**
+  String get agentSyncLogsEmptyMessage;
+
+  /// No description provided for @agentSyncLogsBadgeOk.
+  ///
+  /// In fr, this message translates to:
+  /// **'Synchronisé'**
+  String get agentSyncLogsBadgeOk;
+
+  /// No description provided for @agentSyncLogsBadgeConflicts.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 conflit résolu} other{{count} conflits résolus}}'**
+  String agentSyncLogsBadgeConflicts(int count);
+
+  /// No description provided for @agentSyncLogsBadgeErrors.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 erreur} other{{count} erreurs}}'**
+  String agentSyncLogsBadgeErrors(int count);
+
+  /// No description provided for @agentSyncLogsNoWrites.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune écriture envoyée'**
+  String get agentSyncLogsNoWrites;
+
+  /// No description provided for @agentSyncLogsBookingsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 billet} other{{count} billets}}'**
+  String agentSyncLogsBookingsCount(int count);
+
+  /// No description provided for @agentSyncLogsParcelsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 colis} other{{count} colis}}'**
+  String agentSyncLogsParcelsCount(int count);
+
+  /// No description provided for @agentSyncLogsValidationsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 embarquement} other{{count} embarquements}}'**
+  String agentSyncLogsValidationsCount(int count);
+
+  /// No description provided for @agentSyncLogsNotificationsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 notification colis} other{{count} notifications colis}}'**
+  String agentSyncLogsNotificationsCount(int count);
+
+  /// No description provided for @agentParcelSendSms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer un SMS'**
+  String get agentParcelSendSms;
+
+  /// No description provided for @agentParcelSmsSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS déjà envoyé'**
+  String get agentParcelSmsSent;
+
+  /// No description provided for @agentParcelSmsUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'SMS indisponible hors ligne'**
+  String get agentParcelSmsUnavailable;
+
+  /// No description provided for @agentParcelCall.
+  ///
+  /// In fr, this message translates to:
+  /// **'Appeler'**
+  String get agentParcelCall;
+
+  /// No description provided for @agentParcelMarkNotified.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer prévenu'**
+  String get agentParcelMarkNotified;
+
+  /// No description provided for @agentParcelMarkNotifiedQueued.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer prévenu (mise en attente)'**
+  String get agentParcelMarkNotifiedQueued;
 
   /// No description provided for @agentNavHome.
   ///
@@ -1089,6 +1705,390 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Profil'**
   String get agentNavProfile;
+
+  /// No description provided for @actionConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer'**
+  String get actionConfirm;
+
+  /// No description provided for @agentBoardingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste des passagers'**
+  String get agentBoardingTitle;
+
+  /// No description provided for @agentBoardingOfflineNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scans et coches enregistrés localement, synchronisation automatique au retour du réseau.'**
+  String get agentBoardingOfflineNotice;
+
+  /// No description provided for @agentBoardingPassengersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passagers ({count})'**
+  String agentBoardingPassengersTitle(int count);
+
+  /// No description provided for @agentBoardingEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun passager inscrit sur ce voyage pour l\'instant.'**
+  String get agentBoardingEmpty;
+
+  /// No description provided for @agentBoardingSeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Siège {seat}'**
+  String agentBoardingSeat(String seat);
+
+  /// No description provided for @agentBoardingPaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Payé'**
+  String get agentBoardingPaid;
+
+  /// No description provided for @agentBoardingUnpaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non payé'**
+  String get agentBoardingUnpaid;
+
+  /// No description provided for @agentBoardingUnpaidCannotBoard.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce billet n\'est pas payé : il ne peut pas embarquer.'**
+  String get agentBoardingUnpaidCannotBoard;
+
+  /// No description provided for @agentBoardingProgressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarquement'**
+  String get agentBoardingProgressLabel;
+
+  /// Dénominateur de repli quand la capacité du véhicule n'est pas connue (voyage depuis le cache)
+  ///
+  /// In fr, this message translates to:
+  /// **'{boarded} / {registered} inscrits'**
+  String agentBoardingProgressOfRegistered(int boarded, int registered);
+
+  /// No description provided for @agentBoardingStatRegistered.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inscrits'**
+  String get agentBoardingStatRegistered;
+
+  /// No description provided for @agentBoardingStatPaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Payés'**
+  String get agentBoardingStatPaid;
+
+  /// No description provided for @agentBoardingStatUnpaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non payés'**
+  String get agentBoardingStatUnpaid;
+
+  /// No description provided for @agentBoardingStatBoarded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarqués'**
+  String get agentBoardingStatBoarded;
+
+  /// No description provided for @agentBoardingStatAbsent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Absents'**
+  String get agentBoardingStatAbsent;
+
+  /// No description provided for @agentBoardingStatRemaining.
+  ///
+  /// In fr, this message translates to:
+  /// **'Places restantes'**
+  String get agentBoardingStatRemaining;
+
+  /// No description provided for @agentBoardingScanAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner un QR code'**
+  String get agentBoardingScanAction;
+
+  /// No description provided for @agentBoardingAllAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout embarquer'**
+  String get agentBoardingAllAction;
+
+  /// No description provided for @agentBoardingLastMinuteAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'+ Dernière minute'**
+  String get agentBoardingLastMinuteAction;
+
+  /// No description provided for @agentBoardingDownloadList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger / imprimer la liste'**
+  String get agentBoardingDownloadList;
+
+  /// No description provided for @agentBoardingValidatedBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarquement validé · {boarded} embarqués, {absent} absents.'**
+  String agentBoardingValidatedBanner(int boarded, int absent);
+
+  /// No description provided for @agentBoardingValidatedBannerAt.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarquement validé à {time} · {boarded} embarqués, {absent} absents.'**
+  String agentBoardingValidatedBannerAt(String time, int boarded, int absent);
+
+  /// No description provided for @agentBoardingValidateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'embarquement'**
+  String get agentBoardingValidateAction;
+
+  /// boarding/validate n'a pas de repli hors ligne, SyncPayload ne porte aucune liste pour cette action
+  ///
+  /// In fr, this message translates to:
+  /// **'Nécessite une connexion : verrouille l\'embarquement côté serveur.'**
+  String get agentBoardingValidateRequiresOnline;
+
+  /// No description provided for @agentBoardingValidateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider l\'embarquement ?'**
+  String get agentBoardingValidateTitle;
+
+  /// No description provided for @agentBoardingValidateMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action est définitive. La liste sera verrouillée avec {boarded} passagers embarqués et {absent} absents. Aucune modification ne sera possible après validation.'**
+  String agentBoardingValidateMessage(int boarded, int absent);
+
+  /// No description provided for @agentBoardingValidateConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Oui, valider'**
+  String get agentBoardingValidateConfirm;
+
+  /// No description provided for @agentBoardingValidatedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarquement validé et verrouillé.'**
+  String get agentBoardingValidatedToast;
+
+  /// No description provided for @agentBoardingAllTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Embarquer tous les passagers ?'**
+  String get agentBoardingAllTitle;
+
+  /// No description provided for @agentBoardingAllMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Le passager restant sera marqué comme embarqué.} other{Les {count} passagers restants seront marqués comme embarqués.}}'**
+  String agentBoardingAllMessage(int count);
+
+  /// No description provided for @agentBoardingAllBoarded.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun passager restant à embarquer.} =1{1 passager embarqué.} other{{count} passagers embarqués.}}'**
+  String agentBoardingAllBoarded(int count);
+
+  /// No description provided for @agentBoardingLastMinuteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager de dernière minute'**
+  String get agentBoardingLastMinuteTitle;
+
+  /// No description provided for @agentBoardingLastMinuteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get agentBoardingLastMinuteConfirm;
+
+  /// No description provided for @agentBoardingLastMinuteAdded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager ajouté à la liste d\'embarquement.'**
+  String get agentBoardingLastMinuteAdded;
+
+  /// No description provided for @agentScanTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Scanner un billet'**
+  String get agentScanTitle;
+
+  /// No description provided for @agentScanHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get agentScanHistory;
+
+  /// No description provided for @agentScanAlignHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alignez le QR code du billet dans le cadre'**
+  String get agentScanAlignHint;
+
+  /// No description provided for @agentScanKeepCameraOn.
+  ///
+  /// In fr, this message translates to:
+  /// **'La caméra reste active — enchaînez les scans sans fermer l\'appareil.'**
+  String get agentScanKeepCameraOn;
+
+  /// No description provided for @agentScanCameraError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Caméra indisponible. Vérifiez l\'autorisation d\'accès dans les réglages.'**
+  String get agentScanCameraError;
+
+  /// No description provided for @agentScanOnlineNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'En ligne · vérification en temps réel'**
+  String get agentScanOnlineNote;
+
+  /// No description provided for @agentScanOfflineNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hors ligne · vérification via la liste téléchargée le matin'**
+  String get agentScanOfflineNote;
+
+  /// No description provided for @agentScanFieldPassenger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Passager'**
+  String get agentScanFieldPassenger;
+
+  /// No description provided for @agentScanFieldTrip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trajet'**
+  String get agentScanFieldTrip;
+
+  /// No description provided for @agentScanFieldSeat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Siège'**
+  String get agentScanFieldSeat;
+
+  /// No description provided for @agentScanMarkBoarded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Marquer embarqué'**
+  String get agentScanMarkBoarded;
+
+  /// No description provided for @agentScanContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer le scan'**
+  String get agentScanContinue;
+
+  /// No description provided for @agentScanResultValidTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet valide'**
+  String get agentScanResultValidTitle;
+
+  /// No description provided for @agentScanResultValidMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce billet est valide et peut embarquer.'**
+  String get agentScanResultValidMessage;
+
+  /// No description provided for @agentScanResultUnpaidTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Paiement non confirmé'**
+  String get agentScanResultUnpaidTitle;
+
+  /// No description provided for @agentScanResultUnpaidMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce billet n\'est pas encore payé. Le passager ne peut pas embarquer avec ce billet.'**
+  String get agentScanResultUnpaidMessage;
+
+  /// No description provided for @agentScanResultCancelledTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation annulée'**
+  String get agentScanResultCancelledTitle;
+
+  /// No description provided for @agentScanResultCancelledMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette réservation a été annulée. Le passager ne peut pas embarquer avec ce billet.'**
+  String get agentScanResultCancelledMessage;
+
+  /// No description provided for @agentScanResultRefundedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réservation remboursée'**
+  String get agentScanResultRefundedTitle;
+
+  /// No description provided for @agentScanResultRefundedMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette réservation a été remboursée. Le passager ne peut pas embarquer avec ce billet.'**
+  String get agentScanResultRefundedMessage;
+
+  /// No description provided for @agentScanResultUsedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet déjà utilisé'**
+  String get agentScanResultUsedTitle;
+
+  /// No description provided for @agentScanResultUsedMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce passager a déjà embarqué. Aucune action supplémentaire n\'est nécessaire.'**
+  String get agentScanResultUsedMessage;
+
+  /// No description provided for @agentScanResultInvalidTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Billet invalide'**
+  String get agentScanResultInvalidTitle;
+
+  /// No description provided for @agentScanResultInvalidMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce billet n\'est pas valide pour l\'embarquement d\'aujourd\'hui.'**
+  String get agentScanResultInvalidMessage;
+
+  /// No description provided for @agentScanResultNotFoundTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code non reconnu'**
+  String get agentScanResultNotFoundTitle;
+
+  /// No description provided for @agentScanResultNotFoundMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce QR code ne correspond à aucun billet connu de votre compagnie. Vérifiez qu\'il s\'agit bien d\'un billet TransBooking BF.'**
+  String get agentScanResultNotFoundMessage;
+
+  /// No description provided for @agentScanHistoryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique des scans'**
+  String get agentScanHistoryTitle;
+
+  /// No description provided for @agentScanHistoryEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun billet scanné pour l\'instant.'**
+  String get agentScanHistoryEmpty;
+
+  /// No description provided for @agentScanHistoryCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun billet scanné} =1{1 billet scanné · 50 derniers conservés} other{{count} billets scannés · 50 derniers conservés}}'**
+  String agentScanHistoryCount(int count);
 
   /// No description provided for @publicNavHome.
   ///
@@ -2482,6 +3482,42 @@ abstract class AppLocalizations {
   /// **'Voyages à venir'**
   String get dashUpcoming;
 
+  /// No description provided for @dashScheduledTrips.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voyages programmés'**
+  String get dashScheduledTrips;
+
+  /// No description provided for @dashTicketStatus.
+  ///
+  /// In fr, this message translates to:
+  /// **'Statut des billets'**
+  String get dashTicketStatus;
+
+  /// No description provided for @dashStatusPaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Payé'**
+  String get dashStatusPaid;
+
+  /// No description provided for @dashStatusPending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente'**
+  String get dashStatusPending;
+
+  /// No description provided for @dashStatusCancelled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annulé'**
+  String get dashStatusCancelled;
+
+  /// No description provided for @dashSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get dashSeeAll;
+
   /// No description provided for @dashActionSearch.
   ///
   /// In fr, this message translates to:
@@ -2593,7 +3629,7 @@ abstract class AppLocalizations {
   /// No description provided for @bookingsDate.
   ///
   /// In fr, this message translates to:
-  /// **'Date & heure'**
+  /// **'Date'**
   String get bookingsDate;
 
   /// No description provided for @bookingsTicketNo.
@@ -2619,6 +3655,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Annuler'**
   String get bookingsCancel;
+
+  /// No description provided for @bookingsReview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Noter'**
+  String get bookingsReview;
 
   /// No description provided for @bookingsDownloadUnavailable.
   ///
@@ -2986,6 +4028,17 @@ abstract class AppLocalizations {
   /// **'Votre dernier voyage'**
   String get reviewTripFallback;
 
+  /// Ligne de détail du voyage sur le rappel de dépôt d'avis
+  ///
+  /// In fr, this message translates to:
+  /// **'{date} · {time} · {company} · Billet {ticket}'**
+  String reviewTripMeta(
+    String date,
+    String time,
+    String company,
+    String ticket,
+  );
+
   /// No description provided for @reviewQuestion.
   ///
   /// In fr, this message translates to:
@@ -2997,6 +4050,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Attribuez une note de 1 à 5 étoiles.'**
   String get reviewQuestionHint;
+
+  /// No description provided for @reviewQuestionCompact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre note'**
+  String get reviewQuestionCompact;
 
   /// No description provided for @reviewRatingPrompt.
   ///
@@ -3034,6 +4093,66 @@ abstract class AppLocalizations {
   /// **'Excellent !'**
   String get reviewRating5;
 
+  /// No description provided for @reviewAspectsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qu\'avez-vous apprécié ?'**
+  String get reviewAspectsTitle;
+
+  /// No description provided for @reviewAspectsTitleCompact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Points forts'**
+  String get reviewAspectsTitleCompact;
+
+  /// No description provided for @reviewAspectsOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'(facultatif)'**
+  String get reviewAspectsOptional;
+
+  /// No description provided for @reviewAspectPunctuality.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ponctualité'**
+  String get reviewAspectPunctuality;
+
+  /// No description provided for @reviewAspectComfort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confort'**
+  String get reviewAspectComfort;
+
+  /// No description provided for @reviewAspectCleanliness.
+  ///
+  /// In fr, this message translates to:
+  /// **'Propreté'**
+  String get reviewAspectCleanliness;
+
+  /// No description provided for @reviewAspectWelcome.
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get reviewAspectWelcome;
+
+  /// No description provided for @reviewAspectSafety.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get reviewAspectSafety;
+
+  /// No description provided for @reviewAspectValueForMoney.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rapport qualité-prix'**
+  String get reviewAspectValueForMoney;
+
+  /// Préfixe ajouté au commentaire libre reprenant les points forts cochés (l'API n'a pas de champ dédié aux points forts)
+  ///
+  /// In fr, this message translates to:
+  /// **'Points forts : {aspects}'**
+  String reviewAspectsSummaryPrefix(String aspects);
+
   /// No description provided for @reviewCommentLabel.
   ///
   /// In fr, this message translates to:
@@ -3043,7 +4162,7 @@ abstract class AppLocalizations {
   /// No description provided for @reviewCommentHint.
   ///
   /// In fr, this message translates to:
-  /// **'Partagez votre expérience : ponctualité, confort, accueil…'**
+  /// **'Partagez votre expérience : ponctualité, confort, accueil du personnel, propreté…'**
   String get reviewCommentHint;
 
   /// No description provided for @reviewFooter.
@@ -3148,23 +4267,29 @@ abstract class AppLocalizations {
   /// **'Nouvelle réclamation'**
   String get newClaimTitle;
 
+  /// No description provided for @newClaimBreadcrumb.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamations'**
+  String get newClaimBreadcrumb;
+
   /// No description provided for @newClaimSubmit.
   ///
   /// In fr, this message translates to:
   /// **'Envoyer la réclamation'**
   String get newClaimSubmit;
 
+  /// No description provided for @newClaimSubmitted.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamation envoyée'**
+  String get newClaimSubmitted;
+
   /// No description provided for @newClaimTypeLabel.
   ///
   /// In fr, this message translates to:
   /// **'Type de problème'**
   String get newClaimTypeLabel;
-
-  /// No description provided for @newClaimBookingLabel.
-  ///
-  /// In fr, this message translates to:
-  /// **'Réservation concernée'**
-  String get newClaimBookingLabel;
 
   /// No description provided for @newClaimSubjectLabel.
   ///
@@ -3187,19 +4312,31 @@ abstract class AppLocalizations {
   /// No description provided for @newClaimDescriptionHint.
   ///
   /// In fr, this message translates to:
-  /// **'Décrivez ce qui s\'est passé : circonstances, heure, conséquences…'**
+  /// **'Décrivez ce qui s\'est passé : circonstances, heure, agents concernés, conséquences…'**
   String get newClaimDescriptionHint;
 
-  /// No description provided for @newClaimDescriptionHelper.
+  /// Compteur de caractères sous la description de la réclamation
   ///
   /// In fr, this message translates to:
-  /// **'10 caractères minimum.'**
-  String get newClaimDescriptionHelper;
+  /// **'{count} / 600 caractères'**
+  String newClaimDescriptionCounter(int count);
+
+  /// No description provided for @newClaimTicketLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Numéro de billet'**
+  String get newClaimTicketLabel;
+
+  /// No description provided for @newClaimDateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Date du voyage'**
+  String get newClaimDateLabel;
 
   /// No description provided for @newClaimFooter.
   ///
   /// In fr, this message translates to:
-  /// **'Vous recevrez un suivi par SMS. Délai de traitement : 48–72 h.'**
+  /// **'Vous recevrez un numéro de suivi par SMS. Délai de traitement : 48–72 h.'**
   String get newClaimFooter;
 
   /// No description provided for @newClaimBookingsError.
@@ -3220,47 +4357,41 @@ abstract class AppLocalizations {
   /// **'Une réclamation se rattache à un voyage. Réservez d\'abord un trajet.'**
   String get newClaimNoBookingsMessage;
 
-  /// No description provided for @newClaimThanksTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Réclamation envoyée'**
-  String get newClaimThanksTitle;
-
-  /// No description provided for @newClaimThanksMessage.
-  ///
-  /// In fr, this message translates to:
-  /// **'Un conseiller instruira votre dossier et vous répondra sous 48–72 h.'**
-  String get newClaimThanksMessage;
-
-  /// No description provided for @newClaimBackToClaims.
-  ///
-  /// In fr, this message translates to:
-  /// **'Voir mes réclamations'**
-  String get newClaimBackToClaims;
-
   /// No description provided for @newClaimAttachmentLabel.
   ///
   /// In fr, this message translates to:
-  /// **'Pièce jointe (facultatif)'**
+  /// **'Pièce jointe'**
   String get newClaimAttachmentLabel;
+
+  /// No description provided for @newClaimAttachmentOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'(photo, reçu, PDF — facultatif)'**
+  String get newClaimAttachmentOptional;
+
+  /// No description provided for @newClaimAttachmentDropzone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cliquez pour ajouter un fichier'**
+  String get newClaimAttachmentDropzone;
+
+  /// No description provided for @newClaimAttachmentDropzoneMobile.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un fichier'**
+  String get newClaimAttachmentDropzoneMobile;
 
   /// No description provided for @newClaimAttachmentHint.
   ///
   /// In fr, this message translates to:
-  /// **'PDF ou photo à l\'appui de votre réclamation, 10 Mo maximum.'**
+  /// **'JPG, PNG ou PDF · 10 Mo max'**
   String get newClaimAttachmentHint;
 
-  /// No description provided for @newClaimAttachmentAdd.
+  /// No description provided for @newClaimAttachmentAdded.
   ///
   /// In fr, this message translates to:
-  /// **'Ajouter un fichier'**
-  String get newClaimAttachmentAdd;
-
-  /// No description provided for @newClaimAttachmentChange.
-  ///
-  /// In fr, this message translates to:
-  /// **'Changer de fichier'**
-  String get newClaimAttachmentChange;
+  /// **'ajouté'**
+  String get newClaimAttachmentAdded;
 
   /// No description provided for @newClaimAttachmentRemove.
   ///
@@ -3279,6 +4410,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Impossible de lire ce fichier. Réessayez avec un autre.'**
   String get newClaimAttachmentUnreadable;
+
+  /// No description provided for @newClaimTrackerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivi de la réclamation'**
+  String get newClaimTrackerTitle;
+
+  /// No description provided for @newClaimTrackerCurrentBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'ACTUEL'**
+  String get newClaimTrackerCurrentBadge;
+
+  /// No description provided for @newClaimTrackerSentLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyée'**
+  String get newClaimTrackerSentLabel;
+
+  /// No description provided for @newClaimTrackerSentDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamation reçue et enregistrée.'**
+  String get newClaimTrackerSentDesc;
+
+  /// No description provided for @newClaimTrackerProgressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'En cours'**
+  String get newClaimTrackerProgressLabel;
+
+  /// No description provided for @newClaimTrackerProgressDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un conseiller instruit votre dossier.'**
+  String get newClaimTrackerProgressDesc;
+
+  /// No description provided for @newClaimTrackerResolvedLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Résolue'**
+  String get newClaimTrackerResolvedLabel;
+
+  /// No description provided for @newClaimTrackerResolvedDesc.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réponse et suite données.'**
+  String get newClaimTrackerResolvedDesc;
+
+  /// No description provided for @newClaimSuccessMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un conseiller vous contactera.'**
+  String get newClaimSuccessMessage;
+
+  /// Toast affiché après le dépôt réussi d'une réclamation
+  ///
+  /// In fr, this message translates to:
+  /// **'Réclamation {ref} envoyée'**
+  String newClaimSuccessToast(String ref);
 
   /// Taille de fichier en kilo-octets
   ///
@@ -3478,6 +4669,18 @@ abstract class AppLocalizations {
   /// **'Mettre à jour le mot de passe'**
   String get profilePasswordSubmit;
 
+  /// No description provided for @profileLogoutTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter ?'**
+  String get profileLogoutTitle;
+
+  /// No description provided for @profileLogoutMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vous devrez saisir votre téléphone et votre mot de passe pour vous reconnecter.'**
+  String get profileLogoutMessage;
+
   /// No description provided for @profileTabInfo.
   ///
   /// In fr, this message translates to:
@@ -3537,6 +4740,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Vos paiements apparaîtront ici après votre première réservation.'**
   String get profilePaymentsEmptyMessage;
+
+  /// Sous-titre de l'en-tête du profil : statut de fidélité et nombre de voyages
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Voyageur fidèle} =1{Voyageur fidèle · 1 voyage} other{Voyageur fidèle · {count} voyages}}'**
+  String profileHeaderTrips(int count);
+
+  /// No description provided for @profileTripAmountPaid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Montant payé'**
+  String get profileTripAmountPaid;
 
   /// Nombre de bagages enregistrés sur une réservation
   ///
